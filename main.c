@@ -8,9 +8,9 @@
 #include <pthread.h>
 
 #include "main.h"
-#include "my_library.o"
-#include "RNA_lib.o"
-#include "DNA_lib.o"
+#include "my_library.lib"
+#include "RNA_lib.lib"
+#include "DNA_lib.lib"
 
 /* This functions need to be here because of the threading */
 /* Probably it is possible to move then to another file but I do not know how to properly do that */
