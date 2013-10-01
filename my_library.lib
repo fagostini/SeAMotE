@@ -38,8 +38,8 @@ static void read_args(int argc, char **argv, char *fileM, char *fileP, char *fil
 	options[5].des = "set a threshold for each selection loop (lower thresholds increase the time!)";
 	options[5].err = "Error! The threshold has not been specified!";
 	options[6].cmd = "-a";
-	options[6].des = "set a threshold for each selection loop (lower thresholds increase the time!)";
-	options[6].err = "Error! The threshold has not been specified!";
+	options[6].des = "you can choose whether to use RNA (the set as it is) or DNA (the set and its reverse complementary)";
+	options[6].err = "Error! The molecule type has not been specified!";
 
 	int i = 1;
 	while(i<argc){
@@ -192,6 +192,25 @@ static void free3Dchar(char ***array, int y, int z){
 	free(array);
 }
 
+static void free2Dint(int **array, int y){
+	int i;
+	for( i=0; i<y; i++){
+		free(array[i]);
+	}
+	free(array);
+}
+
+static void free3Dint(int ***array, int y, int z){
+	int i, ii;
+	for( i=0; i<z; i++){
+		for( ii=0; ii<y; ii++){
+			free(array[i][ii]);
+		}
+		free(array[i]);
+	}
+	free(array);
+}
+
 static int rand_int(int n) {
   int limit = RAND_MAX - RAND_MAX % n;
   int rnd;
@@ -227,6 +246,20 @@ static void str_shuffle_arr(int n, char **array) {
 	}
 }
 
+static int bootstrap_sampling(int n, int **order ) {
+
+	int i, j, t;
+	int tmp;
+	for( t=0; t<NUM_BOOT; t++ ){
+		for ( i=n-1; i>=0; i--) {
+		  j = rand_int(i + 1);
+		  tmp = order[t][j];
+		  order[t][j] = order[t][i];
+		  order[t][i] = tmp;
+		}
+	}
+	return 0;
+}
 
 static int read_lines(FILE *inFile){
 
