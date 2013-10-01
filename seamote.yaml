@@ -1,0 +1,63 @@
+---
+title:      Sequence Analysis of Motifs Enrichemnt
+name:       seamote
+title_styled:   >
+    SeAMotE - Sequence Analysis of Motifs Enrichemnt
+version:    1.0
+description:    >
+    This module computes motif enrichment analysis
+
+description_short:    >
+    This module computes motif enrichment analysis
+    
+nav_links:
+    -   title:  >
+            SeAMotE Home
+        href:   >
+            http://service.tartaglialab.com/new_submission/seamote   
+    -   title:  >
+            Documentation
+        href:   >
+            http://service.tartaglialab.com/static_files/shared/documentation.html#4        
+    -   title:  >
+            Tutorial
+        href:   >
+            http://service.tartaglialab.com/static_files/shared/tutorial.html        
+    -   title:  >
+            Group page @ CRG
+        href:   >
+            http://pasteur.crg.es/portal/page/portal/827A462EAB6802B3E04012AC0E01291B
+   
+form_fields:
+    -   name: title
+        description: Submission label (optional)
+        required: No
+        type: text
+    -   name: email
+        description: Email address (optional, used for notification)
+        type: email
+        required: No                            
+
+file_uploads:    
+    -   filename: A.fasta
+        description: Upload a Positive set of sequences (FASTA format)
+        format: fasta
+        required: Yes        
+    -   filename: B.fasta
+        description: Upload a Reference set of sequences (FASTA format)
+        format: fasta
+        required: No
+
+examples:
+    -   reference_id:   8888
+        title:          Load Example
+        description:    A simple example of 10 vs 10 mRNAs
+
+algorithm:
+    command:              "seamote.py -fileA=<file0> -fileB=<file1> -output_dir=<output_dir>"
+    processing_timeout:   7200
+    
+# for the processing part
+output:
+    - 
+
