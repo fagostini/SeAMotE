@@ -425,9 +425,9 @@ int main(int argc, char* argv[]){
 	thread_data_array[0].motLen = ms;
 	thread_data_array[0].cov = posCov;
 	thread_data_array[1].thread_id = 1;
+	thread_data_array[1].depth = 1;
 	thread_data_array[1].arrSeq = negSeq;
 	thread_data_array[1].arrMot = motifs;
-	thread_data_array[1].depth = 1;
 	thread_data_array[1].arrNum = numNeg;
 	thread_data_array[1].motNum = mn;
 	thread_data_array[1].motLen = ms;
