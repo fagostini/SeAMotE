@@ -180,11 +180,25 @@ int main(int argc, char* argv[]){
 	}
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
 	
-	printf("%s", mot[0]);
-	for(i=0;i<numPos;i++){
-		printf(" %d", negDist[0][i]);
+	int m1, m2;
+	for(m1=0;m1<numMot;m1++){
+		for(m2=0;m2<numMot;m2++){
+			if( m1!=m2 & pvalues[m1][0]<0.05 & pvalues[m2][0]<0.05 ){
+				int tot = 0;
+				printf("%s", mot[m1]);
+				for(i=0;i<numPos;i++){
+					if( posDist[m1][i] == 1 | posDist[m2][i] == 1 ){
+						printf(" %d", 1);
+						tot++;
+					}
+					else{
+						printf(" %d", 0);
+					}
+				}
+				printf(" %s %.2f\n", mot[m2], (float)tot/numPos);
+			}
+		}
 	}
-	printf("\n");
 
 	return 0;
 
