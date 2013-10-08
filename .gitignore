@@ -1,10 +1,10 @@
 last_motifs_tested.txt
 main
-main.o
 test.log
 /best_motifs.txt
 /motifs_last_loop.txt
 /*.DS_Store
+/*.o
 /tmp/1*
 /tmp/2*
 /tmp/3*
@@ -19,3 +19,4 @@ Ref_PosRand.txt
 /Ref_NegShuf.txt
 /Ref_PosShuf.txt
 /log.txt
+mergeMot
