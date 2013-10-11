@@ -200,6 +200,14 @@ int main(int argc, char* argv[]){
 		}
 	}
 
+	free2Dchar(posID, numPos);
+	free2Dchar(posSeq, numPos);
+	free2Dchar(negID, numNeg);
+	free2Dchar(negSeq, numNeg);
+	free2Dchar(mot, numMot);
+	free2Dint(posDist, numMot);
+	free2Dint(negDist, numMot);
+
 	return 0;
 
 }

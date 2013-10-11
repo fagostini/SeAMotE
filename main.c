@@ -238,10 +238,10 @@ int main(int argc, char* argv[]){
 	motifs = posID = posSeq = negID = negSeq = shuSeq = NULL;
 	size_t size_mot;
 	FILE *log, *Fpositive, *Fnegative, *Fshuffle, *Fposrand, *Fnegrand, *Fposshuf, *Fnegshuf;
-	char *fileM = (char *)calloc(100, sizeof(char));
-	char *fileP = (char *)calloc(100, sizeof(char));
-	char *fileN = (char *)calloc(100, sizeof(char));
-	char *type = (char *)calloc(10, sizeof(char));
+	char fileM[100];
+	char fileP[100];
+	char fileN[100];
+	char type[100];
 /* 	log = open_file(log, "log.txt", "w"); */
 	printf("Reading args... ");  fflush(stdout);
 /* 	fprintf(log, "Reading args... "); */
@@ -312,8 +312,9 @@ int main(int argc, char* argv[]){
 /* 		fprintf(log, "Negative file: Not specified\nGenerating a shuffled set from the Positive file... "); */
 		Fshuffle = open_file(Fshuffle, "Ref_shuffle.txt", "w");
 		shuSeq = calloc2Dchar(MAX_SEQ, numPos*NUM_SHUFFLE);
+		char *sequence = (char *)malloc(MAX_SEQ*sizeof(char));
 		for( i=0; i<numPos; i++ ){
-			char *sequence = (char *)calloc(MAX_SEQ, sizeof(char));
+			*sequence = '\0';
 			strcpy(sequence, posSeq[i]);
 			int c;
 			for( c=0; c<NUM_SHUFFLE; c++ ){
@@ -321,9 +322,9 @@ int main(int argc, char* argv[]){
 				strcpy(shuSeq[i*NUM_SHUFFLE+c], sequence);
 				fprintf(Fshuffle, "%s\n", sequence);
 			}
-			free(sequence);
 		}
 		fclose(Fshuffle);
+		free(sequence);
 		numNeg = numPos*NUM_SHUFFLE;
 		negSeq = shuSeq;
 		printf("done\n"); fflush(stdout);
@@ -772,21 +773,22 @@ int main(int argc, char* argv[]){
 }*/
 
 	float RposP, RnegP, SposP, SnegP;
+	float *Rpos_vec, *Spos_vec, *Rneg_vec, *Sneg_vec;
 	int max_distance = 0;
 	for( i=0; i<tmp_mn; i++ ){
 		RposP = RnegP = SposP = SnegP = 0;
 		int distance = (int)(abs((backup_pcov[i]-backup_ncov[i])*P_TEST));
 		max_distance = distance > max_distance ? distance : max_distance;
-		float *Rpos_vec = subsampling(prand_matches, numPos, NUM_RAND, P_TEST, i);
-		float *Spos_vec = subsampling(pshuf_matches, numPos, NUM_SHUFFLE, P_TEST, i);
+		Rpos_vec = subsampling(prand_matches, numPos, NUM_RAND, P_TEST, i);
+		Spos_vec = subsampling(pshuf_matches, numPos, NUM_SHUFFLE, P_TEST, i);
 		for( p=0; p<P_TEST; p++){
 			RposP += Rpos_vec[p] > backup_pcov[i] ? 1 : 0;
 			SposP += Spos_vec[p] > backup_pcov[i] ? 1 : 0;
 		}
 		RposP /= P_TEST;
 		SposP /= P_TEST;
-		float *Rneg_vec = subsampling(nrand_matches, numNeg, NUM_RAND, P_TEST, i);		
-		float *Sneg_vec = subsampling(nshuf_matches, numNeg, NUM_SHUFFLE, P_TEST, i);		
+		Rneg_vec = subsampling(nrand_matches, numNeg, NUM_RAND, P_TEST, i);		
+		Sneg_vec = subsampling(nshuf_matches, numNeg, NUM_SHUFFLE, P_TEST, i);		
 		for( p=0; p<P_TEST; p++){
 			RnegP += Rneg_vec[p] > backup_ncov[i] ? 1 : 0;
 			SnegP += Sneg_vec[p] > backup_ncov[i] ? 1 : 0;
@@ -813,23 +815,59 @@ int main(int argc, char* argv[]){
 	printf("done\nFreeing the memory... "); fflush(stdout);
 /*  	fprintf(log, "done\nFreeing the memory... "); */
 
+
+	free2Dchar(motifs, mn);
 	free2Dchar(posID, numPos);
 	free2Dchar(posSeq, numPos);
-	if( negID != NULL ){
+	if( negID ){
 		free2Dchar(negID, numNeg);
 		free2Dchar(negSeq, numNeg);
 	}
 	else{
 		free2Dchar(negSeq, numPos);
 	}
+
 	free3Dchar(PrndSeq, numPos, NUM_RAND);
 	free3Dchar(NrndSeq, numNeg, NUM_RAND);
-	free2Dchar(backup_mot, tmp_mn);
+	free3Dchar(PshuSeq, numPos, NUM_SHUFFLE);
+	free3Dchar(NshuSeq, numNeg, NUM_SHUFFLE);
+	free2Dint(newOrder, NUM_BOOT);
+
+	free(posCov);
+	free(negCov);
+	free(PrndCov);
+	free(NrndCov);
+	free(PshuCov);
+	free(NshuCov);
+
 	free(backup_pcov);
 	free(backup_ncov);
+	free(backup_prcov);
+	free(backup_nrcov);
 	
+	free2Dchar(backup_mot, tmp_mn);
+
+	free(posCount);
+	free(negCount);
+	free(prandCount);
+	free(nrandCount);
+	free(pshufCount);
+	free(nshufCount);
+	free(posPval);
+	free(negPval);
+	
+	free3Dint(prand_matches, NUM_RAND, tmp_mn);
+	free3Dint(nrand_matches, NUM_RAND, tmp_mn);
+	free3Dint(pshuf_matches, NUM_SHUFFLE, tmp_mn);
+	free3Dint(nshuf_matches, NUM_SHUFFLE, tmp_mn);
+
 	free2Dint(pmotDist, tmp_mn);
 	free2Dint(nmotDist, tmp_mn);
+
+	free(Rpos_vec);
+	free(Spos_vec);
+	free(Rneg_vec);
+	free(Sneg_vec);
 
 	printf("done\nThe script executed successfully!\n"); fflush(stdout);
 /* 	fprintf(log, "done\nThe script executed successfully!\n"); */
