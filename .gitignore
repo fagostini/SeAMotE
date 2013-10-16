@@ -14,9 +14,11 @@ test.log
 /tmp/7*
 /tmp/8*
 /tmp/9*
-Ref_NegRand.txt
-Ref_PosRand.txt
+/Ref_NegRand.txt
+/Ref_PosRand.txt
+/Ref_shuffle.txt
 /Ref_NegShuf.txt
 /Ref_PosShuf.txt
 /log.txt
 mergeMot
+
