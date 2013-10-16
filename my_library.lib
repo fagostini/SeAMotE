@@ -276,7 +276,7 @@ static int read_fasta(FILE *inFile, int max_seq){
 	char *id = (char *)malloc(100*sizeof(char));
 	char *sequence = (char *)malloc(max_seq*sizeof(char));
 	while(!feof(inFile)){
-		*line = '\0';
+		memset(line, '\0', 1000*sizeof(char)) ;
 		fscanf(inFile, "%[^\n]%*c", line);
 		if( line[0] != '\0' ){
 			if( line[0] == '>'){
@@ -284,15 +284,14 @@ static int read_fasta(FILE *inFile, int max_seq){
 				if( (id[0]!='\0') && (sequence[0]!='\0')){
 					printf("%s %s\n", id, sequence);
 				}
-				*id = '\0';
+				memset(id, '\0', 100*sizeof(char)) ;
 				memmove(id, line, 100);
-				*sequence = '\0';
+				memset(sequence, '\0', max_seq*sizeof(char)) ;
 			}
 			else{
 				strncat(sequence, line, strlen(line));
 			}
 		}
-		free(line);
 	}
 	if( (id[0]!='\0') && (sequence[0]!='\0')){
 		printf("%s %s\n", id, sequence);
@@ -307,15 +306,15 @@ static int read_fasta(FILE *inFile, int max_seq){
 
 static int read_oneline(FILE *inFile, char **ID, char **SEQ, int max_id, int max_seq, char *format){
 	int c = 0;
-	char *id = (char *)calloc(max_id, sizeof(char));
-	char *sequence = (char *)calloc(max_seq, sizeof(char));
+	char *id = (char *)malloc(max_id*sizeof(char));
+	char *sequence = (char *)malloc(max_seq*sizeof(char));
 	while(!feof(inFile)){
-    	*id = '\0';
-   		*sequence = '\0';
+    	memset(id, '\0', max_id*sizeof(char)) ;
+   		memset(sequence, '\0', max_seq*sizeof(char)) ;
     	fscanf(inFile, format, id, sequence);
-    	if( id!='\0' && sequence[0]!='\0'){
-			strncpy(ID[c],id,max_id);
-			strncpy(SEQ[c],sequence,max_seq);
+    	if( *id != '\0' && *sequence != '\0'){
+			memmove(ID[c], id, max_id);
+			memmove(SEQ[c], sequence, max_seq);
     		c++;
     	}
     }

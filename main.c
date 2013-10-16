@@ -314,12 +314,12 @@ int main(int argc, char* argv[]){
 		shuSeq = calloc2Dchar(MAX_SEQ, numPos*NUM_SHUFFLE);
 		char *sequence = (char *)malloc(MAX_SEQ*sizeof(char));
 		for( i=0; i<numPos; i++ ){
-			*sequence = '\0';
-			strcpy(sequence, posSeq[i]);
+			memset(sequence, '\0', MAX_SEQ*sizeof(char) );
+			memmove(sequence, posSeq[i], strlen(posSeq[i]));
 			int c;
 			for( c=0; c<NUM_SHUFFLE; c++ ){
 				str_shuffle(sequence, strlen(sequence));
-				strcpy(shuSeq[i*NUM_SHUFFLE+c], sequence);
+				memmove(shuSeq[i*NUM_SHUFFLE+c], sequence, strlen(sequence));
 				fprintf(Fshuffle, "%s\n", sequence);
 			}
 		}
@@ -367,7 +367,7 @@ int main(int argc, char* argv[]){
 		for( i=0; i<numPos; i++){
 			int len = strlen(posSeq[i]);
 			PshuSeq[s][i] = (char *)calloc(len, sizeof(char));
-			strncpy(PshuSeq[s][i], posSeq[i], len);
+			memmove(PshuSeq[s][i], posSeq[i], len);
 			str_shuffle_arr(len, &PshuSeq[s][i]);
 			fprintf(Fposshuf, "%s\n", PshuSeq[s][i]);
 		}
@@ -380,7 +380,7 @@ int main(int argc, char* argv[]){
 		for( i=0; i<numNeg; i++){
 			int len = strlen(negSeq[i]);
 			NshuSeq[s][i] = (char *)calloc(len, sizeof(char));
-			strncpy(NshuSeq[s][i], negSeq[i], len);
+			memmove(NshuSeq[s][i], negSeq[i], len);
 			str_shuffle_arr(len, &NshuSeq[s][i]);
 			fprintf(Fnegshuf, "%s\n", NshuSeq[s][i]);
 		}
