@@ -311,21 +311,21 @@ int main(int argc, char* argv[]){
 		printf("Negative file: Not specified\nGenerating a shuffled set from the Positive file... "); fflush(stdout);
 /* 		fprintf(log, "Negative file: Not specified\nGenerating a shuffled set from the Positive file... "); */
 		Fshuffle = open_file(Fshuffle, "Ref_shuffle.txt", "w");
-		shuSeq = calloc2Dchar(MAX_SEQ, numPos*NUM_SHUFFLE);
+		shuSeq = calloc2Dchar(MAX_SEQ, numPos*NO_NEGA);
 		char *sequence = (char *)malloc(MAX_SEQ*sizeof(char));
 		for( i=0; i<numPos; i++ ){
 			memset(sequence, '\0', MAX_SEQ*sizeof(char) );
 			memmove(sequence, posSeq[i], strlen(posSeq[i]));
 			int c;
-			for( c=0; c<NUM_SHUFFLE; c++ ){
+			for( c=0; c<NO_NEGA; c++ ){
 				str_shuffle(sequence, strlen(sequence));
-				memmove(shuSeq[i*NUM_SHUFFLE+c], sequence, strlen(sequence));
+				memmove(shuSeq[i*NO_NEGA+c], sequence, strlen(sequence));
 				fprintf(Fshuffle, "%s\n", sequence);
 			}
 		}
 		fclose(Fshuffle);
 		free(sequence);
-		numNeg = numPos*NUM_SHUFFLE;
+		numNeg = numPos*NO_NEGA;
 		negSeq = shuSeq;
 		printf("done\n"); fflush(stdout);
 /* 		fprintf(log, "done\n"); */
@@ -404,15 +404,17 @@ int main(int argc, char* argv[]){
 	size_t size_cov = mn*sizeof(float);
 	float *posCov = (float *)calloc(mn, sizeof(posCov));
 	float *negCov = (float *)calloc(mn, sizeof(negCov));
+/* 
 	float *PrndCov = (float *)calloc(mn, sizeof(PrndCov));
 	float *NrndCov = (float *)calloc(mn, sizeof(NrndCov));
 	float *PshuCov = (float *)calloc(mn, sizeof(PshuCov));
 	float *NshuCov = (float *)calloc(mn, sizeof(NshuCov));
+ */
 
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- BEGINS ----- */	
 	int rc;
 	void *status;
-	pthread_t threads[NUM_THREADS*3];
+	pthread_t threads[NUM_THREADS];
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -433,6 +435,7 @@ int main(int argc, char* argv[]){
 	thread_data_array[1].motNum = mn;
 	thread_data_array[1].motLen = ms;
 	thread_data_array[1].cov = negCov;
+/* 
 	thread_data_array[2].thread_id = 2;
 	thread_data_array[2].depth = NUM_RAND;
 	thread_data_array[2].arrRnd = PrndSeq;
@@ -465,6 +468,7 @@ int main(int argc, char* argv[]){
 	thread_data_array[5].motNum = mn;
 	thread_data_array[5].motLen = ms;
 	thread_data_array[5].cov = NshuCov;
+ */
 
 	for( i=0; i<NUM_THREADS; i++ ){
 		rc = pthread_create(&threads[i], &attr, set_coverage, (void *) &thread_data_array[i]);
@@ -472,15 +476,17 @@ int main(int argc, char* argv[]){
 			printf("ERROR; return code from pthread_create() is %d\n", rc);
 			exit(-1);
 		}
+/* 
 		rc = pthread_create(&threads[i+2], &attr, set_coverage_avg, (void *) &thread_data_array[i+2]);
 		if (rc) {
 			printf("ERROR; return code from pthread_create() is %d\n", rc);
 			exit(-1);
 		}
+ */
 
 	}
 	pthread_attr_destroy(&attr);
-	for( i=0; i<NUM_THREADS*2; i++ ){
+	for( i=0; i<NUM_THREADS; i++ ){
 		rc = pthread_join(threads[i], &status);
 		if (rc) {
 			printf("ERROR; return code from pthread_join() is %d\n", rc);
@@ -495,14 +501,18 @@ int main(int argc, char* argv[]){
 	}
 	float *backup_pcov = (float *)calloc(mn, sizeof(float));
 	float *backup_ncov = (float *)calloc(mn, sizeof(float));
+/* 
 	float *backup_prcov = (float *)calloc(mn, sizeof(float));
 	float *backup_nrcov = (float *)calloc(mn, sizeof(float));
+ */
 	
 	memmove(backup_mot, motifs, size_mot);
 	memmove(backup_pcov, thread_data_array[0].cov, size_cov);
 	memmove(backup_ncov, thread_data_array[1].cov, size_cov);
+/* 
 	memmove(backup_prcov, thread_data_array[2].cov, size_cov);
 	memmove(backup_nrcov, thread_data_array[3].cov, size_cov);
+ */
 	
 	printf("done\nBeginnig the motif coverage optimization:\n"); fflush(stdout);
 /* 	fprintf(log, "done\nBeginnig the motif coverage optimization:\n"); */
@@ -535,15 +545,19 @@ int main(int argc, char* argv[]){
 			negCov = realloc(negCov, new_mn*sizeof(float));
 			bzero(negCov, new_mn*sizeof(float));
  			/* POSITIVE RANDOM COVERAGE */
+/* 
  			backup_prcov = (float *)realloc(backup_prcov, size_cov);
 			memmove(backup_prcov, thread_data_array[2].cov, size_cov);
 			PrndCov = realloc(PrndCov, new_mn*sizeof(float));
 			bzero(PrndCov, new_mn*sizeof(float));
+ */
  			/* NEGATIVE RANDOM COVERAGE */
+/* 
  			backup_nrcov = (float *)realloc(backup_nrcov, size_cov);
 			memmove(backup_nrcov, thread_data_array[3].cov, size_cov);
 			NrndCov = realloc(NrndCov, new_mn*sizeof(float));
 			bzero(NrndCov, new_mn*sizeof(float));
+ */
 
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- BEGINS ----- */
 			pthread_attr_init(&attr);
@@ -563,6 +577,7 @@ int main(int argc, char* argv[]){
 			thread_data_array[1].motNum = new_mn;
 			thread_data_array[1].motLen = ms;
 			thread_data_array[1].cov = negCov;
+/* 
 			thread_data_array[2].thread_id = 2;
 			thread_data_array[2].arrRnd = PrndSeq;
 			thread_data_array[2].arrMot = new_motifs;
@@ -577,6 +592,7 @@ int main(int argc, char* argv[]){
 			thread_data_array[3].motNum = new_mn;
 			thread_data_array[3].motLen = ms;
 			thread_data_array[3].cov = NrndCov;
+ */
 
 			for( i=0; i<NUM_THREADS; i++ ){
 				rc = pthread_create(&threads[i], &attr, set_coverage, (void *) &thread_data_array[i]);
@@ -618,13 +634,16 @@ int main(int argc, char* argv[]){
 	float *posPval, *negPval;
 	posCount = (int *)calloc(tmp_mn, sizeof(int));
 	negCount = (int *)calloc(tmp_mn, sizeof(int));
+/* 
 	prandCount = (int *)calloc(tmp_mn, sizeof(int));
 	nrandCount = (int *)calloc(tmp_mn, sizeof(int));
 	pshufCount = (int *)calloc(tmp_mn, sizeof(int));
 	nshufCount = (int *)calloc(tmp_mn, sizeof(int));
+ */
 	posPval = (float *)calloc(tmp_mn, sizeof(float));
 	negPval = (float *)calloc(tmp_mn, sizeof(float));
 	
+/* 
 	int m; 
 	prand_matches = (int ***)calloc(tmp_mn, sizeof(**prand_matches));
 	for( m=0; m<tmp_mn; m++ ){
@@ -654,6 +673,7 @@ int main(int argc, char* argv[]){
 			nshuf_matches[m][i] = (int *)calloc(numNeg, sizeof(int));
 		}
 	}
+ */
 	pmotDist = (int **)calloc(tmp_mn, sizeof(*pmotDist));
 	for( b=0; b<tmp_mn; b++ ){
 		pmotDist[b] = (int *)calloc(numPos, sizeof(int));
@@ -681,6 +701,7 @@ int main(int argc, char* argv[]){
 	thread_data_array[1].count = negCount;
 	thread_data_array[1].motDistr = nmotDist;
 	
+/* 
 	thread_data_array[2].thread_id = 2;
 	thread_data_array[2].motNum = tmp_mn;
 	thread_data_array[2].arrMot = backup_mot;
@@ -708,6 +729,7 @@ int main(int argc, char* argv[]){
 	thread_data_array[5].motLen = ms-1;
 	thread_data_array[5].count = nshufCount;
 	thread_data_array[5].pVal = nshuf_matches;
+ */
 
 	for( i=0; i<NUM_THREADS; i++ ){
 		rc = pthread_create(&threads[i], &attr, set_count, (void *) &thread_data_array[i]);
@@ -715,6 +737,7 @@ int main(int argc, char* argv[]){
 			printf("ERROR; return code from pthread_create() is %d\n", rc);
 			exit(-1);
 		}
+/* 
  		rc = pthread_create(&threads[i+2], &attr, set_count_rand, (void *) &thread_data_array[i+2]);
 		if (rc) {
 			printf("ERROR; return code from pthread_create() is %d\n", rc);
@@ -725,9 +748,10 @@ int main(int argc, char* argv[]){
 			printf("ERROR; return code from pthread_create() is %d\n", rc);
 			exit(-1);
 		}
+ */
 	}
 	pthread_attr_destroy(&attr);
-	for( i=0; i<NUM_THREADS*3; i++ ){
+	for( i=0; i<NUM_THREADS; i++ ){
 		rc = pthread_join(threads[i], &status);
 		if (rc) {
 			printf("ERROR; return code from pthread_join() is %d\n", rc);
@@ -760,22 +784,13 @@ int main(int argc, char* argv[]){
 /* 	fprintf(log, "done\nCalculating the optimal distance between the sets... "); */
 			  	
 	FILE *FoutAll = open_file(FoutAll, "motifs_last_loop.txt", "w" );
-
-/*for( i=0; i<tmp_mn; i++){
-	int pi;
-	for( pi=0; pi<10; pi++){
-		int ci;
-		for( pi=0; pi<numPos; pi++){
-			printf("%d ", prand_matches[i][pi][ci]);
-		}
-		printf("\n");
-	}
-}*/
-
+/* 
 	float RposP, RnegP, SposP, SnegP;
 	float *Rpos_vec, *Spos_vec, *Rneg_vec, *Sneg_vec;
 	int max_distance = 0;
+ */
 	for( i=0; i<tmp_mn; i++ ){
+/* 
 		RposP = RnegP = SposP = SnegP = 0;
 		int distance = (int)(abs((backup_pcov[i]-backup_ncov[i])*P_TEST));
 		max_distance = distance > max_distance ? distance : max_distance;
@@ -795,6 +810,7 @@ int main(int argc, char* argv[]){
 		}
 		RnegP /= P_TEST;
 		SnegP /= P_TEST;
+ */
 /*		fprintf(FoutAll, "%s %.2f %.2f %.2f %.2f %d %d %d %d %.3f %.3f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], backup_prcov[i], backup_nrcov[i], posCount[i], negCount[i], prandCount[i], nrandCount[i], posP, negP); */
 /* 		fprintf(FoutAll, "%s %.2f %.2f %d %d %d %d %d %d %.3f %.3f %.3f %.3f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], prandCount[i], nrandCount[i], pshufCount[i], nshufCount[i], RposP, RnegP, SposP, SnegP); */
 		fprintf(FoutAll, "%s %.2f %.2f %d %d %.5f %.5f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
@@ -835,39 +851,49 @@ int main(int argc, char* argv[]){
 
 	free(posCov);
 	free(negCov);
+/* 
 	free(PrndCov);
 	free(NrndCov);
 	free(PshuCov);
 	free(NshuCov);
+ */
 
 	free(backup_pcov);
 	free(backup_ncov);
+/* 
 	free(backup_prcov);
 	free(backup_nrcov);
+ */
 	
 	free2Dchar(backup_mot, tmp_mn);
 
 	free(posCount);
 	free(negCount);
+/* 
 	free(prandCount);
 	free(nrandCount);
 	free(pshufCount);
 	free(nshufCount);
+ */
 	free(posPval);
 	free(negPval);
 	
+/* 
 	free3Dint(prand_matches, NUM_RAND, tmp_mn);
 	free3Dint(nrand_matches, NUM_RAND, tmp_mn);
 	free3Dint(pshuf_matches, NUM_SHUFFLE, tmp_mn);
 	free3Dint(nshuf_matches, NUM_SHUFFLE, tmp_mn);
+ */
 
 	free2Dint(pmotDist, tmp_mn);
 	free2Dint(nmotDist, tmp_mn);
 
+/* 
 	free(Rpos_vec);
 	free(Spos_vec);
 	free(Rneg_vec);
 	free(Sneg_vec);
+ */
 
 	printf("done\nThe script executed successfully!\n"); fflush(stdout);
 /* 	fprintf(log, "done\nThe script executed successfully!\n"); */
