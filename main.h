@@ -1,6 +1,6 @@
 #define MAX_ID 100
 #define MAX_SEQ 15000
-#define MIN_MOT 2
+#define MIN_MOT 3
 #define MAX_MOT 20
 #define NUM_BOOT 100000	/* Gives the precision of the p-value */
 #define NUM_THREADS	2	/* This number MUST NOT change!!! */
