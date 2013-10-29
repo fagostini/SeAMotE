@@ -12,6 +12,9 @@
 #include "RNA_lib.lib"
 #include "DNA_lib.lib"
 
+#define print_and_continue(a) {printf("%d ", a); fflush(stdout);}
+#define print_and_exit(a) {printf("%d\n", a); fflush(stdout); exit(1);}
+
 /* This functions need to be here because of the threading */
 /* Probably it is possible to move then to another file but I do not know how to properly do that */
 struct thread_data{
@@ -23,7 +26,7 @@ struct thread_data{
 	int arrNum;
 	int motNum;
 	int motLen;
-	float *cov;
+	double *cov;
 	int *count;
 	int **motDistr;
 	int ***pVal;
@@ -32,7 +35,7 @@ struct thread_data thread_data_array[NUM_THREADS*3];
 void *set_coverage(void *threadarg){
 
 	int taskid, seqNum, motNum, motLen;
-	float *coverage;
+	double *coverage;
 	char **seqSet, **motSet;
 	
 	sleep(1);
@@ -70,14 +73,14 @@ void *set_coverage(void *threadarg){
 				pos++;
 			}while( pos<(strlen(seqSet[s])-motLen+1));
 		}
-		coverage[m] += count > 0 ? (float)count/seqNum : 0;
+		coverage[m] += count > 0 ? (double)count/seqNum : 0;
 	}
 	pthread_exit(NULL);
 }
 void *set_coverage_avg(void *threadarg){
 
 	int taskid, seqNum, motNum, motLen, arrDepth;
-	float *coverage;
+	double *coverage;
 	char ***seqSet, **motSet;
 	
 	sleep(1);
@@ -117,7 +120,7 @@ void *set_coverage_avg(void *threadarg){
 					pos++;
 				}while( pos<(strlen(seqSet[r][s])-motLen+1));
 			}
-			coverage[m] += count > 0 ? (float)count/seqNum : 0;
+			coverage[m] += count > 0 ? (double)count/seqNum : 0;
 		}
 		coverage[m] /= arrDepth;
 	}
@@ -126,7 +129,7 @@ void *set_coverage_avg(void *threadarg){
 void *set_count(void *threadarg){
 
 	int taskid, seqNum, motNum, motLen, *count;
-	float *coverage;
+	double *coverage;
 	char **seqSet, **motSet;
 	int **mDist;
 	
@@ -172,7 +175,7 @@ void *set_count_rand(void *threadarg){
 
 	int  *count;
 	int taskid, seqNum, motNum, motLen, arrDepth, ***distSet;
-	float *coverage;
+	double *coverage;
 	char ***seqSet, **motSet;
 
 	sleep(1);
@@ -222,18 +225,13 @@ void *set_count_rand(void *threadarg){
 int main(int argc, char* argv[]){
 	
 /* 	srand(time(NULL)); */
-	srand(1);
-	
-/*	char *my_seq = NULL;
-	random_sequence(100000, &my_seq);
-	puts(my_seq);
-	exit(0); */
+	srand(1);	
 	
 	int i, numPos, numNeg, dna, rna, prot;
 	numPos = numNeg = 0;
 	int ms = MIN_MOT;
 	int mn = pow(4,ms);
-	float th = 0.95;
+	double th = 0.95;
 	char **motifs, **posID, **posSeq, **negID, **negSeq, **shuSeq;
 	motifs = posID = posSeq = negID = negSeq = shuSeq = NULL;
 	size_t size_mot;
@@ -267,7 +265,7 @@ int main(int argc, char* argv[]){
 	else{
 		printf("Motifs file: Not specified\nGenerating the seed (%d nt) motifs... ", ms); fflush(stdout);
 /* 		fprintf(log, "Motifs file: Not specified\nGenerating the seed (%d nt) motifs... ", ms); */
-		motifs = calloc2Dchar(ms, mn);
+		motifs = malloc2Dchar(ms, mn);
 		size_mot = (ms)*mn*sizeof(char)*4;
 		create_motifs_nt(motifs, ms);
 		printf("done\n"); fflush(stdout);
@@ -278,8 +276,8 @@ int main(int argc, char* argv[]){
 /* 		fprintf(log, "Positive file: %s\nReading the Positive file... ", fileP); */
 		Fpositive = open_file(Fpositive, fileP, "r");
 		numPos = read_lines(Fpositive);
-		posID = dna == 0 ? calloc2Dchar(MAX_ID, numPos) : calloc2Dchar(MAX_ID, numPos*2);
-		posSeq = calloc2Dchar(MAX_SEQ, numPos);
+		posID = dna == 0 ? malloc2Dchar(MAX_ID, numPos) : malloc2Dchar(MAX_ID, numPos*2);
+		posSeq = malloc2Dchar(MAX_SEQ, numPos);
 		read_oneline(Fpositive, posID, posSeq, MAX_ID, MAX_SEQ, "%s %[^\n]%*c");
 		fclose(Fpositive);
 		if( dna == 1 ){
@@ -297,8 +295,8 @@ int main(int argc, char* argv[]){
 /* 		fprintf(log, "Negative file: %s\nReading the Negative file... ", fileN); */
 		Fnegative = open_file(Fnegative, fileN, "r");
 		numNeg = read_lines(Fnegative);
-		negID = dna == 0 ? calloc2Dchar(MAX_ID, numNeg) : calloc2Dchar(MAX_ID, numNeg*2);
-		negSeq = calloc2Dchar(MAX_SEQ, numNeg);
+		negID = dna == 0 ? malloc2Dchar(MAX_ID, numNeg) : malloc2Dchar(MAX_ID, numNeg*2);
+		negSeq = malloc2Dchar(MAX_SEQ, numNeg);
 		read_oneline(Fnegative, negID, negSeq, MAX_ID, MAX_SEQ, "%s %[^\n]%*c");
 		fclose(Fnegative);
 		if( dna == 1 ){
@@ -311,8 +309,8 @@ int main(int argc, char* argv[]){
 		printf("Negative file: Not specified\nGenerating a shuffled set from the Positive file... "); fflush(stdout);
 /* 		fprintf(log, "Negative file: Not specified\nGenerating a shuffled set from the Positive file... "); */
 		Fshuffle = open_file(Fshuffle, "Ref_shuffle.txt", "w");
-		shuSeq = calloc2Dchar(MAX_SEQ, numPos*NO_NEGA);
-		char *sequence = (char *)malloc(MAX_SEQ*sizeof(char));
+		shuSeq = malloc2Dchar(MAX_SEQ, numPos*NO_NEGA);
+		char *sequence = malloc(MAX_SEQ*sizeof(char));
 		for( i=0; i<numPos; i++ ){
 			memset(sequence, '\0', MAX_SEQ*sizeof(char) );
 			memmove(sequence, posSeq[i], strlen(posSeq[i]));
@@ -332,41 +330,44 @@ int main(int argc, char* argv[]){
 	}
 	printf("Coverage threshold: %.2f\n", th); fflush(stdout);
 /* 	fprintf(log, "Coverage threshold: %.2f\n", th); */
-
 /* 	GENERATION OF THE RANDOMIZED REFERENCE DATASETS */	
 	int r;
 	Fposrand = open_file(Fposrand, "Ref_PosRand.txt", "w");
-	char ***PrndSeq = (char ***)calloc(NUM_RAND, sizeof(**PrndSeq));
+	char ***PrndSeq = malloc(NUM_RAND*sizeof(char **));
 	for( r=0; r<NUM_RAND; r++){
-		PrndSeq[r] = (char **)calloc(numPos, sizeof(*PrndSeq[r]));
+		PrndSeq[r] = malloc(numPos*sizeof(char *));
 		for( i=0; i<numPos; i++){
 			int len = strlen(posSeq[i]);
+			PrndSeq[r][i] = malloc((len+1)*sizeof(char));
+			memset(PrndSeq[r][i], '\0', (len+1)*sizeof(char));
 			random_sequence(len, &PrndSeq[r][i]);
 			fprintf(Fposrand, "%s\n", PrndSeq[r][i]);
 		}
 	}
 	fclose(Fposrand);
 	Fnegrand = open_file(Fnegrand, "Ref_NegRand.txt", "w");
-	char ***NrndSeq = (char ***)calloc(NUM_RAND, sizeof(**NrndSeq));
+	char ***NrndSeq = malloc(NUM_RAND*sizeof(**NrndSeq));
 	for( r=0; r<NUM_RAND; r++){
-		NrndSeq[r] = (char **)calloc(numNeg, sizeof(*NrndSeq[r]));
+		NrndSeq[r] = malloc(numNeg*sizeof(*NrndSeq[r]));
 		for( i=0; i<numNeg; i++){
 			int len = strlen(negSeq[i]);
+			NrndSeq[r][i] = malloc((len+1)*sizeof(char));
+			memset(NrndSeq[r][i], '\0', (len+1)*sizeof(char));
 			random_sequence(len, &NrndSeq[r][i]);
 			fprintf(Fnegrand, "%s\n", NrndSeq[r][i]);
 		}
 	}
 	fclose(Fnegrand);
-
 /* 	GENERATION OF THE SHUFFLED REFERENCE DATASETS */	
 	int s;
 	Fposshuf = open_file(Fposshuf, "Ref_PosShuf.txt", "w");
-	char ***PshuSeq = (char ***)calloc(NUM_SHUFFLE, sizeof(**PshuSeq));
+	char ***PshuSeq = malloc(NUM_SHUFFLE*sizeof(**PshuSeq));
 	for( s=0; s<NUM_SHUFFLE; s++){
-		PshuSeq[s] = (char **)calloc(numPos, sizeof(*PshuSeq[s]));
+		PshuSeq[s] = malloc(numPos*sizeof(*PshuSeq[s]));
 		for( i=0; i<numPos; i++){
 			int len = strlen(posSeq[i]);
-			PshuSeq[s][i] = (char *)calloc(len, sizeof(char));
+			PshuSeq[s][i] = malloc((len+1)*sizeof(char));
+			memset(PshuSeq[s][i], '\0', (len+1)*sizeof(char));
 			memmove(PshuSeq[s][i], posSeq[i], len);
 			str_shuffle_arr(len, &PshuSeq[s][i]);
 			fprintf(Fposshuf, "%s\n", PshuSeq[s][i]);
@@ -374,12 +375,13 @@ int main(int argc, char* argv[]){
 	}
 	fclose(Fposshuf);
 	Fnegshuf = open_file(Fnegshuf, "Ref_NegShuf.txt", "w");
-	char ***NshuSeq = (char ***)calloc(NUM_SHUFFLE, sizeof(**NshuSeq));
+	char ***NshuSeq = malloc(NUM_SHUFFLE*sizeof(**NshuSeq));
 	for( s=0; s<NUM_SHUFFLE; s++){
-		NshuSeq[s] = (char **)calloc(numNeg, sizeof(*NshuSeq[s]));
+		NshuSeq[s] = malloc(numNeg*sizeof(*NshuSeq[s]));
 		for( i=0; i<numNeg; i++){
 			int len = strlen(negSeq[i]);
-			NshuSeq[s][i] = (char *)calloc(len, sizeof(char));
+			NshuSeq[s][i] = malloc((len+1)*sizeof(char));
+			memset(NshuSeq[s][i], '\0', (len+1)*sizeof(char));
 			memmove(NshuSeq[s][i], negSeq[i], len);
 			str_shuffle_arr(len, &NshuSeq[s][i]);
 			fprintf(Fnegshuf, "%s\n", NshuSeq[s][i]);
@@ -390,9 +392,9 @@ int main(int argc, char* argv[]){
 /* 	GENERATION OF THE BOOTSTRAPPED REFERENCE DATASETS */	
 	int b;
 	int numTot = numPos+numNeg;
-	int **newOrder = (int **)calloc(NUM_BOOT, sizeof(*newOrder));
+	int **newOrder = calloc(NUM_BOOT, sizeof(*newOrder));
 	for( b=0; b<NUM_BOOT; b++ ){
-		newOrder[b] = (int *)calloc(numTot, sizeof(int));
+		newOrder[b] = calloc(numTot, sizeof(int));
 		for( i=0; i<numTot; i++ ){
 			newOrder[b][i] = i;
 		}
@@ -401,14 +403,14 @@ int main(int argc, char* argv[]){
 
 	printf("Calculating the seed coverages... "); fflush(stdout);
 /* 	fprintf(log, "Calculating the seed coverages... "); */
-	size_t size_cov = mn*sizeof(float);
-	float *posCov = (float *)calloc(mn, sizeof(posCov));
-	float *negCov = (float *)calloc(mn, sizeof(negCov));
+	size_t size_cov = mn*sizeof(double);
+	double *posCov = calloc(mn, sizeof(posCov));
+	double *negCov = calloc(mn, sizeof(negCov));
 /* 
-	float *PrndCov = (float *)calloc(mn, sizeof(PrndCov));
-	float *NrndCov = (float *)calloc(mn, sizeof(NrndCov));
-	float *PshuCov = (float *)calloc(mn, sizeof(PshuCov));
-	float *NshuCov = (float *)calloc(mn, sizeof(NshuCov));
+	double *PrndCov = (double *)calloc(mn, sizeof(PrndCov));
+	double *NrndCov = (double *)calloc(mn, sizeof(NrndCov));
+	double *PshuCov = (double *)calloc(mn, sizeof(PshuCov));
+	double *NshuCov = (double *)calloc(mn, sizeof(NshuCov));
  */
 
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- BEGINS ----- */	
@@ -495,15 +497,16 @@ int main(int argc, char* argv[]){
 	}
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
 
-	char **backup_mot = (char **)calloc(mn, sizeof(*backup_mot));
+	char **backup_mot = malloc(mn*sizeof(*backup_mot));
 	for( i=0; i<mn; i++ ){
-		backup_mot[i] = (char *)calloc(ms, sizeof(char));
+		backup_mot[i] = malloc((ms+1)*sizeof(char));
+		memset(backup_mot[i], '\0', (ms+1)*sizeof(char));
 	}
-	float *backup_pcov = (float *)calloc(mn, sizeof(float));
-	float *backup_ncov = (float *)calloc(mn, sizeof(float));
+	double *backup_pcov = calloc(mn, sizeof(double));
+	double *backup_ncov = calloc(mn, sizeof(double));
 /* 
-	float *backup_prcov = (float *)calloc(mn, sizeof(float));
-	float *backup_nrcov = (float *)calloc(mn, sizeof(float));
+	double *backup_prcov = (double *)calloc(mn, sizeof(double));
+	double *backup_nrcov = (double *)calloc(mn, sizeof(double));
  */
 	
 	memmove(backup_mot, motifs, size_mot);
@@ -527,36 +530,36 @@ int main(int argc, char* argv[]){
 		if( new_mn != 0 ){
 			/* MOTIFS */
 			size_mot = old_mn*(ms)*sizeof(char)*2;
-			backup_mot = (char **)realloc(backup_mot, size_mot);
+			backup_mot = realloc(backup_mot, size_mot);
 			memcpy(backup_mot, old_motifs, size_mot);
 			ms++;
 			new_mn = filter_and_expand_nt(old_motifs, thread_data_array[0].cov, thread_data_array[1].cov, old_mn, ms, th, &new_motifs);
 		 	printf("   %d: Testing %d motifs (%d nt)... ", loop+1, new_mn, ms); fflush(stdout);
 /* 			fprintf(log, "   %d: Testing %d motifs (%d nt)... ", loop+1, new_mn, ms); */
  			/* POSITIVE COVERAGE */
- 			size_cov = old_mn*sizeof(float);
- 			backup_pcov = (float *)realloc(backup_pcov, size_cov);
+ 			size_cov = old_mn*sizeof(double);
+ 			backup_pcov = realloc(backup_pcov, size_cov);
 			memmove(backup_pcov, thread_data_array[0].cov, size_cov);
-			posCov = realloc(posCov, new_mn*sizeof(float));
-			bzero(posCov, new_mn*sizeof(float));
+			posCov = realloc(posCov, new_mn*sizeof(double));
+			bzero(posCov, new_mn*sizeof(double));
  			/* NEGATIVE COVERAGE */
- 			backup_ncov = (float *)realloc(backup_ncov, size_cov);
+ 			backup_ncov = realloc(backup_ncov, size_cov);
 			memmove(backup_ncov, thread_data_array[1].cov, size_cov);
-			negCov = realloc(negCov, new_mn*sizeof(float));
-			bzero(negCov, new_mn*sizeof(float));
+			negCov = realloc(negCov, new_mn*sizeof(double));
+			bzero(negCov, new_mn*sizeof(double));
  			/* POSITIVE RANDOM COVERAGE */
 /* 
- 			backup_prcov = (float *)realloc(backup_prcov, size_cov);
+ 			backup_prcov = (double *)realloc(backup_prcov, size_cov);
 			memmove(backup_prcov, thread_data_array[2].cov, size_cov);
-			PrndCov = realloc(PrndCov, new_mn*sizeof(float));
-			bzero(PrndCov, new_mn*sizeof(float));
+			PrndCov = realloc(PrndCov, new_mn*sizeof(double));
+			bzero(PrndCov, new_mn*sizeof(double));
  */
  			/* NEGATIVE RANDOM COVERAGE */
 /* 
- 			backup_nrcov = (float *)realloc(backup_nrcov, size_cov);
+ 			backup_nrcov = (double *)realloc(backup_nrcov, size_cov);
 			memmove(backup_nrcov, thread_data_array[3].cov, size_cov);
-			NrndCov = realloc(NrndCov, new_mn*sizeof(float));
-			bzero(NrndCov, new_mn*sizeof(float));
+			NrndCov = realloc(NrndCov, new_mn*sizeof(double));
+			bzero(NrndCov, new_mn*sizeof(double));
  */
 
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- BEGINS ----- */
@@ -631,17 +634,17 @@ int main(int argc, char* argv[]){
 /* 	fprintf(log, "Calculating the motif distribution in the sets.. "); */
 
 	int *posCount, *negCount, *prandCount, *nrandCount, ***prand_matches, ***nrand_matches, *pshufCount, *nshufCount, ***pshuf_matches, ***nshuf_matches, **pmotDist, **nmotDist;
-	float *posPval, *negPval;
-	posCount = (int *)calloc(tmp_mn, sizeof(int));
-	negCount = (int *)calloc(tmp_mn, sizeof(int));
+	double *posPval, *negPval;
+	posCount = calloc(tmp_mn, sizeof(int));
+	negCount = calloc(tmp_mn, sizeof(int));
 /* 
 	prandCount = (int *)calloc(tmp_mn, sizeof(int));
 	nrandCount = (int *)calloc(tmp_mn, sizeof(int));
 	pshufCount = (int *)calloc(tmp_mn, sizeof(int));
 	nshufCount = (int *)calloc(tmp_mn, sizeof(int));
  */
-	posPval = (float *)calloc(tmp_mn, sizeof(float));
-	negPval = (float *)calloc(tmp_mn, sizeof(float));
+	posPval = calloc(tmp_mn, sizeof(double));
+	negPval = calloc(tmp_mn, sizeof(double));
 	
 /* 
 	int m; 
@@ -674,13 +677,13 @@ int main(int argc, char* argv[]){
 		}
 	}
  */
-	pmotDist = (int **)calloc(tmp_mn, sizeof(*pmotDist));
+	pmotDist = calloc(tmp_mn, sizeof(*pmotDist));
 	for( b=0; b<tmp_mn; b++ ){
-		pmotDist[b] = (int *)calloc(numPos, sizeof(int));
+		pmotDist[b] = calloc(numPos, sizeof(int));
 	}
-	nmotDist = (int **)calloc(tmp_mn, sizeof(*nmotDist));
+	nmotDist = calloc(tmp_mn, sizeof(*nmotDist));
 	for( b=0; b<tmp_mn; b++ ){
-		nmotDist[b] = (int *)calloc(numNeg, sizeof(int));
+		nmotDist[b] = calloc(numNeg, sizeof(int));
 	}
 
 /* ----- MULTI-THREADING COUNT ----- BEGINS ----- */
@@ -760,7 +763,7 @@ int main(int argc, char* argv[]){
 	}
 	
 	int p, cp, cn;
-	float ppval, npval;
+	double ppval, npval;
 	for(i=0;i<tmp_mn;i++){
 		ppval = npval = 0;
 		for(b=0;b<NUM_BOOT;b++){
@@ -785,8 +788,8 @@ int main(int argc, char* argv[]){
 			  	
 	FILE *FoutAll = open_file(FoutAll, "motifs_last_loop.txt", "w" );
 /* 
-	float RposP, RnegP, SposP, SnegP;
-	float *Rpos_vec, *Spos_vec, *Rneg_vec, *Sneg_vec;
+	double RposP, RnegP, SposP, SnegP;
+	double *Rpos_vec, *Spos_vec, *Rneg_vec, *Sneg_vec;
 	int max_distance = 0;
  */
 	for( i=0; i<tmp_mn; i++ ){
@@ -813,7 +816,9 @@ int main(int argc, char* argv[]){
  */
 /*		fprintf(FoutAll, "%s %.2f %.2f %.2f %.2f %d %d %d %d %.3f %.3f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], backup_prcov[i], backup_nrcov[i], posCount[i], negCount[i], prandCount[i], nrandCount[i], posP, negP); */
 /* 		fprintf(FoutAll, "%s %.2f %.2f %d %d %d %d %d %d %.3f %.3f %.3f %.3f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], prandCount[i], nrandCount[i], pshufCount[i], nshufCount[i], RposP, RnegP, SposP, SnegP); */
-		fprintf(FoutAll, "%s %.2f %.2f %d %d %.5f %.5f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
+		if( backup_pcov[i] >= th || backup_ncov[i] >= th ){
+			fprintf(FoutAll, "%s %.2f %.2f %d %d %.5f %.5f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
+		}
 	}
 	fclose(FoutAll);
 	

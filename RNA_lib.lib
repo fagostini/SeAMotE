@@ -5,7 +5,7 @@
 
 static void random_sequence(int seqLen, char **sequence){
 	int i, p;
-	(*sequence) = (char *)calloc(seqLen, sizeof(char)+1);
+	(*sequence) = malloc((seqLen+1)*sizeof(char));
 	for( i=0; i<seqLen; i++){
 		p = rand() % 100;
 		if( p < pA ){
@@ -46,17 +46,17 @@ static int check_motif(char *mstr, char mlen){
 	for( i=0; i<mlen; i++ ){
 		dash += mstr[i] == '-' ? 1 : 0;
 	}
-	if( (float)dash/mlen > 0.3 || (mstr[0] == '-' && mstr[mlen-1] == '-') ){
+	if( (double)dash/mlen > 0.3 || (mstr[0] == '-' && mstr[mlen-1] == '-') ){
 		no = 1;	
 	}
 	
 	return no;
 }
 
-static int filter_and_expand_nt(char **oldSet, float *pcov, float *ncov, int numMot, int newLen, float threshold, char ***newSet){
+static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int numMot, int newLen, double threshold, char ***newSet){
 	int i, ii;
 	char pool[] = "ACGT-";
-	char **tmpSet = calloc2Dchar(newLen, numMot*10);
+	char **tmpSet = malloc2Dchar(newLen+1, numMot*10);
 	FILE *tmp_out, *tmp_in;
 /*	if( (dummy = tmpfile()) == NULL ){ */
 	if( (tmp_out = fopen("tmpMot.txt", "w")) == NULL ){
@@ -64,14 +64,16 @@ static int filter_and_expand_nt(char **oldSet, float *pcov, float *ncov, int num
 		exit(1);
 	}
 	int c = 0;
+	char *motA = malloc((newLen+1)*sizeof(char));
+	char *motB = malloc((newLen+1)*sizeof(char));
 	for( i=0; i<numMot; i++ ){
-		if( pcov[i]>=threshold | ncov[i]>=threshold ){
+		if( pcov[i]>=threshold || ncov[i]>=threshold ){
   		for( ii=0; ii<5; ii++ ){
- 				char *motA = (char *)calloc(newLen, sizeof(char)+1);
- 				strncpy(motA, oldSet[i], newLen-1);
+  				memset(motA, '\0', (newLen+1)*sizeof(char));
+  				memset(motB, '\0', (newLen+1)*sizeof(char));
+ 				memcpy(motA, oldSet[i], newLen-1);
  				strncat(motA, &pool[ii], 1);
- 				char *motB = (char *)calloc(newLen, sizeof(char)+1);
- 				strncpy(motB, &pool[ii], 1);
+ 				memcpy(motB, &pool[ii], 1);
  				strncat(motB, oldSet[i], newLen-1);
  				if( check_motif(motA, newLen) == 0 ){
  					fprintf(tmp_out, "%s\n", motA);
@@ -81,12 +83,12 @@ static int filter_and_expand_nt(char **oldSet, float *pcov, float *ncov, int num
  				}
 /*  			strncpy(tmpSet[c++], motA, newLen);
   				strncpy(tmpSet[c++], motB, newLen); */
- 				free(motA);
- 				free(motB);
  			}
 		}  
 	}
 	fclose(tmp_out);
+	free(motA);
+	free(motB);
 	
 	if( (tmp_in = fopen("tmpMot.txt", "r")) == NULL ){
 		printf("Fail\nCannot open the temporary file to store motifs.\n");
@@ -94,10 +96,11 @@ static int filter_and_expand_nt(char **oldSet, float *pcov, float *ncov, int num
 	}
 
 	int numUniq = 0;
+	char *mot = malloc((newLen+1)*sizeof(char));
 	while(!feof(tmp_in)){
-		char *mot = (char *)calloc(newLen, sizeof(char)+1);
+		memset(mot, '\0', (newLen+1)*sizeof(char));
 		fscanf(tmp_in,"%[^\n]%*c", mot);
-		if(mot[0]!='\0'){
+		if( *mot != '\0' ){
 			int found = c = 0;
 			do{
 				if( strncmp(tmpSet[c++], mot, newLen) == 0 ){
@@ -106,19 +109,22 @@ static int filter_and_expand_nt(char **oldSet, float *pcov, float *ncov, int num
 				}
 			}while( c <= numUniq );
 			if( found == 0 ){
-				strncpy(tmpSet[numUniq++], mot, newLen);
+				memcpy(tmpSet[numUniq++], mot, newLen);
 			}
 		}
 	}
 	fclose(tmp_in);
+	free(mot);
 	remove("tmpMot.txt");
 
 	c = 0;
-	(*newSet) = calloc2Dchar(newLen, numUniq);
+	(*newSet) = malloc2Dchar((newLen+1), numUniq);
 	while( c<numUniq ){
-		strncpy((*newSet)[c], tmpSet[c], newLen);
+		memcpy((*newSet)[c], tmpSet[c], newLen);
 		c++;
 	}
+	
+	free2Dchar(tmpSet,  numMot*10);
 	
 	return numUniq;
 }
