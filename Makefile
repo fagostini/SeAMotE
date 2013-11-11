@@ -21,15 +21,19 @@ endif
 # Log file
 LOG = test.log
 # Sources
-SRC = main.c
+OLD_SRC = main.c
+SRC = motifSearch.c
 # Objects
-OBJ = main.o
+OLD_OBJ = main.o
+OBJ = motifSearch.o
 # Headers
-HDR = main.h
+OLD_HDR = main.h
+HDR = motifSearch.h
 # Libraries
 LIBS = my_library.lib RNA_lib.lib DNA_lib.lib
 # Binaries
-BIN = main
+OLD_BIN = main
+BIN = motifSearch
 # Files
 QUICKFILE = quick_posi.oneline quick_nega.oneline
 RNAFILE = posi10_mRNA.oneline nega10_mRNA.oneline
@@ -38,7 +42,7 @@ DNAFILE = posi10_DNA.oneline nega10_DNA.oneline
 REALDNA = positive_DNA.oneline negative_DNA.oneline
 
 # Make options
-all: $(BIN)
+all: $(BIN) $(OLD_BIN)
 
 $(BIN):	$(OBJ)
 	$(CC) $(OBJ) $(LNFLAGS) -o $(BIN)
@@ -46,11 +50,21 @@ $(BIN):	$(OBJ)
 $(OBJ):	$(SRC) $(HDR) $(LIBS)
 	$(CC) $(CCFLAGS) $(SRC) -c
 
+$(OLD_BIN):	$(OLD_OBJ)
+	$(CC) $(OLD_OBJ) $(LNFLAGS) -o $(OLD_BIN)
+
+$(OLD_OBJ):	$(OLD_SRC) $(OLD_HDR) $(LIBS)
+	$(CC) $(CCFLAGS) $(OLD_SRC) -c
+
 clean:
-	@rm -f $(OBJ) $(BIN) $(LOG)
+	@rm -f $(OBJ) $(BIN) $(OLD_OBJ) $(OLD_BIN) $(LOG)
 
 # Testing options
 tests: testRNA testDNA
+
+old:	$(OLD_BIN) $(QUICKFILE)
+	@./$(OLD_BIN) -p quick_posi.oneline -n quick_nega.oneline -t 0.8 -a rna > $(LOG)
+	@echo "Test Quick PASSED" || echo "Test Quick FAILED"
 
 quick:	$(BIN) $(QUICKFILE)
 	@./$(BIN) -p quick_posi.oneline -n quick_nega.oneline -t 0.8 -a rna > $(LOG)
