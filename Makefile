@@ -1,16 +1,16 @@
 # Compiler
 CC = gcc
 # Compiler flags
-CCFLAGS = -ansi -pthread
-# Linker flags
-LNFLAGS = -O3 -Wall -pedantic
+CCFLAGS = -ansi
+# Object flags
+OBFLAGS = -O3 -Wall -pedantic
 # System-specific flags
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
-	CCFLAGS += -D LINUX -lm
+	LNFLAGS += -D LINUX -lm -lpthread
 endif
 ifeq ($(UNAME_S),Darwin)
-	CCFLAGS += -D OSX
+	LNFLAGS += -D OSX -pthread
 endif
 # Arch-specific flags
 UNAME_P := $(shell uname -m)
@@ -45,16 +45,16 @@ REALDNA = positive_DNA.oneline negative_DNA.oneline
 all: $(BIN) $(OLD_BIN)
 
 $(BIN):	$(OBJ)
-	$(CC) $(OBJ) $(LNFLAGS) -o $(BIN)
+	$(CC) $(OBJ) $(OBFLAGS) -o $(BIN) $(LNFLAGS)
 
 $(OBJ):	$(SRC) $(HDR) $(LIBS)
-	$(CC) $(CCFLAGS) $(SRC) -c
+	$(CC) $(SRC) $(CCFLAGS) -c
 
 $(OLD_BIN):	$(OLD_OBJ)
-	$(CC) $(OLD_OBJ) $(LNFLAGS) -o $(OLD_BIN)
+	$(CC) $(OLD_OBJ) $(OBFLAGS) -o $(OLD_BIN) $(LNFLAGS)
 
 $(OLD_OBJ):	$(OLD_SRC) $(OLD_HDR) $(LIBS)
-	$(CC) $(CCFLAGS) $(OLD_SRC) -c
+	$(CC) $(OLD_SRC) $(CCFLAGS) -c
 
 clean:
 	@rm -f $(OBJ) $(BIN) $(OLD_OBJ) $(OLD_BIN) $(LOG)
