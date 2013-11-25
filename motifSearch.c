@@ -16,6 +16,21 @@
 #define print_and_continue(a) {printf("%d ", a); fflush(stdout);}
 #define print_and_exit(a) {printf("%d\n", a); fflush(stdout); exit(1);}
 
+int cmp( const void* a, const void* b){
+	float* p1 = *(float**) a; 
+	float* p2 = *(float**) b; 
+	/*printf("Compare %f %x <=> %f %x\n", p1[0], a, p2[0], b);*/
+	if( p1[1] < p2[1]){
+		return -1;
+	}
+	else if (p1[1] > p2[1]){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+
 /* This functions need to be here because of the threading */
 /* Probably it is possible to move then to another file but I do not know how to properly do that */
 struct thread_data{
@@ -76,6 +91,23 @@ void *set_coverage(void *threadarg){
 		}
 		coverage[m] += count > 0 ? (double)count/seqNum : 0;
 	}
+	double **index = calloc(motNum, sizeof(double *));
+	for( m=0; m<motNum; m++ ){
+		index[m] = calloc(2, sizeof(double));
+	}
+	for( m=0; m<motNum; m++ ){
+		index[m][0] = coverage[m];
+		index[m][1] = m;
+	}
+	qsort(index, motNum, sizeof(double), cmp);
+	for( m=0; m<motNum; m++ ){
+/* 		printf("\n%s %.2lf %d", motSet[(int)index[m][1]], index[m][0], (int)index[m][1]); */
+		free(index[m]);
+	}
+	free(index);
+
+/* 	printf("\n"); */
+	
 	pthread_exit(NULL);
 }
 void *set_count(void *threadarg){
@@ -321,6 +353,7 @@ int main(int argc, char* argv[]){
 			exit(-1);
 		}
 	}
+	
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
 
 	char **backup_mot = malloc(mn*sizeof(*backup_mot));
