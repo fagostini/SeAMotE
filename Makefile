@@ -71,11 +71,11 @@ quick:	$(BIN) $(QUICKFILE)
 	@echo "Test Quick PASSED" || echo "Test Quick FAILED"
 	
 testRNA:	$(BIN) $(RNAFILE)
-	@./$(BIN) -p posi10_mRNA.oneline -n nega10_mRNA.oneline -t 0.95 -a rna > $(LOG)
+	@./$(BIN) -p posi10_mRNA.oneline -n nega10_mRNA.oneline -t 0.8 -a rna > $(LOG)
 	@echo "Test RNA PASSED" || echo "Test RNA FAILED"
 
 testDNA:	$(BIN) $(DNAFILE)
-	@./$(BIN) -p posi10_DNA.oneline -n nega10_DNA.oneline -t 0.95 -a rna > $(LOG)
+	@./$(BIN) -p posi10_DNA.oneline -n nega10_DNA.oneline -t 0.8 -a rna > $(LOG)
 	@echo "Test DNA PASSED" || echo "Test DNA FAILED"
 
 runRNA:	$(BIN) $(REALRNA)
