@@ -14,16 +14,16 @@
 #include "DNA_lib.lib"
 
 #define print_and_continue(a) {printf("%d ", a); fflush(stdout);}
-#define print_and_exit(a) {printf("%d\n", a); fflush(stdout); exit(1);}
+#define print_and_exit(a) {printf("%d\n", a); fflush(stdout); exit(0);}
 
 int cmp( const void* a, const void* b){
 	float* p1 = *(float**) a; 
 	float* p2 = *(float**) b; 
 	/*printf("Compare %f %x <=> %f %x\n", p1[0], a, p2[0], b);*/
-	if( p1[1] < p2[1]){
+	if( p1[1] > p2[1]){
 		return -1;
 	}
-	else if (p1[1] > p2[1]){
+	else if (p1[1] < p2[1]){
 		return 1;
 	}
 	else{
@@ -77,7 +77,7 @@ void *set_coverage(void *threadarg){
 						break;
 					}
 					i++;
-					if( i==motLen ){
+					if( i == motLen ){
 						count++;
 						br = 1;
 						break;
@@ -91,22 +91,6 @@ void *set_coverage(void *threadarg){
 		}
 		coverage[m] += count > 0 ? (double)count/seqNum : 0;
 	}
-	double **index = calloc(motNum, sizeof(double *));
-	for( m=0; m<motNum; m++ ){
-		index[m] = calloc(2, sizeof(double));
-	}
-	for( m=0; m<motNum; m++ ){
-		index[m][0] = coverage[m];
-		index[m][1] = m;
-	}
-	qsort(index, motNum, sizeof(double), cmp);
-	for( m=0; m<motNum; m++ ){
-/* 		printf("\n%s %.2lf %d", motSet[(int)index[m][1]], index[m][0], (int)index[m][1]); */
-		free(index[m]);
-	}
-	free(index);
-
-/* 	printf("\n"); */
 	
 	pthread_exit(NULL);
 }
@@ -154,6 +138,121 @@ void *set_count(void *threadarg){
 	}
 	pthread_exit(NULL);
 }
+void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, double **negCov){
+	int perc = (int)((*numMot)*PERCENTILE);
+/* 
+	double **selCov = calloc(2, sizeof(double *));
+	selCov[0] = calloc(perc*3,sizeof(double));
+	selCov[1] = calloc(perc*3,sizeof(double));
+ */
+	int m;
+/* 
+	char **selMot = malloc(perc*3*sizeof(char *));
+	for( m=0; m<perc*3; m++ ){
+		selMot[m] = malloc((motLen+1)*sizeof(char));
+		memset(selMot[m], '\0', (motLen+1)*sizeof(char));
+	}
+ */
+	double **index = calloc((*numMot), sizeof(double *));
+	for( m=0; m<(*numMot); m++ ){
+		index[m] = calloc(4, sizeof(double));
+	}
+	/* The first selection is on the coverage over the positive dataset */
+	for( m=0; m<(*numMot); m++ ){
+		index[m][0] = (*posCov)[m];
+		index[m][1] = (*negCov)[m];
+		index[m][2] = m;
+	}
+	qsort(index, (*numMot), sizeof(double), cmp);
+	int *tmpIndex = calloc(perc*3,sizeof(int));
+	for( m=0; m<perc; m++ ){
+/* 
+		memmove(selMot[m], (*motSet)[(int)index[m][2]], motLen+1);
+		selCov[0][m] = index[m][0];
+		selCov[1][m] = index[m][1];
+ */
+		tmpIndex[m] = (int)index[m][2];
+	}
+	/* The second selection is on the coverage over the negative dataset */
+	for( m=0; m<(*numMot); m++ ){
+		index[m][0] = (*negCov)[m];
+		index[m][1] = (*posCov)[m];
+		index[m][2] = m;
+	}
+	qsort(index, (*numMot), sizeof(double), cmp);
+	for( m=perc; m<perc*2; m++ ){
+/* 
+		memmove(selMot[m], (*motSet)[(int)index[m][2]], motLen+1);
+		selCov[0][m] = index[m][1];
+		selCov[1][m] = index[m][0];
+ */
+		tmpIndex[m] = (int)index[m][2];
+	}
+	/* The third selection is on the maximization of the coverage between dataset */
+	for( m=0; m<(*numMot); m++ ){
+		index[m][0] = (*posCov)[m]-(*negCov)[m];
+		index[m][1] = (*posCov)[m];
+		index[m][2] = (*negCov)[m];
+		index[m][3] = m;
+	}
+	qsort(index, (*numMot), sizeof(double), cmp);
+	for( m=perc*2; m<perc*3; m++ ){
+/* 
+		memmove(selMot[m], (*motSet)[(int)index[m][3]], motLen+1);
+		selCov[0][m] = index[m][1];
+		selCov[1][m] = index[m][2];
+ */
+		tmpIndex[m] = (int)index[m][3];
+	}
+	
+/* 	printf("%p %p %p\n", (*motSet), (*posCov), (*negCov)); fflush(stdout); */
+	int realNum = 0;
+	int *selIndex = calloc(perc*3,sizeof(int));
+	for( m=0; m<perc*3; m++ ){
+		int i;
+		int exist = 0;
+		for( i=0; i<m; i++ ){
+			if( tmpIndex[m] == tmpIndex[i] ){
+				exist++;
+				break;
+			}
+		}
+		if( exist == 0 ){
+			selIndex[realNum] = tmpIndex[m];
+			realNum++;	
+		}
+	}
+	
+	double *PselCov = calloc(realNum, sizeof(double));
+	double *NselCov = calloc(realNum, sizeof(double));
+	char **selMot = malloc(realNum*sizeof(char *));
+	for( m=0; m<realNum; m++ ){
+		selMot[m] = malloc((motLen+1)*sizeof(char));
+		memset(selMot[m], '\0', (motLen+1)*sizeof(char));
+		memmove(selMot[m], (*motSet)[selIndex[m]], motLen+1 );
+		PselCov[m] = (*posCov)[selIndex[m]];
+		NselCov[m] = (*negCov)[selIndex[m]];
+/* 		printf("%s %.2lf %.2lf\n", selMot[m], PselCov[m], NselCov[m]); fflush(stdout); */
+	}
+		
+	for( m=0; m<(*numMot); m++ ){
+		free(index[m]);
+		free((*motSet)[m]);
+	}
+	free(index);
+	free((*motSet));
+	free((*posCov));
+	free((*negCov));
+	free(tmpIndex);
+	free(selIndex);
+
+	(*motSet) = selMot;
+	(*posCov) = PselCov;
+	(*negCov) = NselCov;
+	
+	(*numMot) = realNum;
+
+}
 
 int main(int argc, char* argv[]){
 	
@@ -164,10 +263,9 @@ int main(int argc, char* argv[]){
 	numPos = numNeg = 0;
 	int ms = MIN_MOT;
 	int mn = pow(4,ms);
-	double th = 0.95;
+	double th = 0.8;
 	char **motifs, **posID, **posSeq, **negID, **negSeq, **shuSeq;
 	motifs = posID = posSeq = negID = negSeq = shuSeq = NULL;
-	size_t size_mot;
 	FILE *log, *Fpositive, *Fnegative, *Fshuffle, *Fposshuf, *Fnegshuf;
 	char fileM[100];
 	char fileP[100];
@@ -199,7 +297,6 @@ int main(int argc, char* argv[]){
 		printf("Motifs file: Not specified\nGenerating the seed (%d nt) motifs... ", ms); fflush(stdout);
 /* 		fprintf(log, "Motifs file: Not specified\nGenerating the seed (%d nt) motifs... ", ms); */
 		motifs = malloc2Dchar(ms, mn);
-		size_mot = (ms*sizeof(char *))*mn*sizeof(char);
 		create_motifs_nt(motifs, ms);
 		printf("done\n"); fflush(stdout);
 /* 		fprintf(log, "done\n"); */
@@ -249,7 +346,8 @@ int main(int argc, char* argv[]){
 			memmove(sequence, posSeq[i], strlen(posSeq[i]));
 			int c;
 			for( c=0; c<NO_NEGA; c++ ){
-				str_shuffle(sequence, strlen(sequence));
+/* 				str_shuffle(sequence, strlen(sequence)); */
+				str_random(sequence, strlen(sequence));
 				memmove(shuSeq[i*NO_NEGA+c], sequence, strlen(sequence));
 				fprintf(Fshuffle, "%s\n", sequence);
 			}
@@ -263,7 +361,7 @@ int main(int argc, char* argv[]){
 	}
 	printf("Coverage threshold: %.2f\n", th); fflush(stdout);
 /* 	fprintf(log, "Coverage threshold: %.2f\n", th); */
-/* 	GENERATION OF THE SHUFFLED REFERENCE DATASETS */	
+/* 	GENERATION OF THE SHUFFLED REFERENCE DATASETS (NOT IN USE AT THE MOMENT) */	
 	int s;
 	Fposshuf = open_file(Fposshuf, "Ref_PosShuf.txt", "w");
 	char ***PshuSeq = malloc(NUM_SHUFFLE*sizeof(**PshuSeq));
@@ -308,7 +406,6 @@ int main(int argc, char* argv[]){
 
 	printf("Calculating the seed coverages... "); fflush(stdout);
 /* 	fprintf(log, "Calculating the seed coverages... "); */
-	size_t size_cov = mn*sizeof(double);
 	double *posCov = calloc(mn, sizeof(posCov));
 	double *negCov = calloc(mn, sizeof(negCov));
 
@@ -355,19 +452,33 @@ int main(int argc, char* argv[]){
 	}
 	
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
+	select_motifs(&mn, ms, &motifs, &posCov, &negCov);
+	thread_data_array[0].arrMot = motifs;
+	thread_data_array[1].arrMot = motifs;
+	thread_data_array[0].cov = posCov;
+	thread_data_array[1].cov = negCov;
+	thread_data_array[0].motNum = mn;
+	thread_data_array[1].motNum = mn;
 
-	char **backup_mot = malloc(mn*sizeof(*backup_mot));
+	char **backup_mot = malloc(mn*sizeof(char *));
 	for( i=0; i<mn; i++ ){
 		backup_mot[i] = malloc((ms+1)*sizeof(char));
 		memset(backup_mot[i], '\0', (ms+1)*sizeof(char));
 	}
 	double *backup_pcov = calloc(mn, sizeof(double));
 	double *backup_ncov = calloc(mn, sizeof(double));
-	
+	size_t size_mot = mn*(ms+1)*sizeof(char)*sizeof(char *);
+	size_t size_cov = mn*sizeof(double);
 	memmove(backup_mot, motifs, size_mot);
-	memmove(backup_pcov, thread_data_array[0].cov, size_cov);
-	memmove(backup_ncov, thread_data_array[1].cov, size_cov);
+	memmove(backup_pcov, posCov, size_cov);
+	memmove(backup_ncov, negCov, size_cov);
 	
+/* 
+	for( i=0; i<mn; i++ ){
+		printf("%s %.2lf %.2lf\n", backup_mot[i], backup_pcov[i], backup_ncov[i] ); fflush(stdout);
+	}
+ */
+
 	printf("done\nBeginnig the motif coverage optimization:\n"); fflush(stdout);
 /* 	fprintf(log, "done\nBeginnig the motif coverage optimization:\n"); */
 	int old_mn, tmp_mn;
@@ -379,7 +490,7 @@ int main(int argc, char* argv[]){
 		old_mn = new_mn;
 		new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*10;
 		if( new_mn == 0 && th > 0.5 ){
-			th -= 0.05;
+			th -= TH_STEP;
 			printf("   Lowering the threshold to %.2f of coverage\n", th);
 			new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*10;
 		}
@@ -396,13 +507,13 @@ int main(int argc, char* argv[]){
  			size_cov = old_mn*sizeof(double);
  			backup_pcov = realloc(backup_pcov, size_cov);
 			memmove(backup_pcov, thread_data_array[0].cov, size_cov);
-			posCov = realloc(posCov, new_mn*sizeof(double));
-			memset(posCov, 0, new_mn*sizeof(double));
+			free(posCov);
+			posCov = calloc(new_mn, sizeof(double));
  			/* NEGATIVE COVERAGE */
  			backup_ncov = realloc(backup_ncov, size_cov);
 			memmove(backup_ncov, thread_data_array[1].cov, size_cov);
-			negCov = realloc(negCov, new_mn*sizeof(double));
-			memset(negCov, 0, new_mn*sizeof(double));
+			free(negCov);
+			negCov = calloc(new_mn, sizeof(double));
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- BEGINS ----- */
 			pthread_attr_init(&attr);
 			pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -438,12 +549,25 @@ int main(int argc, char* argv[]){
 				}
 			}
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
+			select_motifs(&new_mn, ms, &new_motifs, &posCov, &negCov);
+			thread_data_array[0].arrMot = new_motifs;
+			thread_data_array[1].arrMot = new_motifs;
+			thread_data_array[0].cov = posCov;
+			thread_data_array[1].cov = negCov;
+			thread_data_array[0].motNum = new_mn;
+			thread_data_array[1].motNum = new_mn;
+			
+/* 
+			for(i=0;i<new_mn;i++){
+				printf("%s %.2lf %.2lf\n", new_motifs[i], posCov[i], negCov[i]);
+			}
+ */
+				
 			tmp_mn = old_mn;
 	  		old_motifs = new_motifs;
 	  		printf("done\n"); fflush(stdout);
-	  		
 	  		char fname[50];
-			sprintf(fname,"motifs_%dnt.dat", ms-1);
+			sprintf(fname,"tmp/motifs_%dnt.dat", ms-1);
 	  		FILE *myTMP = open_file(myTMP, fname, "w" );
 	  		for( i=0; i<tmp_mn; i++ ){
 	  			if( backup_mot[i][0] != '-' && backup_mot[i][ms-2] != '-' ){
@@ -451,7 +575,6 @@ int main(int argc, char* argv[]){
 	  			}
 	  		}
 	  		fclose(myTMP);
-	  		
 /* 			fprintf(log, "done\n"); */
 		}
 		else{
@@ -524,13 +647,13 @@ int main(int argc, char* argv[]){
 			for( p=0; p<numPos; p++ ){
 				cp += newOrder[b][p]<numPos ? pmotDist[i][newOrder[b][p]] : nmotDist[i][newOrder[b][p]-numPos];
 			}
-			ppval += posCount[i] > cp ? 1 : 0;
+			ppval += posCount[i] >= cp ? 1 : 0;
 			for( p=numPos; p<numTot; p++ ){
 				cn += newOrder[b][p]<numPos ? pmotDist[i][newOrder[b][p]] : nmotDist[i][newOrder[b][p]-numPos];
 			}
-			npval += negCount[i] > cn ? 1 : 0;
+			npval += negCount[i] >= cn ? 1 : 0;
 		}
-		posPval[i] = (1+ppval)/(NUM_BOOT+1);
+		posPval[i] = (1+ppval)/(NUM_BOOT+1); 
 		negPval[i] = (1+npval)/(NUM_BOOT+1);
 	}
 	
@@ -543,7 +666,7 @@ int main(int argc, char* argv[]){
 	for( i=0; i<tmp_mn; i++ ){
 /* 		if( backup_pcov[i] >= th || backup_ncov[i] >= th ){ */
 		if( backup_mot[i][0] != '-' && backup_mot[i][ms-2] != '-' ){
-			fprintf(FoutAll, "%s %.2f %.2f %d %d %.5f %.5f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
+			fprintf(FoutAll, "%s %.2f %.2f %d %d %.3f %.3f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
 		}
 /* 		} */
 	}
