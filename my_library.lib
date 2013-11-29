@@ -285,6 +285,7 @@ static int read_oneline(FILE *inFile, char **ID, char **SEQ, int max_id, int max
     		int i;
     		for( i=0; i<strlen(sequence); i++ ){
     			sequence[i] = toupper(sequence[i]);
+    			sequence[i] = sequence[i] == 'U' ? 'T' : sequence[i];
     		}
 			memmove(ID[c], id, max_id);
 			memmove(SEQ[c], sequence, max_seq);
