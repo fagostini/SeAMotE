@@ -17,8 +17,8 @@
 #define print_and_exit(a) {printf("%d\n", a); fflush(stdout); exit(0);}
 
 int cmp( const void* a, const void* b){
-	float* p1 = *(float**) a; 
-	float* p2 = *(float**) b; 
+	double* p1 = *(double**) a; 
+	double* p2 = *(double**) b; 
 	/*printf("Compare %f %x <=> %f %x\n", p1[0], a, p2[0], b);*/
 	if( p1[1] > p2[1]){
 		return -1;
@@ -138,8 +138,8 @@ void *set_count(void *threadarg){
 	}
 	pthread_exit(NULL);
 }
-void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, double **negCov){
-	int perc = (int)((*numMot)*PERCENTILE);
+void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, double **negCov, double threshold){
+	int perc = (int)((*numMot)*threshold);
 /* 
 	double **selCov = calloc(2, sizeof(double *));
 	selCov[0] = calloc(perc*3,sizeof(double));
@@ -187,6 +187,7 @@ void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, dou
 		selCov[1][m] = index[m][0];
  */
 		tmpIndex[m] = (int)index[m][2];
+/* 		printf("%s %.3lf\n", (*motSet)[tmpIndex[m]], (*posCov)[tmpIndex[m]]); */
 	}
 	/* The third selection is on the maximization of the coverage between dataset */
 	for( m=0; m<(*numMot); m++ ){
@@ -232,7 +233,7 @@ void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, dou
 		memmove(selMot[m], (*motSet)[selIndex[m]], motLen+1 );
 		PselCov[m] = (*posCov)[selIndex[m]];
 		NselCov[m] = (*negCov)[selIndex[m]];
-/* 		printf("%s %.2lf %.2lf\n", selMot[m], PselCov[m], NselCov[m]); fflush(stdout); */
+/* 		printf("%s %.3lf %.3lf\n", selMot[m], PselCov[m], NselCov[m]); fflush(stdout); */
 	}
 		
 	for( m=0; m<(*numMot); m++ ){
@@ -452,13 +453,14 @@ int main(int argc, char* argv[]){
 	}
 	
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
-	select_motifs(&mn, ms, &motifs, &posCov, &negCov);
+	select_motifs(&mn, ms, &motifs, &posCov, &negCov, 0.1);
 	thread_data_array[0].arrMot = motifs;
 	thread_data_array[1].arrMot = motifs;
 	thread_data_array[0].cov = posCov;
 	thread_data_array[1].cov = negCov;
 	thread_data_array[0].motNum = mn;
 	thread_data_array[1].motNum = mn;
+
 
 	char **backup_mot = malloc(mn*sizeof(char *));
 	for( i=0; i<mn; i++ ){
@@ -488,12 +490,14 @@ int main(int argc, char* argv[]){
 	int loop = 0;
  	do{
 		old_mn = new_mn;
-		new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*10;
+		new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*16;
+/* 
 		if( new_mn == 0 && th > 0.5 ){
 			th -= TH_STEP;
 			printf("   Lowering the threshold to %.2f of coverage\n", th);
-			new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*10;
+			new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*16;
 		}
+ */
 		if( new_mn != 0 ){
 			/* MOTIFS */
 			size_mot = old_mn*(ms)*sizeof(char)*2;
@@ -549,7 +553,7 @@ int main(int argc, char* argv[]){
 				}
 			}
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
-			select_motifs(&new_mn, ms, &new_motifs, &posCov, &negCov);
+			select_motifs(&new_mn, ms, &new_motifs, &posCov, &negCov, 0.05);
 			thread_data_array[0].arrMot = new_motifs;
 			thread_data_array[1].arrMot = new_motifs;
 			thread_data_array[0].cov = posCov;
@@ -571,7 +575,7 @@ int main(int argc, char* argv[]){
 	  		FILE *myTMP = open_file(myTMP, fname, "w" );
 	  		for( i=0; i<tmp_mn; i++ ){
 	  			if( backup_mot[i][0] != '-' && backup_mot[i][ms-2] != '-' ){
-	  				fprintf(myTMP, "%s %.2f %.2f\n", backup_mot[i], backup_pcov[i], backup_ncov[i]);
+	  				fprintf(myTMP, "%s %.3f %.3f\n", backup_mot[i], backup_pcov[i], backup_ncov[i]);
 	  			}
 	  		}
 	  		fclose(myTMP);
@@ -666,14 +670,13 @@ int main(int argc, char* argv[]){
 	for( i=0; i<tmp_mn; i++ ){
 /* 		if( backup_pcov[i] >= th || backup_ncov[i] >= th ){ */
 		if( backup_mot[i][0] != '-' && backup_mot[i][ms-2] != '-' ){
-			fprintf(FoutAll, "%s %.2f %.2f %d %d %.3f %.3f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
+			fprintf(FoutAll, "%s %.3f %.3f %d %d %.3f %.3f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
 		}
 /* 		} */
 	}
 	fclose(FoutAll);
 	printf("done\nFreeing the memory... "); fflush(stdout);
 /*  	fprintf(log, "done\nFreeing the memory... "); */
-
 
 	free2Dchar(motifs, mn);
 	free2Dchar(posID, numPos);
@@ -695,14 +698,14 @@ int main(int argc, char* argv[]){
 
 	free(backup_pcov);
 	free(backup_ncov);
-	
-	free2Dchar(backup_mot, tmp_mn);
+
+	free2Dchar(backup_mot, old_mn);
 
 	free(posCount);
 	free(negCount);
 	free(posPval);
 	free(negPval);
-	
+
 	free2Dint(pmotDist, tmp_mn);
 	free2Dint(nmotDist, tmp_mn);
 
