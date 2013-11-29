@@ -8,5 +8,5 @@
 #define NUM_RAND 1		/* Raise this number to generate X sets of randomized sequences (NOT IN USE AT THE MOMENT) */
 #define NUM_SHUFFLE 1	/* Raise this number to generate X sets of shuffled sequences (NOT IN USE AT THE MOMENT) */
 #define P_TEST 1		/* Raise this number to increase the number of shuffle and random permutations (NOT IN USE AT THE MOMENT) */
-#define PERCENTILE 0.05 /* Each loop selects the top % of the motif coverage distributions ( Positive and Negative, separately ) */
+#define PERCENTILE 0.05 /* NOW INITIALIZED IN THE MAIN SCRIPT. Each loop selects the top % of the motif coverage distributions ( Positive and Negative, separately ) */
 #define TH_STEP 0.1		/* If the motifs tested do not achieved the set coverage, the latter will be lowered by this factor */
