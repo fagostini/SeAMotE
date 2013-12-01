@@ -7,10 +7,12 @@ OBFLAGS = -O3 -Wall -pedantic
 # System-specific flags
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
-	LNFLAGS += -D LINUX -lm -lpthread
+	CCFLAGS += -lpthread
+	LNFLAGS += -D LINUX -lm
 endif
 ifeq ($(UNAME_S),Darwin)
-	LNFLAGS += -D OSX -pthread
+	CCFLAGS += -pthread
+	LNFLAGS += -D OSX
 endif
 # Arch-specific flags
 UNAME_P := $(shell uname -m)
