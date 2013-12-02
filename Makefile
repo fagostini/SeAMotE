@@ -1,17 +1,15 @@
 # Compiler
-CC = gcc
+CC = gcc-4
 # Compiler flags
-CCFLAGS = -ansi
+CCFLAGS = -ansi -pthread
 # Object flags
 OBFLAGS = -O3 -Wall -pedantic
 # System-specific flags
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
-	CCFLAGS += -lpthread
-	LNFLAGS += -D LINUX -lm
+	LNFLAGS += -D LINUX -lm -lpthread
 endif
 ifeq ($(UNAME_S),Darwin)
-	CCFLAGS += -pthread
 	LNFLAGS += -D OSX
 endif
 # Arch-specific flags
