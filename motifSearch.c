@@ -260,8 +260,8 @@ int main(int argc, char* argv[]){
 /* 	srand(time(NULL)); */
 	srand(1);	
 	
-	int i, numPos, numNeg, dna, rna, prot;
-	numPos = numNeg = 0;
+	int i, numPos, numNeg, dna, rna, prot, ref;
+	numPos = numNeg = ref = 0;
 	int ms = MIN_MOT;
 	int mn = pow(4,ms);
 	double th = 0.8;
@@ -275,7 +275,7 @@ int main(int argc, char* argv[]){
 /* 	log = open_file(log, "log.txt", "w"); */
 	printf("Reading args... ");  fflush(stdout);
 /* 	fprintf(log, "Reading args... "); */
-	read_args(argc, argv, fileM, fileP, fileN, &th, type);
+	read_args(argc, argv, fileM, fileP, fileN, &th, type, &ref);
 	printf("done\n"); fflush(stdout);
 /* 	fprintf(log, "done\n"); */
 	if( type[0] != '\0' ){
@@ -337,7 +337,12 @@ int main(int argc, char* argv[]){
 /* 		fprintf(log, "done\n"); */
 	}
 	else{
-		printf("Negative file: Not specified\nGenerating a shuffled set from the Positive file... "); fflush(stdout);
+		if( ref == 1 ){
+			printf("Negative file: Not specified\nReference: Random\nGenerating reference set... "); fflush(stdout);
+		}
+		else{
+			printf("Negative file: Not specified\nReference: Shuffle\nGenerating reference set from the Positive file... "); fflush(stdout);			
+		}
 /* 		fprintf(log, "Negative file: Not specified\nGenerating a shuffled set from the Positive file... "); */
 		Fshuffle = open_file(Fshuffle, "Ref_shuffle.txt", "w");
 		shuSeq = malloc2Dchar(MAX_SEQ, numPos*NO_NEGA);
@@ -347,8 +352,12 @@ int main(int argc, char* argv[]){
 			memmove(sequence, posSeq[i], strlen(posSeq[i]));
 			int c;
 			for( c=0; c<NO_NEGA; c++ ){
-/* 				str_shuffle(sequence, strlen(sequence)); */
-				str_random(sequence, strlen(sequence));
+				if( ref == 1 ){
+					str_random(sequence, strlen(sequence));
+				}
+				else{
+					str_shuffle(sequence, strlen(sequence));
+				}
 				memmove(shuSeq[i*NO_NEGA+c], sequence, strlen(sequence));
 				fprintf(Fshuffle, "%s\n", sequence);
 			}
@@ -583,7 +592,7 @@ int main(int argc, char* argv[]){
 		}
 		else{
 			printf("   Breaking the loop!\n");
-			free2Dchar(new_motifs, new_mn);		  	
+			free2Dchar(new_motifs, new_mn);	
 			break;
 		}
 		loop++;
@@ -688,7 +697,6 @@ int main(int argc, char* argv[]){
 	else{
 		free2Dchar(negSeq, numPos);
 	}
-
 	free3Dchar(PshuSeq, numPos, NUM_SHUFFLE);
 	free3Dchar(NshuSeq, numNeg, NUM_SHUFFLE);
 	free2Dint(newOrder, NUM_BOOT);
@@ -699,7 +707,9 @@ int main(int argc, char* argv[]){
 	free(backup_pcov);
 	free(backup_ncov);
 
-	free2Dchar(backup_mot, old_mn);
+	if( loop != 0 ){
+		free2Dchar(backup_mot, old_mn);
+	}
 
 	free(posCount);
 	free(negCount);
