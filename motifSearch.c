@@ -273,10 +273,10 @@ int main(int argc, char* argv[]){
 	char fileN[100];
 	char type[100];
 /* 	log = open_file(log, "log.txt", "w"); */
-	printf("Reading args... ");  fflush(stdout);
+/* 	printf("Reading args... ");  fflush(stdout); */
 /* 	fprintf(log, "Reading args... "); */
 	read_args(argc, argv, fileM, fileP, fileN, &th, type, &ref);
-	printf("done\n"); fflush(stdout);
+/* 	printf("done\n"); fflush(stdout); */
 /* 	fprintf(log, "done\n"); */
 	if( type[0] != '\0' ){
 		if((strcmp(type, "rna") == 0) | (strcmp(type, "RNA") == 0)){
@@ -679,7 +679,7 @@ int main(int argc, char* argv[]){
 	for( i=0; i<tmp_mn; i++ ){
 /* 		if( backup_pcov[i] >= th || backup_ncov[i] >= th ){ */
 		if( backup_mot[i][0] != '-' && backup_mot[i][ms-2] != '-' ){
-			fprintf(FoutAll, "%s %.3f %.3f %d %d %.3f %.3f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
+			fprintf(FoutAll, "%s %.3f %.3f %d %d %.4f %.4f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
 		}
 /* 		} */
 	}

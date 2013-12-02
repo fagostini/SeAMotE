@@ -5,9 +5,9 @@ struct data{
 };
 
 static void call_help(int n, struct data *options){
-	printf("\n%s\nUsage: %s [-options]\n\nThe most common options are:\n", options[0].des, options[0].cmd);
+	printf("\n%s\nUsage: %s [-options]\n\nCommon options are:\n", options[0].des, options[0].cmd);
 	printf("\t%s : %s\n\n", options[1].cmd, options[1].des);
-	printf("   options controlling the input:\n");
+	printf("   options controlling inputs and parameters:\n");
 	printf("\t%s <file> : %s\n", options[2].cmd, options[2].des);
 	printf("\t%s <file> : %s\n", options[3].cmd, options[3].des);
 	printf("\t%s <file> : %s\n", options[4].cmd, options[4].des);
@@ -28,7 +28,7 @@ static void read_args(int argc, char **argv, char *fileM, char *fileP, char *fil
 	options[1].des = "show brief help on version and usage";
 	options[1].err = "";
 	options[2].cmd = "-m";
-	options[2].des = "the file containing a set of pre-generated motifs (optional)";
+	options[2].des = "the file containing a set of pre-generated motifs (under development)";
 	options[2].err = "Error! The motifs file does not exists or has not been specified!";
 	options[3].cmd = "-p";
 	options[3].des = "the file containing a set of positive sequences";
@@ -37,17 +37,17 @@ static void read_args(int argc, char **argv, char *fileM, char *fileP, char *fil
 	options[4].des = "the file containing a set of negative sequences (optional)";
 	options[4].err = "Error! The negative set does not exists or has not been specified!";
 	options[5].cmd = "-t";
-	options[5].des = "set a threshold for each selection loop (lower thresholds increase the time!)";
+	options[5].des = "set a threshold for each selection loop (default: 0.9)";
 	options[5].err = "Error! The threshold has not been specified!";
 	options[6].cmd = "-a";
 	options[6].des = "you can choose whether to use RNA (the set as it is) or DNA (the set and its reverse complementary)";
 	options[6].err = "Error! The molecule type has not been specified!";
 	options[7].cmd = "-r";
-	options[7].des = "the reference set can consist of a random of shuffle dataset";
+	options[7].des = "the reference set can consist of a random of shuffle dataset (default: shuffle)";
 	options[7].err = "Error! The reference has not been specified correctly!";
 
 	int i = 1;
-	while(i<argc){
+	while( i < argc ){
 		/* HELP */
 		if(strcmp(argv[i], options[1].cmd) == 0 ){
 			call_help(0, options);
@@ -137,7 +137,7 @@ static void read_args(int argc, char **argv, char *fileM, char *fileP, char *fil
 				call_help(1, options);
 			}
 		}
-		if( ++i == argc ){
+		if( ++i >= argc ){
 			break;
 		}
 		

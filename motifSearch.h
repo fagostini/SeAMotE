@@ -3,7 +3,7 @@
 #define MAX_SEQ 15000
 #define MIN_MOT 3
 #define MAX_MOT 21
-#define NUM_BOOT 1000	/* Gives the precision of the p-value */
+#define NUM_BOOT 10000	/* Gives the precision of the p-value */
 #define NO_NEGA 1		/* Is the factor size (Neg/Pos) that will be use to generate the negative, if not given. (USE INTEGER ONLY) */  
 #define NUM_RAND 1		/* Raise this number to generate X sets of randomized sequences (NOT IN USE AT THE MOMENT) */
 #define NUM_SHUFFLE 1	/* Raise this number to generate X sets of shuffled sequences (NOT IN USE AT THE MOMENT) */
