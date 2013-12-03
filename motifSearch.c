@@ -268,10 +268,14 @@ int main(int argc, char* argv[]){
 	char **motifs, **posID, **posSeq, **negID, **negSeq, **shuSeq;
 	motifs = posID = posSeq = negID = negSeq = shuSeq = NULL;
 	FILE *log, *Fpositive, *Fnegative, *Fshuffle, *Fposshuf, *Fnegshuf;
-	char fileM[100];
-	char fileP[100];
-	char fileN[100];
-	char type[100];
+	char *fileM = malloc(100*sizeof(char));
+	memset(fileM, '\0', 100*sizeof(char));
+	char *fileP = malloc(100*sizeof(char));
+	memset(fileP, '\0', 100*sizeof(char));
+	char *fileN = malloc(100*sizeof(char));
+	memset(fileN, '\0', 100*sizeof(char));
+	char *type = malloc(100*sizeof(char));
+	memset(type, '\0', 100*sizeof(char));
 /* 	log = open_file(log, "log.txt", "w"); */
 /* 	printf("Reading args... ");  fflush(stdout); */
 /* 	fprintf(log, "Reading args... "); */
@@ -686,6 +690,11 @@ int main(int argc, char* argv[]){
 	fclose(FoutAll);
 	printf("done\nFreeing the memory... "); fflush(stdout);
 /*  	fprintf(log, "done\nFreeing the memory... "); */
+
+	free(fileM);
+	free(fileP);
+	free(fileN);
+	free(type);
 
 	free2Dchar(motifs, mn);
 	free2Dchar(posID, numPos);
