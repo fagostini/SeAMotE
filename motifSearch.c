@@ -13,7 +13,7 @@
 #include "RNA_lib.h"
 #include "DNA_lib.h"
 
-#define print_and_continue(a) {printf("%d ", a); fflush(stdout);}
+#define print_and_continue(a) {printf("%s ", a); fflush(stdout);}
 #define print_and_exit(a) {printf("%d\n", a); fflush(stdout); exit(0);}
 
 int cmp( const void* a, const void* b){
@@ -395,6 +395,7 @@ int main(int argc, char* argv[]){
 	printf("Coverage threshold: %.2f\n", th); fflush(stdout);
 /* 	fprintf(log, "Coverage threshold: %.2f\n", th); */
 /* 	GENERATION OF THE SHUFFLED REFERENCE DATASETS (NOT IN USE AT THE MOMENT) */	
+/* 
 	int s;
 	Fposshuf = open_file(Fposshuf, "Ref_PosShuf.txt", "w");
 	char ***PshuSeq = malloc(NUM_SHUFFLE*sizeof(**PshuSeq));
@@ -424,6 +425,7 @@ int main(int argc, char* argv[]){
 		}
 	}
 	fclose(Fnegshuf);
+ */
 
 /* 	GENERATION OF THE BOOTSTRAPPED REFERENCE DATASETS */	
 	int b;
@@ -535,10 +537,10 @@ int main(int argc, char* argv[]){
 			/* MOTIFS */
 			size_mot = old_mn*(ms)*sizeof(char)*sizeof(char *);
 			backup_mot = realloc(backup_mot, size_mot);
-			memcpy(backup_mot, old_motifs, size_mot);
+			memmove(backup_mot, old_motifs, size_mot);
 			ms++;
 			new_mn = filter_and_expand_nt(old_motifs, thread_data_array[0].cov, thread_data_array[1].cov, old_mn, ms, th, &new_motifs);
-		 	printf("   %d: Testing %d motifs (%d nt)... ", loop+1, new_mn, ms); fflush(stdout);
+		 	printf("   %d: Testing %d motifs (%d nt) ", loop+1, new_mn, ms); fflush(stdout);
 /* 			fprintf(log, "   %d: Testing %d motifs (%d nt)... ", loop+1, new_mn, ms); */
  			/* POSITIVE COVERAGE */
  			size_cov = old_mn*sizeof(double);
@@ -546,6 +548,7 @@ int main(int argc, char* argv[]){
 			memmove(backup_pcov, thread_data_array[0].cov, size_cov);
 			free(posCov);
 			posCov = calloc(new_mn, sizeof(double));
+			printf("."); fflush(stdout);
  			/* NEGATIVE COVERAGE */
  			backup_ncov = realloc(backup_ncov, size_cov);
 			memmove(backup_ncov, thread_data_array[1].cov, size_cov);
@@ -569,7 +572,7 @@ int main(int argc, char* argv[]){
 			thread_data_array[1].motNum = new_mn;
 			thread_data_array[1].motLen = ms;
 			thread_data_array[1].cov = negCov;
-
+			printf("."); fflush(stdout);
 			for( i=0; i<NUM_THREADS; i++ ){
 				rc = pthread_create(&threads[i], &attr, set_coverage, (void *) &thread_data_array[i]);
 				if (rc) {
@@ -578,6 +581,7 @@ int main(int argc, char* argv[]){
 				}
 			}
 			pthread_attr_destroy(&attr);
+			printf("."); fflush(stdout);
 			for( i=0; i<NUM_THREADS; i++ ){
 				rc = pthread_join(threads[i], &status);
 				if (rc) {
@@ -587,6 +591,7 @@ int main(int argc, char* argv[]){
 			}
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
 /* 
+			printf("."); fflush(stdout);
 			select_motifs(&new_mn, ms, &new_motifs, &posCov, &negCov, 0.05);
 			thread_data_array[0].arrMot = new_motifs;
 			thread_data_array[1].arrMot = new_motifs;
@@ -601,7 +606,7 @@ int main(int argc, char* argv[]){
 				printf("%s %.2lf %.2lf\n", new_motifs[i], posCov[i], negCov[i]);
 			}
  */
-				
+			printf(". "); fflush(stdout);
 			tmp_mn = old_mn;
 	  		old_motifs = new_motifs;
 	  		printf("done\n"); fflush(stdout);
@@ -721,36 +726,40 @@ int main(int argc, char* argv[]){
 	free(fileP);
 	free(fileN);
 	free(type);
-
+print_and_continue("0");
 	free2Dchar(motifs, mn);
 	free2Dchar(posID, numPos);
 	free2Dchar(posSeq, numPos);
 	if( negID ){
+		print_and_continue("1a");
 		free2Dchar(negID, numNeg);
 		free2Dchar(negSeq, numNeg);
 	}
 	else{
+		print_and_continue("1b");
 		free2Dchar(negSeq, numPos);
 	}
-	free3Dchar(PshuSeq, numPos, NUM_SHUFFLE);
-	free3Dchar(NshuSeq, numNeg, NUM_SHUFFLE);
+/* 	free3Dchar(PshuSeq, numPos, NUM_SHUFFLE); */
+/* 	free3Dchar(NshuSeq, numNeg, NUM_SHUFFLE); */
 	free2Dint(newOrder, NUM_BOOT);
-
+print_and_continue("2");
 	free(posCov);
 	free(negCov);
-
+print_and_continue("3");
 	free(backup_pcov);
 	free(backup_ncov);
-
+print_and_continue("4");
 	if( loop != 0 ){
-		free2Dchar(backup_mot, old_mn);
+	printf("%d", loop);
+	print_and_continue("a");
+		free2Dchar(backup_mot, tmp_mn);
 	}
-
+print_and_continue("6");
 	free(posCount);
 	free(negCount);
 	free(posPval);
 	free(negPval);
-
+print_and_continue("7");
 	free2Dint(pmotDist, tmp_mn);
 	free2Dint(nmotDist, tmp_mn);
 
