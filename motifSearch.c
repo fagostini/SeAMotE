@@ -9,9 +9,9 @@
 #include <pthread.h>
 
 #include "motifSearch.h"
-#include "my_library.lib"
-#include "RNA_lib.lib"
-#include "DNA_lib.lib"
+#include "my_library.h"
+#include "RNA_lib.h"
+#include "DNA_lib.h"
 
 #define print_and_continue(a) {printf("%d ", a); fflush(stdout);}
 #define print_and_exit(a) {printf("%d\n", a); fflush(stdout); exit(0);}
@@ -47,7 +47,9 @@ struct thread_data{
 	int **motDistr;
 	int ***pVal;
 };
+
 struct thread_data thread_data_array[NUM_THREADS];
+
 void *set_coverage(void *threadarg){
 
 	int taskid, seqNum, motNum, motLen;
@@ -94,6 +96,7 @@ void *set_coverage(void *threadarg){
 	
 	pthread_exit(NULL);
 }
+
 void *set_count(void *threadarg){
 
 	int taskid, seqNum, motNum, motLen, *count;
@@ -138,21 +141,10 @@ void *set_count(void *threadarg){
 	}
 	pthread_exit(NULL);
 }
+
 void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, double **negCov, double threshold){
 	int perc = (int)((*numMot)*threshold);
-/* 
-	double **selCov = calloc(2, sizeof(double *));
-	selCov[0] = calloc(perc*3,sizeof(double));
-	selCov[1] = calloc(perc*3,sizeof(double));
- */
 	int m;
-/* 
-	char **selMot = malloc(perc*3*sizeof(char *));
-	for( m=0; m<perc*3; m++ ){
-		selMot[m] = malloc((motLen+1)*sizeof(char));
-		memset(selMot[m], '\0', (motLen+1)*sizeof(char));
-	}
- */
 	double **index = calloc((*numMot), sizeof(double *));
 	for( m=0; m<(*numMot); m++ ){
 		index[m] = calloc(4, sizeof(double));
@@ -166,11 +158,6 @@ void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, dou
 	qsort(index, (*numMot), sizeof(double), cmp);
 	int *tmpIndex = calloc(perc*3,sizeof(int));
 	for( m=0; m<perc; m++ ){
-/* 
-		memmove(selMot[m], (*motSet)[(int)index[m][2]], motLen+1);
-		selCov[0][m] = index[m][0];
-		selCov[1][m] = index[m][1];
- */
 		tmpIndex[m] = (int)index[m][2];
 	}
 	/* The second selection is on the coverage over the negative dataset */
@@ -181,11 +168,6 @@ void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, dou
 	}
 	qsort(index, (*numMot), sizeof(double), cmp);
 	for( m=perc; m<perc*2; m++ ){
-/* 
-		memmove(selMot[m], (*motSet)[(int)index[m][2]], motLen+1);
-		selCov[0][m] = index[m][1];
-		selCov[1][m] = index[m][0];
- */
 		tmpIndex[m] = (int)index[m][2];
 /* 		printf("%s %.3lf\n", (*motSet)[tmpIndex[m]], (*posCov)[tmpIndex[m]]); */
 	}
@@ -198,11 +180,6 @@ void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, dou
 	}
 	qsort(index, (*numMot), sizeof(double), cmp);
 	for( m=perc*2; m<perc*3; m++ ){
-/* 
-		memmove(selMot[m], (*motSet)[(int)index[m][3]], motLen+1);
-		selCov[0][m] = index[m][1];
-		selCov[1][m] = index[m][2];
- */
 		tmpIndex[m] = (int)index[m][3];
 	}
 	
@@ -254,6 +231,48 @@ void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, dou
 	(*numMot) = realNum;
 
 }
+void call_R(char *filename){
+	
+	FILE *fp;
+	int status;
+/* 	char path[1035]; */
+
+	/* Open the command for reading. */
+	char command[150];
+	sprintf(command, "cat pvalues.R | R --slave --vanilla --args %s", filename);
+	fp = popen(command, "r");
+	if (fp == NULL) {
+		printf("Failed to run command\n" );
+		exit(1);
+	}
+
+	/* Read the output a line at a time - output it. */
+/* 
+	while( fgets(path, sizeof(path)-1, fp) != NULL) {
+		printf("%s", path);
+	}
+ */
+ 	int c = 0;
+ 	char *line = malloc(200*sizeof(char));
+ 	while( !feof(fp) ){
+ 		memset(line, '\0', 200*sizeof(char));
+ 		fscanf(fp, "%[^\n]%*c", line);
+ 		if( *line != '\0' && c != 0 ){
+ 			char mot[21];
+ 			int tp, fp, fn, tn;
+ 			double pval;
+ 			sscanf(line, "%s %d %d %d %d %lf", mot, &tp, &fp, &fn, &tn, &pval);
+ 			printf("%s %lf\n", mot, pval);
+ 		}
+ 		c++;
+ 	}
+ 	free(line);
+
+	/* close */
+	pclose(fp);
+
+}
+
 
 int main(int argc, char* argv[]){
 	
@@ -466,6 +485,7 @@ int main(int argc, char* argv[]){
 	}
 	
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
+/* 
 	select_motifs(&mn, ms, &motifs, &posCov, &negCov, 0.1);
 	thread_data_array[0].arrMot = motifs;
 	thread_data_array[1].arrMot = motifs;
@@ -473,7 +493,7 @@ int main(int argc, char* argv[]){
 	thread_data_array[1].cov = negCov;
 	thread_data_array[0].motNum = mn;
 	thread_data_array[1].motNum = mn;
-
+ */
 
 	char **backup_mot = malloc(mn*sizeof(char *));
 	for( i=0; i<mn; i++ ){
@@ -503,17 +523,17 @@ int main(int argc, char* argv[]){
 	int loop = 0;
  	do{
 		old_mn = new_mn;
-		new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*16;
+		new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*MOT_FACTOR;
 /* 
 		if( new_mn == 0 && th > 0.5 ){
 			th -= TH_STEP;
 			printf("   Lowering the threshold to %.2f of coverage\n", th);
-			new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*16;
+			new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*MOT_FACTOR;
 		}
  */
 		if( new_mn != 0 ){
 			/* MOTIFS */
-			size_mot = old_mn*(ms)*sizeof(char)*2;
+			size_mot = old_mn*(ms)*sizeof(char)*sizeof(char *);
 			backup_mot = realloc(backup_mot, size_mot);
 			memcpy(backup_mot, old_motifs, size_mot);
 			ms++;
@@ -566,6 +586,7 @@ int main(int argc, char* argv[]){
 				}
 			}
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
+/* 
 			select_motifs(&new_mn, ms, &new_motifs, &posCov, &negCov, 0.05);
 			thread_data_array[0].arrMot = new_motifs;
 			thread_data_array[1].arrMot = new_motifs;
@@ -573,6 +594,7 @@ int main(int argc, char* argv[]){
 			thread_data_array[1].cov = negCov;
 			thread_data_array[0].motNum = new_mn;
 			thread_data_array[1].motNum = new_mn;
+ */
 			
 /* 
 			for(i=0;i<new_mn;i++){
@@ -583,15 +605,19 @@ int main(int argc, char* argv[]){
 			tmp_mn = old_mn;
 	  		old_motifs = new_motifs;
 	  		printf("done\n"); fflush(stdout);
-	  		char fname[50];
+	  		char *fname = malloc(50*sizeof(char));
+	  		memset(fname, '\0', 50*sizeof(char));
 			sprintf(fname,"tmp/motifs_%dnt.dat", ms-1);
 	  		FILE *myTMP = open_file(myTMP, fname, "w" );
 	  		for( i=0; i<tmp_mn; i++ ){
 	  			if( backup_mot[i][0] != '-' && backup_mot[i][ms-2] != '-' ){
-	  				fprintf(myTMP, "%s %.3f %.3f\n", backup_mot[i], backup_pcov[i], backup_ncov[i]);
+	  				fprintf(myTMP, "%s %d %d %d %d\n", backup_mot[i], (int)(numPos*backup_pcov[i]), numPos, (int)(numNeg*backup_ncov[i]), numNeg);
 	  			}
 	  		}
 	  		fclose(myTMP);
+			
+			call_R(fname);
+			
 /* 			fprintf(log, "done\n"); */
 		}
 		else{

@@ -1,5 +1,5 @@
 # Compiler
-CC = gcc-4
+CC = gcc
 # Compiler flags
 CCFLAGS = -ansi -pthread
 # Object flags
@@ -30,7 +30,7 @@ OBJ = motifSearch.o
 OLD_HDR = main.h
 HDR = motifSearch.h
 # Libraries
-LIBS = my_library.lib RNA_lib.lib DNA_lib.lib
+LIBS = my_library.h RNA_lib.h DNA_lib.h
 # Binaries
 OLD_BIN = main
 BIN = motifSearch
