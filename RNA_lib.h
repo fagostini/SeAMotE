@@ -81,12 +81,12 @@ static void random_sequence(int seqLen, char **sequence){
 
 static void create_motifs_nt(char **array, char mlen){
 	int i, ii, c, cc;
+/* 
 	int n = 4;
 	char pool[] = "ACGT";
-/* 
+ */
  	int n = 14;
 	char pool[] = "ACGTRYSWKMBDHV";
- */
 	for( i=0; i<mlen; i++ ){
 		int step = pow(n, mlen-i-1);
 		c = ii = cc = 0;
@@ -122,7 +122,7 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
  */
 	int n = 14;
 	char pool[] = "ACGTRYSWKMBDHV";
-	char **tmpSet = malloc2Dchar(newLen+1, numMot*n*2);
+	char **tmpSet = malloc2Dchar(newLen+1, numMot*n);
 	FILE *tmp_out, *tmp_in;
 	if( (tmp_out = fopen("tmpMot.txt", "w")) == NULL ){
 		printf("Fail\nCannot open the temporary file to store motifs.\n");
@@ -132,8 +132,10 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
 	char *motA = malloc((newLen+1)*sizeof(char));
 	memset(motA, '\0', (newLen+1)*sizeof(char));
 
+/* 
 	char *motB = malloc((newLen+1)*sizeof(char));
 	memset(motB, '\0', (newLen+1)*sizeof(char));
+ */
 
 /* 
 	char *motC = malloc((newLen+1)*sizeof(char));
@@ -143,8 +145,8 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
  */
 
 	for( i=0; i<numMot; i++ ){
-		if( pcov[i]>=threshold || ncov[i]>=threshold ){
-  		for( ii=0; ii<n; ii++ ){
+/* 		if( pcov[i]>=threshold || ncov[i]>=threshold ){ */
+  			for( ii=0; ii<n; ii++ ){
   				/* Add the nucleotide on the right side */
   				memset(motA, '\0', (newLen+1)*sizeof(char));
  				memcpy(motA, oldSet[i], newLen-1);
@@ -156,10 +158,12 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
  				}
  */
 				/* Add the nucleotide on the left side */
+/* 
   				memset(motB, '\0', (newLen+1)*sizeof(char));
  				memcpy(motB, &pool[ii], 1);
  				strncat(motB, oldSet[i], newLen-1);
 				fprintf(tmp_out, "%s\n", motB);
+ */
 /* 
 				if( check_motif(motB, newLen, 0.35) == 0 ){
  					fprintf(tmp_out, "%s\n", motB);
@@ -183,11 +187,11 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
  				}
  */
  			}
-		}  
+/* 		}   */
 	}
 	fclose(tmp_out);
 	free(motA);
-	free(motB);
+/* 	free(motB); */
 /* 
 	free(motC);
 	free(motD);
@@ -206,13 +210,13 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
 		if( *mot != '\0' ){
 			int found = c = 0;
 			do{
-				if( strncmp(tmpSet[c++], mot, newLen) == 0 ){
+				if( strncmp(tmpSet[c++], mot, newLen+1) == 0 ){
 					found = 1;
 					break;
 				}
 			}while( c <= numUniq );
 			if( found == 0 ){
-				memmove(tmpSet[numUniq++], mot, newLen);
+				memmove(tmpSet[numUniq++], mot, newLen+1);
 			}
 		}
 	}
@@ -220,6 +224,11 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
 	free(mot);
 	remove("tmpMot.txt");
 
+	for( i=0; i<numMot; i++ ){
+		free(oldSet[i]);
+	}
+	free(oldSet);
+	
 	c = 0;
 	(*newSet) = malloc2Dchar((newLen+1), numUniq);
 	while( c<numUniq ){
@@ -227,7 +236,7 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
 		c++;
 	}
 	
-	free2Dchar(tmpSet,  numMot*n*2);
+	free2Dchar(tmpSet,  numMot*n);
 	
 	return numUniq;
 }

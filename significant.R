@@ -1,0 +1,41 @@
+Args <- commandArgs()
+
+th <- as.double(Args[6])
+out <- as.integer(Args[7])
+
+DFall <- as.data.frame(read.table(paste("tmp/motifs_", Args[5],"nt.dat", sep="")))
+
+DF <- as.data.frame(DFall[which(DFall$V2/DFall$V3 >= th),])
+DF$V3 <- DF$V3-DF$V2;
+DF$V5 <- DF$V5-DF$V4;
+
+Pval <- vector(length=dim(DF)[1])
+Nval <- vector(length=dim(DF)[1])
+for( i in seq(1,dim(DF)[1],1) ){
+	m <- matrix(c(DF[i,]$V2, DF[i,]$V3, DF[i,]$V4, DF[i,]$V5), 2, 2)
+	Pval[i] <- fisher.test(m, alternative="greater")$p.value
+	Nval[i] <- fisher.test(m, alternative="less")$p.value
+}
+DF$Pval <- Pval
+DF$Nval <- Nval
+
+# if( length(Pval) < 1000 ){
+# 	if( length(Pval) <= 50 ){
+# 		Pquant <- max(Pval)
+# 		Nquant <- max(Nval)
+# 	}else{
+# 		Pquant <- Pval[order(Pval, decreasing=FALSE)[50]]
+# 		Nquant <- Nval[order(Nval, decreasing=FALSE)[50]]
+# 	}
+# }else{
+	Pquant <- quantile(Pval, 0.1)
+	Nquant <- quantile(Nval, 0.1)	
+# }
+
+if( out == 1 ){
+	write.table(DF[which( (DF$V2/(DF$V2+DF$V3) >= th+0.1) ),],"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)
+	write.table(DF[which( (DF$V2/(DF$V2+DF$V3) >= th) ),], paste("tmp/motifs_",Args[5],"nt.dat", sep=""), row.names=FALSE, col.names=FALSE, quote = FALSE)
+}else{
+	write.table(DF[which(DF$Pval <= Pquant ),], paste("tmp/motifs_",Args[5],"nt.dat", sep=""), row.names=FALSE, col.names=FALSE, quote = FALSE)
+}
+
