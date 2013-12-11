@@ -13,6 +13,8 @@
 #include "RNA_lib.h"
 #include "DNA_lib.h"
 
+#define SEED_NOTA 4
+#define NOTATION 14
 #define print_and_continue(a) {printf("%s ", a); fflush(stdout);}
 #define print_and_exit(a) {printf("%d\n", a); fflush(stdout); exit(0);}
 
@@ -75,9 +77,23 @@ void *set_coverage(void *threadarg){
 			do{
 				i = 0;
 				do{
+/* 
 					if( motSet[m][i] != '-' && motSet[m][i] != seqSet[s][pos+i]){
 						break;
 					}
+ */
+ 					if( seqSet[s][pos+i] == 'A' && ( motSet[m][i] != 'A' && motSet[m][i] != 'R' && motSet[m][i] != 'W' && motSet[m][i] != 'M' && motSet[m][i] != 'D' && motSet[m][i] != 'H' && motSet[m][i] != 'V') ){
+ 						break;
+ 					}
+ 					else if( seqSet[s][pos+i] == 'C' && ( motSet[m][i] != 'C' && motSet[m][i] != 'Y' && motSet[m][i] != 'S' && motSet[m][i] != 'M' && motSet[m][i] != 'B' && motSet[m][i] != 'H' && motSet[m][i] != 'V') ){
+ 						break;
+ 					}
+ 					else if( seqSet[s][pos+i] == 'G' && ( motSet[m][i] != 'G' && motSet[m][i] != 'R' && motSet[m][i] != 'S' && motSet[m][i] != 'K' && motSet[m][i] != 'B' && motSet[m][i] != 'D' && motSet[m][i] != 'V') ){
+ 						break;
+ 					}
+ 					else if( seqSet[s][pos+i] == 'T' && ( motSet[m][i] != 'T' && motSet[m][i] != 'Y' && motSet[m][i] != 'W' && motSet[m][i] != 'K' && motSet[m][i] != 'B' && motSet[m][i] != 'D' && motSet[m][i] != 'H') ){
+ 						break;
+ 					}
 					i++;
 					if( i == motLen ){
 						count++;
@@ -123,9 +139,23 @@ void *set_count(void *threadarg){
 			do{
 				i = 0;
 				do{
+/* 
 					if( motSet[m][i] != '-' && motSet[m][i] != seqSet[s][pos+i]){
-						break;	/* Escape when a mismatch is found */
+						break;
 					}
+*/
+ 					if( seqSet[s][pos+i] == 'A' && ( motSet[m][i] != 'A' && motSet[m][i] != 'R' && motSet[m][i] != 'W' && motSet[m][i] != 'M' && motSet[m][i] != 'D' && motSet[m][i] != 'H' && motSet[m][i] != 'V') ){
+ 						break;
+ 					}
+ 					else if( seqSet[s][pos+i] == 'C' && ( motSet[m][i] != 'C' && motSet[m][i] != 'Y' && motSet[m][i] != 'S' && motSet[m][i] != 'M' && motSet[m][i] != 'B' && motSet[m][i] != 'H' && motSet[m][i] != 'V') ){
+ 						break;
+ 					}
+ 					else if( seqSet[s][pos+i] == 'G' && ( motSet[m][i] != 'G' && motSet[m][i] != 'R' && motSet[m][i] != 'S' && motSet[m][i] != 'K' && motSet[m][i] != 'B' && motSet[m][i] != 'D' && motSet[m][i] != 'V') ){
+ 						break;
+ 					}
+ 					else if( seqSet[s][pos+i] == 'T' && ( motSet[m][i] != 'T' && motSet[m][i] != 'Y' && motSet[m][i] != 'W' && motSet[m][i] != 'K' && motSet[m][i] != 'B' && motSet[m][i] != 'D' && motSet[m][i] != 'H') ){
+ 						break;
+ 					}
 					i++;
 					if( i==motLen ){
 						c++;
@@ -231,6 +261,7 @@ void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, dou
 	(*numMot) = realNum;
 
 }
+
 void call_R(char *filename){
 	
 	FILE *fp;
@@ -262,7 +293,7 @@ void call_R(char *filename){
  			int tp, fp, fn, tn;
  			double pval;
  			sscanf(line, "%s %d %d %d %d %lf", mot, &tp, &fp, &fn, &tn, &pval);
- 			printf("%s %lf\n", mot, pval);
+/*  			printf("%s %lf\n", mot, pval); */
  		}
  		c++;
  	}
@@ -282,7 +313,7 @@ int main(int argc, char* argv[]){
 	int i, numPos, numNeg, dna, rna, prot, ref;
 	numPos = numNeg = ref = 0;
 	int ms = MIN_MOT;
-	int mn = pow(4,ms);
+	int mn = pow(SEED_NOTA,ms);
 	double th = 0.8;
 	char **motifs, **posID, **posSeq, **negID, **negSeq, **shuSeq;
 	motifs = posID = posSeq = negID = negSeq = shuSeq = NULL;
@@ -525,17 +556,17 @@ int main(int argc, char* argv[]){
 	int loop = 0;
  	do{
 		old_mn = new_mn;
-		new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*MOT_FACTOR;
+		new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*NOTATION*2;
 /* 
 		if( new_mn == 0 && th > 0.5 ){
 			th -= TH_STEP;
 			printf("   Lowering the threshold to %.2f of coverage\n", th);
-			new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*MOT_FACTOR;
+			new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*NOTATION;
 		}
  */
 		if( new_mn != 0 ){
 			/* MOTIFS */
-			size_mot = old_mn*(ms)*sizeof(char)*sizeof(char *);
+			size_mot = old_mn*(ms)*sizeof(char *)*sizeof(char);
 			backup_mot = realloc(backup_mot, size_mot);
 			memmove(backup_mot, old_motifs, size_mot);
 			ms++;
@@ -621,6 +652,7 @@ int main(int argc, char* argv[]){
 	  		}
 	  		fclose(myTMP);
 			
+			printf("%s\n", fname);
 			call_R(fname);
 			
 /* 			fprintf(log, "done\n"); */
