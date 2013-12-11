@@ -665,7 +665,7 @@ int main(int argc, char* argv[]){
 			else{
 				out = 0;
 			}
-			if( th < 0.6 ){
+			if( th < 0.5 ){
 				printf("   Breaking the loop!\n");
 				free2Dchar(new_motifs, new_mn);	
 				break;

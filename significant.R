@@ -36,6 +36,7 @@ if( out == 1 ){
 	write.table(DF[which( (DF$V2/(DF$V2+DF$V3) >= th+0.1) ),],"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)
 	write.table(DF[which( (DF$V2/(DF$V2+DF$V3) >= th) ),], paste("tmp/motifs_",Args[5],"nt.dat", sep=""), row.names=FALSE, col.names=FALSE, quote = FALSE)
 }else{
+	write.table(DF[which( DF$Pval <= min(Pval) ),],"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)
 	write.table(DF[which(DF$Pval <= Pquant ),], paste("tmp/motifs_",Args[5],"nt.dat", sep=""), row.names=FALSE, col.names=FALSE, quote = FALSE)
 }
 
