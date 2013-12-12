@@ -34,6 +34,8 @@ LIBS = my_library.h RNA_lib.h DNA_lib.h
 # Binaries
 OLD_BIN = main
 BIN = motifSearch
+# R script
+R_SRC = significant.R
 # Files
 QUICKFILE = quick_posi.oneline quick_nega.oneline
 RNAFILE = posi10_mRNA.oneline nega10_mRNA.oneline
@@ -47,7 +49,7 @@ all: $(BIN) $(OLD_BIN)
 $(BIN):	$(OBJ)
 	$(CC) $(OBJ) $(OBFLAGS) -o $(BIN) $(LNFLAGS)
 
-$(OBJ):	$(SRC) $(HDR) $(LIBS)
+$(OBJ):	$(SRC) $(HDR) $(LIBS) $(R_SRC)
 	$(CC) $(SRC) $(CCFLAGS) -c
 
 $(OLD_BIN):	$(OLD_OBJ)
