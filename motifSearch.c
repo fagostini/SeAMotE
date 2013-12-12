@@ -54,7 +54,7 @@ struct thread_data thread_data_array[NUM_THREADS];
 
 void *set_coverage(void *threadarg){
 
-	int taskid, seqNum, motNum, motLen;
+	int taskid, seqNum, motNum, motLen, **motDistr;
 	double *coverage;
 	char **seqSet, **motSet;
 	
@@ -68,6 +68,7 @@ void *set_coverage(void *threadarg){
    	coverage = my_data->cov;
    	seqSet = my_data->arrSeq;
    	motSet = my_data->arrMot;
+   	motDistr = my_data->motDistr;
    	
 	int m, s, pos, i, br, count;
 	for( m=0; m<motNum; m++ ){
@@ -100,8 +101,9 @@ void *set_coverage(void *threadarg){
 						br = 1;
 						break;
 					}
-				}while( i<motLen );
+				}while( i < motLen );
 				if( br == 1 ){
+					motDistr[m][s] = 1;
 					break;
 				}
 				pos++;
@@ -157,14 +159,14 @@ void *set_count(void *threadarg){
  						break;
  					}
 					i++;
-					if( i==motLen ){
+					if( i == motLen-1 ){
 						c++;
 						sc++;	/* Put the condition sc += sc > 0 ? 0 : 1; if you want to consider only one motif per sequence   */
 						break;	/* Escape when the motif is completely covered */
 					}
-				}while( i<motLen );
+				}while( i < motLen );
 				pos++;
-			}while( pos<(strlen(seqSet[s])-motLen+1));
+			}while( pos < (strlen(seqSet[s])-motLen+1) );
 			mDist[m][s] = sc > 0 ? sc : 0; /* Multiple motifs in the same sequence are considered */
 		}
 		count[m] = c > 0 ? c : 0;
@@ -474,6 +476,14 @@ int main(int argc, char* argv[]){
 /* 	fprintf(log, "Calculating the seed coverages... "); */
 	double *posCov = calloc(mn, sizeof(posCov));
 	double *negCov = calloc(mn, sizeof(negCov));
+	int **pmotDist = calloc(mn, sizeof(int *));
+	for( i=0; i<mn; i++ ){
+		pmotDist[i] = calloc(numPos,sizeof(int));
+	}
+	int **nmotDist = calloc(mn, sizeof(int *));
+	for( i=0; i<mn; i++ ){
+		nmotDist[i] = calloc(numNeg, sizeof(int));
+	}
 
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- BEGINS ----- */	
 	int rc;
@@ -491,6 +501,7 @@ int main(int argc, char* argv[]){
 	thread_data_array[0].motNum = mn;
 	thread_data_array[0].motLen = ms;
 	thread_data_array[0].cov = posCov;
+	thread_data_array[0].motDistr = pmotDist;
 	thread_data_array[1].thread_id = 1;
 	thread_data_array[1].depth = 1;
 	thread_data_array[1].arrSeq = negSeq;
@@ -499,6 +510,7 @@ int main(int argc, char* argv[]){
 	thread_data_array[1].motNum = mn;
 	thread_data_array[1].motLen = ms;
 	thread_data_array[1].cov = negCov;
+	thread_data_array[1].motDistr = nmotDist;
 
 	for( i=0; i<NUM_THREADS; i++ ){
 		rc = pthread_create(&threads[i], &attr, set_coverage, (void *) &thread_data_array[i]);
@@ -531,20 +543,38 @@ int main(int argc, char* argv[]){
 	char *fname = malloc(50*sizeof(char));
 	memset(fname, '\0', 50*sizeof(char));
 	sprintf(fname,"tmp/motifs_%dnt.dat", ms);
+	char *fname2 = malloc(50*sizeof(char));
+	memset(fname2, '\0', 50*sizeof(char));
+	sprintf(fname2,"tmp/motifs_%dnt_distribution.dat", ms);
 	FILE *myTMP = open_file(myTMP, fname, "w" );
 	for( i=0; i<mn; i++ ){
 		fprintf(myTMP, "%s %d %d %d %d\n", motifs[i], (int)(numPos*posCov[i]), numPos, (int)(numNeg*negCov[i]), numNeg);
 	}
 	fclose(myTMP);
+	FILE *myTMP2 = open_file(myTMP2, fname2, "w" );
+	int ii;
+	for( i=0; i<mn; i++ ){
+		fprintf(myTMP2, "%s ", motifs[i]);
+		for( ii=0; ii<numPos; ii++ ){
+			fprintf(myTMP2, " %d", pmotDist[i][ii]);
+		}
+		fprintf(myTMP2, " \n");
+	}
+	fclose(myTMP2);
 	
 	call_R(ms, th, 0);
 
 	for( i=0; i<mn ; i++ ){
 		free(motifs[i]);
+		free(pmotDist[i]);
+		free(nmotDist[i]);
 	}
 	free(motifs);
 	free(posCov);
 	free(negCov);
+	free(pmotDist);
+	free(nmotDist);
+
 
 	myTMP = open_file(myTMP, fname, "r" );
 	mn = read_lines(myTMP);
@@ -576,25 +606,8 @@ int main(int argc, char* argv[]){
  	free(mot);
  	free(mline);
 	fclose(myTMP);
-
-	char **backup_mot = malloc(mn*sizeof(char *));
-	for( i=0; i<mn; i++ ){
-		backup_mot[i] = malloc((ms+1)*sizeof(char));
-		memset(backup_mot[i], '\0', (ms+1)*sizeof(char));
-	}
-	double *backup_pcov = calloc(mn, sizeof(double));
-	double *backup_ncov = calloc(mn, sizeof(double));
-	size_t size_mot = mn*(ms+1)*sizeof(char)*sizeof(char *);
-	size_t size_cov = mn*sizeof(double);
-	memmove(backup_mot, motifs, size_mot);
-	memmove(backup_pcov, posCov, size_cov);
-	memmove(backup_ncov, negCov, size_cov);
-	
-/* 
-	for( i=0; i<mn; i++ ){
-		printf("%s %.2lf %.2lf\n", backup_mot[i], backup_pcov[i], backup_ncov[i] ); fflush(stdout);
-	}
- */
+	free(fname);
+	free(fname2);
 
 	printf("done\nBeginnig the motif coverage optimization:\n"); fflush(stdout);
 /* 	fprintf(log, "done\nBeginnig the motif coverage optimization:\n"); */
@@ -611,12 +624,23 @@ int main(int argc, char* argv[]){
 			ms++;
 			printf("%d", new_mn);
 			new_mn = filter_and_expand_nt(old_motifs, thread_data_array[0].cov, thread_data_array[1].cov, old_mn, ms, th, &new_motifs);
-		 	printf("   %d: Testing %d motifs (%d nt).", loop+1, new_mn, ms); fflush(stdout);
-			free(posCov);
-			posCov = calloc(new_mn, sizeof(double));
-			free(negCov);
-			negCov = calloc(new_mn, sizeof(double));
+		 	printf("   %d: Testing %d motifs (%d nt)", loop+1, new_mn, ms); fflush(stdout);
 
+			posCov = realloc(posCov, new_mn*sizeof(double));
+			memset(posCov, 0, new_mn*sizeof(double));
+			negCov = realloc(negCov, new_mn*sizeof(double));
+			memset(negCov, 0, new_mn*sizeof(double));
+			
+			printf("."); fflush(stdout);
+			pmotDist = calloc(new_mn, sizeof(int *));
+			for( i=0; i<new_mn; i++ ){
+				pmotDist[i] = calloc(numPos, sizeof(int));
+			}
+			nmotDist = calloc(new_mn, sizeof(int *));
+			for( i=0; i<new_mn; i++ ){
+				nmotDist[i] = calloc(numNeg, sizeof(int));
+			}
+			printf("."); fflush(stdout);
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- BEGINS ----- */
 			pthread_attr_init(&attr);
 			pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -628,6 +652,7 @@ int main(int argc, char* argv[]){
 			thread_data_array[0].motNum = new_mn;
 			thread_data_array[0].motLen = ms;
 			thread_data_array[0].cov = posCov;
+			thread_data_array[0].motDistr = pmotDist;
 			thread_data_array[1].thread_id = 1;
 			thread_data_array[1].arrSeq = negSeq;
 			thread_data_array[1].arrMot = new_motifs;
@@ -635,6 +660,7 @@ int main(int argc, char* argv[]){
 			thread_data_array[1].motNum = new_mn;
 			thread_data_array[1].motLen = ms;
 			thread_data_array[1].cov = negCov;
+			thread_data_array[1].motDistr = pmotDist;
 			printf("."); fflush(stdout);
 			for( i=0; i<NUM_THREADS; i++ ){
 				rc = pthread_create(&threads[i], &attr, set_coverage, (void *) &thread_data_array[i]);
@@ -661,31 +687,47 @@ int main(int argc, char* argv[]){
 				printf("- "); fflush(stdout);
 				th -= 0.1;
 				out = 1;
+				if( th < 0.5 ){
+					printf("   Breaking the loop!\n");
+	/* 				free2Dchar(new_motifs, new_mn);	 */
+					break;
+				}
 			}
 			else{
 				out = 0;
-			}
-			if( th < 0.5 ){
-				printf("   Breaking the loop!\n");
-				free2Dchar(new_motifs, new_mn);	
-				break;
 			}
 			
 			char *fname = malloc(50*sizeof(char));
 			memset(fname, '\0', 50*sizeof(char));
 			sprintf(fname,"tmp/motifs_%dnt.dat", ms);
+			char *fname2 = malloc(50*sizeof(char));
+			memset(fname2, '\0', 50*sizeof(char));
+			sprintf(fname2,"tmp/motifs_%dnt_distribution.dat", ms);
 			FILE *myTMP = open_file(myTMP, fname, "w" );
 			for( i=0; i<new_mn; i++ ){
 				fprintf(myTMP, "%s %d %d %d %d\n", new_motifs[i], (int)(numPos*posCov[i]), numPos, (int)(numNeg*negCov[i]), numNeg);
 			}
 			fclose(myTMP);
+			FILE *myTMP2 = open_file(myTMP2, fname2, "w" );
+			for( i=0; i<new_mn; i++ ){
+				fprintf(myTMP2, "%s ", new_motifs[i]);
+				for( ii=0; ii<numPos; ii++ ){
+					fprintf(myTMP2, " %d", pmotDist[i][ii]);
+				}
+				fprintf(myTMP2, " \n");
+			}
+			fclose(myTMP2);
 
 			call_R(ms, th, out);
 
 			for( i=0; i<new_mn ; i++ ){
 				free(new_motifs[i]);
+				free(pmotDist[i]);
+				free(nmotDist[i]);
 			}
 			free(new_motifs);
+			free(pmotDist);
+			free(nmotDist);
 			free(posCov);
 			free(negCov);
 
@@ -719,6 +761,8 @@ int main(int argc, char* argv[]){
 			free(mot);
 			free(mline);
 			fclose(myTMP);
+			free(fname);
+			free(fname2);
 
 			tmp_mn = old_mn;
 	  		old_motifs = new_motifs;
@@ -727,215 +771,46 @@ int main(int argc, char* argv[]){
 		}
 		else{
 			printf("   Breaking the loop!\n");
-			free2Dchar(new_motifs, new_mn);	
+/* 			free2Dchar(new_motifs, new_mn);	 */
 			break;
 		}
 	
 		loop++;
 	}while( loop < MAX_MOT-MIN_MOT );
 
-/* COMMENTED FROM HERE... */
-/* 
-	int old_mn, tmp_mn;
-	char **old_motifs = motifs;
-	char **new_motifs = NULL;
-	int new_mn = tmp_mn = mn;
-	int loop = 0;
- 	do{
-		old_mn = new_mn;
- */
-	/* 	new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*NOTATION; */
-	/* 
-		if( new_mn == 0 && th > 0.5 ){
-			th -= TH_STEP;
-			printf("   Lowering the threshold to %.2f of coverage\n", th);
-			new_mn = above_threshold(thread_data_array[0].cov, thread_data_array[1].cov, old_mn, th)*NOTATION;
-		}
-	*/
-/* 		if( new_mn != 0 ){ */
-			/* MOTIFS */
-/* 
-			size_mot = old_mn*(ms)*sizeof(char *)*sizeof(char);
-			backup_mot = realloc(backup_mot, size_mot);
-			memmove(backup_mot, old_motifs, size_mot);
-			ms++;
-			new_mn = filter_and_expand_nt(old_motifs, thread_data_array[0].cov, thread_data_array[1].cov, old_mn, ms, th, &new_motifs);
-		 	printf("   %d: Testing %d motifs (%d nt) ", loop+1, new_mn, ms); fflush(stdout);
- */
-	/* 		fprintf(log, "   %d: Testing %d motifs (%d nt)... ", loop+1, new_mn, ms); */
- 			/* POSITIVE COVERAGE */
-/* 
- 			size_cov = old_mn*sizeof(double);
- 			backup_pcov = realloc(backup_pcov, size_cov);
-			memmove(backup_pcov, thread_data_array[0].cov, size_cov);
-			free(posCov);
-			posCov = calloc(new_mn, sizeof(double));
-			printf("."); fflush(stdout);
- */
- 			/* NEGATIVE COVERAGE */
-/* 
- 			backup_ncov = realloc(backup_ncov, size_cov);
-			memmove(backup_ncov, thread_data_array[1].cov, size_cov);
-			free(negCov);
-			negCov = calloc(new_mn, sizeof(double));
- */
-			
-			
-	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- BEGINS ----- */
-/* 
-			pthread_attr_init(&attr);
-			pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-
-			thread_data_array[0].thread_id = 0;
-			thread_data_array[0].arrSeq = posSeq;
-			thread_data_array[0].arrMot = new_motifs;
-			thread_data_array[0].arrNum = numPos;
-			thread_data_array[0].motNum = new_mn;
-			thread_data_array[0].motLen = ms;
-			thread_data_array[0].cov = posCov;
-			thread_data_array[1].thread_id = 1;
-			thread_data_array[1].arrSeq = negSeq;
-			thread_data_array[1].arrMot = new_motifs;
-			thread_data_array[1].arrNum = numNeg;
-			thread_data_array[1].motNum = new_mn;
-			thread_data_array[1].motLen = ms;
-			thread_data_array[1].cov = negCov;
-			printf("."); fflush(stdout);
-			for( i=0; i<NUM_THREADS; i++ ){
-				rc = pthread_create(&threads[i], &attr, set_coverage, (void *) &thread_data_array[i]);
-				if (rc) {
-					printf("ERROR; return code from pthread_create() is %d\n", rc);
-					exit(-1);
-				}
-			}
-			pthread_attr_destroy(&attr);
-			printf("."); fflush(stdout);
-			for( i=0; i<NUM_THREADS; i++ ){
-				rc = pthread_join(threads[i], &status);
-				if (rc) {
-					printf("ERROR; return code from pthread_join() is %d\n", rc);
-					exit(-1);
-				}
-			}
- */
-	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
-	/* 
-			printf("."); fflush(stdout);
-			select_motifs(&new_mn, ms, &new_motifs, &posCov, &negCov, 0.05);
-			thread_data_array[0].arrMot = new_motifs;
-			thread_data_array[1].arrMot = new_motifs;
-			thread_data_array[0].cov = posCov;
-			thread_data_array[1].cov = negCov;
-			thread_data_array[0].motNum = new_mn;
-			thread_data_array[1].motNum = new_mn;
- */
-			
-	/* 			tmp_mn = old_mn; */
-	/* 	  		old_motifs = new_motifs; */
-	  
-/* 
-			char *fname = malloc(50*sizeof(char));
-			memset(fname, '\0', 50*sizeof(char));
-			sprintf(fname,"tmp/motifs_%dnt.dat", ms);
-			FILE *myTMP = open_file(myTMP, fname, "w" );
-			for( i=0; i<new_mn; i++ ){
-				fprintf(myTMP, "%s %d %d %d %d\n", new_motifs[i], (int)(numPos*posCov[i]), numPos, (int)(numNeg*negCov[i]), numNeg);
-			}
-			fclose(myTMP);
-
-			call_R(fname, th);
-
-			for( i=0; i<new_mn ; i++ ){
-				free(new_motifs[i]);
-			}
-			free(new_motifs);
-			free(posCov);
-			free(negCov);
-
-			myTMP = open_file(myTMP, fname, "r" );
-			new_mn = read_lines(myTMP);
-			new_motifs = malloc(new_mn*sizeof(char *));
-			for( i=0; i<new_mn ; i++ ){
-				new_motifs[i] = malloc((ms+1)*sizeof(char));
-				memset(new_motifs[i], '\0', (ms+1)*sizeof(char));
-			}
-			posCov = calloc(new_mn, sizeof(double));
-			negCov = calloc(new_mn, sizeof(double));
-
-			i = 0;
-			char *mline = malloc(200*sizeof(char));
-			char *mot = malloc(50*sizeof(char));
-			while( !feof(myTMP) ){
-				memset(mline, '\0', 200*sizeof(char));
-				fscanf(myTMP, "%[^\n]%*c", mline);
-				if( *mline != '\0' ){
-					memset(mot, '\0', 50*sizeof(char));
-					int tp, fp, fn, tn;
-					double pval;
-					sscanf(mline, "%s %d %d %d %d %lf", mot, &tp, &fp, &fn, &tn, &pval);
-					memmove(new_motifs[i], mot, ms+1);
-					posCov[i] = (double)tp/numPos;
-					negCov[i] = (double)fn/numNeg;
-					i++;
-				}
-			}
-			free(mot);
-			free(mline);
-			fclose(myTMP);
-
-			tmp_mn = old_mn;
-	  		old_motifs = new_motifs;
-	  		printf("done\n"); fflush(stdout);
- */
-	  			
-	/* 			fprintf(log, "done\n"); */
-/* 
-		}
-		else{
-			printf("   Breaking the loop!\n");
-			free2Dchar(new_motifs, new_mn);	
-			break;
-		}
-		loop++;
- 	}while( loop < MAX_MOT-MIN_MOT );
- */
-
-/* ... TO HERE */
+	goto here;
 
 	printf("Calculating the motif distribution in the sets... "); fflush(stdout);
 /* 	fprintf(log, "Calculating the motif distribution in the sets.. "); */
+	tmp_mn = new_mn;
 
-	int *posCount, *negCount, *pshufCount, *nshufCount, ***pshuf_matches, ***nshuf_matches, **pmotDist, **nmotDist;
+	int *posCount, *negCount, *pshufCount, *nshufCount, ***pshuf_matches, ***nshuf_matches;
 	double *posPval, *negPval;
 	posCount = calloc(tmp_mn, sizeof(int));
 	negCount = calloc(tmp_mn, sizeof(int));
 	posPval = calloc(tmp_mn, sizeof(double));
 	negPval = calloc(tmp_mn, sizeof(double));
-	
-	pmotDist = calloc(tmp_mn, sizeof(*pmotDist));
-	for( b=0; b<tmp_mn; b++ ){
-		pmotDist[b] = calloc(numPos, sizeof(int));
-	}
-	nmotDist = calloc(tmp_mn, sizeof(*nmotDist));
-	for( b=0; b<tmp_mn; b++ ){
-		nmotDist[b] = calloc(numNeg, sizeof(int));
-	}
-
+	print_and_continue("0");
+	pmotDist = realloc(pmotDist, tmp_mn*numPos*sizeof(int *)*sizeof(int));
+	nmotDist = realloc(nmotDist, tmp_mn*numNeg*sizeof(int *)*sizeof(int));
+	memset(pmotDist, 0, tmp_mn*numPos*sizeof(int *)*sizeof(int));
+	memset(nmotDist, 0, tmp_mn*numNeg*sizeof(int *)*sizeof(int));
+	print_and_continue("1");
 /* ----- MULTI-THREADING COUNT ----- BEGINS ----- */
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
 	thread_data_array[0].thread_id = 0;
-	thread_data_array[0].motNum = tmp_mn;
-	thread_data_array[0].arrMot = backup_mot;
-	thread_data_array[0].motLen = ms-1;
+	thread_data_array[0].motNum = new_mn;
+	thread_data_array[0].arrMot = new_motifs;
+	thread_data_array[0].motLen = ms;
 	thread_data_array[0].count = posCount;
 	thread_data_array[0].motDistr = pmotDist;
 	
 	thread_data_array[1].thread_id = 1;
-	thread_data_array[1].motNum = tmp_mn;
-	thread_data_array[1].arrMot = backup_mot;
-	thread_data_array[1].motLen = ms-1;
+	thread_data_array[1].motNum = new_mn;
+	thread_data_array[1].arrMot = new_motifs;
+	thread_data_array[1].motLen = ms;
 	thread_data_array[1].count = negCount;
 	thread_data_array[1].motDistr = nmotDist;
 	
@@ -954,7 +829,7 @@ int main(int argc, char* argv[]){
 			exit(-1);
 		}
 	}
-	
+	print_and_continue("2");
 	int p, cp, cn;
 	double ppval, npval;
 	for( i=0; i<tmp_mn; i++ ){
@@ -980,14 +855,16 @@ int main(int argc, char* argv[]){
 /* 	fprintf(log, "done\nCalculating the optimal distance between the sets... "); */
 			  	
 	FILE *FoutAll = open_file(FoutAll, "motifs_last_loop.txt", "w" );
-	for( i=0; i<tmp_mn; i++ ){
-/* 		if( backup_pcov[i] >= th || backup_ncov[i] >= th ){ */
-		if( backup_mot[i][0] != '-' && backup_mot[i][ms-2] != '-' ){
-			fprintf(FoutAll, "%s %.3f %.3f %d %d %.4f %.4f\n", backup_mot[i], backup_pcov[i], backup_ncov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
+ 	for( i=0; i<new_mn; i++ ){
+		if( new_motifs[i][0] != '-' && new_motifs[i][ms-2] != '-' ){
+			fprintf(FoutAll, "%s %.3f %.3f %d %d %.4f %.4f\n", new_motifs[i], posCov[i], negCov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
 		}
-/* 		} */
 	}
+
 	fclose(FoutAll);
+	
+	here:
+	
 	printf("done\nFreeing the memory... "); fflush(stdout);
 /*  	fprintf(log, "done\nFreeing the memory... "); */
 
@@ -996,7 +873,7 @@ int main(int argc, char* argv[]){
 	free(fileN);
 	free(type);
 print_and_continue("0");
-	free2Dchar(motifs, mn);
+/* 	free2Dchar(motifs, mn); */
 	free2Dchar(posID, numPos);
 	free2Dchar(posSeq, numPos);
 	if( negID ){
@@ -1015,13 +892,16 @@ print_and_continue("2");
 	free(posCov);
 	free(negCov);
 print_and_continue("3");
+/* 
 	free(backup_pcov);
 	free(backup_ncov);
+ */
 print_and_continue("4");
 	if( loop != 0 ){
 		printf("%d", loop);
 		print_and_continue("a");
-		free2Dchar(backup_mot, tmp_mn);
+/* 		free2Dchar(backup_mot, tmp_mn); */
+		free2Dchar(new_motifs, new_mn);
 	}
 print_and_continue("6");
 	free(posCount);

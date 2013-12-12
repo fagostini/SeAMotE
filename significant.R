@@ -4,6 +4,7 @@ th <- as.double(Args[6])
 out <- as.integer(Args[7])
 
 DFall <- as.data.frame(read.table(paste("tmp/motifs_", Args[5],"nt.dat", sep="")))
+DFdis <- as.data.frame(read.table(paste("tmp/motifs_", Args[5],"nt_distribution.dat", sep="")))
 
 DF <- as.data.frame(DFall[which(DFall$V2/DFall$V3 >= th),])
 DF$V3 <- DF$V3-DF$V2;
@@ -33,7 +34,7 @@ DF$Nval <- Nval
 # }
 
 if( out == 1 ){
-	write.table(DF[which( (DF$V2/(DF$V2+DF$V3) >= th+0.1) ),],"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)
+	write.table(DF[which( (DF$V2/(DF$V2+DF$V3) >= th+0.1 & DF$Pval <= min(Pval) ) ),],"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)
 	write.table(DF[which( (DF$V2/(DF$V2+DF$V3) >= th) ),], paste("tmp/motifs_",Args[5],"nt.dat", sep=""), row.names=FALSE, col.names=FALSE, quote = FALSE)
 }else{
 	write.table(DF[which( DF$Pval <= min(Pval) ),],"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)

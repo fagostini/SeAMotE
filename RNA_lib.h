@@ -229,14 +229,45 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
 	}
 	free(oldSet);
 	
-	c = 0;
-	(*newSet) = malloc2Dchar((newLen+1), numUniq);
-	while( c<numUniq ){
-		memcpy((*newSet)[c], tmpSet[c], newLen);
-		c++;
+	(*newSet) = malloc(numUniq*sizeof(char *));
+	for( i=0; i<numUniq; i++ ){
+		(*newSet)[i] = malloc((newLen+1)*sizeof(char));
+		memset((*newSet)[i], '\0', (newLen+1)*sizeof(char));
+		memmove((*newSet)[i], tmpSet[i], newLen);
 	}
 	
 	free2Dchar(tmpSet,  numMot*n);
 	
 	return numUniq;
+}
+
+static void expand_nt(char **oldSet, int numMot, int newLen, char ***newSet){
+	int i, ii;
+/* 
+	int n = 4;
+	char pool[] = "ACGT";
+ */
+	int n = 14;
+	char pool[] = "ACGTRYSWKMBDHV";
+
+	int c = 0;
+	char *motA = malloc((newLen+1)*sizeof(char));
+	memset(motA, '\0', (newLen+1)*sizeof(char));
+	for( i=0; i<numMot; i++ ){
+		for( ii=0; ii<n; ii++ ){
+			/* Add the nucleotide on the right side */
+			memset(motA, '\0', (newLen+1)*sizeof(char));
+			memcpy(motA, oldSet[i], newLen-1);
+			strncat(motA, &pool[ii], 1);
+			memmove((*newSet)[c++], motA, newLen);
+/* 			puts((*newSet)); */
+		}
+	}
+	free(motA);
+	
+	for( i=0; i<numMot; i++ ){
+		free(oldSet[i]);
+	}
+	free(oldSet);
+	
 }
