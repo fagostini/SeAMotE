@@ -29,15 +29,22 @@ DF$Nval <- Nval
 # 		Nquant <- Nval[order(Nval, decreasing=FALSE)[50]]
 # 	}
 # }else{
-	Pquant <- quantile(Pval, 0.1)
-	Nquant <- quantile(Nval, 0.1)	
+# 	Pquant <- quantile(Pval, 0.1)
+# 	Nquant <- quantile(Nval, 0.1)	
 # }
 
+if( length(Pval) < 150 ){
+	select <- order(Pval)
+}else{
+	select <- order(Pval)[1:150]
+}
+
 if( out == 1 ){
-	write.table(DF[which( (DF$V2/(DF$V2+DF$V3) >= th+0.1 & DF$Pval <= min(Pval) ) ),],"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)
+#	write.table(DF[which( (DF$V2/(DF$V2+DF$V3) >= th+0.1 & DF$Pval <= min(Pval) ) ),],"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)
 	write.table(DF[which( (DF$V2/(DF$V2+DF$V3) >= th) ),], paste("tmp/motifs_",Args[5],"nt.dat", sep=""), row.names=FALSE, col.names=FALSE, quote = FALSE)
 }else{
 	write.table(DF[which( DF$Pval <= min(Pval) ),],"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)
-	write.table(DF[which(DF$Pval <= Pquant ),], paste("tmp/motifs_",Args[5],"nt.dat", sep=""), row.names=FALSE, col.names=FALSE, quote = FALSE)
+#	write.table(DF[which(DF$Pval <= Pquant ),], paste("tmp/motifs_",Args[5],"nt.dat", sep=""), row.names=FALSE, col.names=FALSE, quote = FALSE)
+	write.table(DF[which(row.names(DF) %in% select),], paste("tmp/motifs_",Args[5],"nt.dat", sep=""), row.names=FALSE, col.names=FALSE, quote = FALSE)
 }
 
