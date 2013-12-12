@@ -675,7 +675,7 @@ int main(int argc, char* argv[]){
 			thread_data_array[1].motNum = new_mn;
 			thread_data_array[1].motLen = ms;
 			thread_data_array[1].cov = negCov;
-			thread_data_array[1].motDistr = pmotDist;
+			thread_data_array[1].motDistr = nmotDist;
 			printf("."); fflush(stdout);
 			for( i=0; i<NUM_THREADS; i++ ){
 				rc = pthread_create(&threads[i], &attr, set_coverage, (void *) &thread_data_array[i]);
