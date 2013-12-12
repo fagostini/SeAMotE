@@ -549,11 +549,13 @@ int main(int argc, char* argv[]){
 	char *fname3 = malloc(50*sizeof(char));
 	memset(fname3, '\0', 50*sizeof(char));
 	sprintf(fname3,"tmp/motifs_%dnt_Ndistribution.dat", ms);
+	
 	FILE *myTMP = open_file(myTMP, fname, "w" );
 	for( i=0; i<mn; i++ ){
 		fprintf(myTMP, "%s %d %d %d %d\n", motifs[i], (int)(numPos*posCov[i]), numPos, (int)(numNeg*negCov[i]), numNeg);
 	}
 	fclose(myTMP);
+	
 	FILE *myTMP2 = open_file(myTMP2, fname2, "w" );
 	int ii;
 	for( i=0; i<mn; i++ ){
@@ -564,6 +566,7 @@ int main(int argc, char* argv[]){
 		fprintf(myTMP2, " \n");
 	}
 	fclose(myTMP2);
+	
 	FILE *myTMP3 = open_file(myTMP3, fname3, "w" );
 	for( i=0; i<mn; i++ ){
 		fprintf(myTMP3, "%s ", motifs[i]);
@@ -586,7 +589,6 @@ int main(int argc, char* argv[]){
 	free(negCov);
 	free(pmotDist);
 	free(nmotDist);
-
 
 	myTMP = open_file(myTMP, fname, "r" );
 	mn = read_lines(myTMP);
@@ -620,6 +622,7 @@ int main(int argc, char* argv[]){
 	fclose(myTMP);
 	free(fname);
 	free(fname2);
+	free(fname3);
 
 	printf("done\nBeginnig the motif coverage optimization:\n"); fflush(stdout);
 /* 	fprintf(log, "done\nBeginnig the motif coverage optimization:\n"); */
@@ -723,6 +726,7 @@ int main(int argc, char* argv[]){
 				fprintf(myTMP, "%s %d %d %d %d\n", new_motifs[i], (int)(numPos*posCov[i]), numPos, (int)(numNeg*negCov[i]), numNeg);
 			}
 			fclose(myTMP);
+			
 			FILE *myTMP2 = open_file(myTMP2, fname2, "w" );
 			for( i=0; i<new_mn; i++ ){
 				fprintf(myTMP2, "%s ", new_motifs[i]);
@@ -732,6 +736,7 @@ int main(int argc, char* argv[]){
 				fprintf(myTMP2, " \n");
 			}
 			fclose(myTMP2);
+			
 			FILE *myTMP3 = open_file(myTMP3, fname3, "w" );
 			for( i=0; i<new_mn; i++ ){
 				fprintf(myTMP3, "%s ", new_motifs[i]);
@@ -787,6 +792,7 @@ int main(int argc, char* argv[]){
 			fclose(myTMP);
 			free(fname);
 			free(fname2);
+			free(fname3);
 
 			tmp_mn = old_mn;
 	  		old_motifs = new_motifs;

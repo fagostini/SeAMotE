@@ -4,7 +4,7 @@ th <- as.double(Args[6])
 out <- as.integer(Args[7])
 
 DFall <- as.data.frame(read.table(paste("tmp/motifs_", Args[5],"nt.dat", sep="")))
-DFdis <- as.data.frame(read.table(paste("tmp/motifs_", Args[5],"nt_distribution.dat", sep="")))
+DFdis <- as.data.frame(read.table(paste("tmp/motifs_", Args[5],"nt_Pdistribution.dat", sep="")))
 
 DF <- as.data.frame(DFall[which(DFall$V2/DFall$V3 >= th),])
 DF$V3 <- DF$V3-DF$V2;
