@@ -316,7 +316,7 @@ int main(int argc, char* argv[]){
 	numPos = numNeg = ref = 0;
 	int ms = MIN_MOT;
 	int mn = pow(SEED_NOTA,ms);
-	double th = 0.8;
+	double th = 0.9;
 	char **motifs, **posID, **posSeq, **negID, **negSeq, **shuSeq;
 	motifs = posID = posSeq = negID = negSeq = shuSeq = NULL;
 	FILE *log, *Fpositive, *Fnegative, *Fshuffle, *Fposshuf, *Fnegshuf;
@@ -680,7 +680,7 @@ int main(int argc, char* argv[]){
 			}
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
 			int out;
-			if( new_mn <= 10*NOTATION ){
+			if( new_mn <= 20*NOTATION ){
 				FILE *bestMotifs = open_file(bestMotifs, "tmp/best_motifs.dat", "aw" );
 				fprintf(bestMotifs, "%.2lf\n", th);
 				fclose(bestMotifs);
