@@ -565,7 +565,6 @@ int main(int argc, char* argv[]){
 	}
 	fclose(myTMP2);
 	FILE *myTMP3 = open_file(myTMP3, fname3, "w" );
-	int ii;
 	for( i=0; i<mn; i++ ){
 		fprintf(myTMP3, "%s ", motifs[i]);
 		for( ii=0; ii<numNeg; ii++ ){
@@ -715,7 +714,7 @@ int main(int argc, char* argv[]){
 			sprintf(fname,"tmp/motifs_%dnt.dat", ms);
 			char *fname2 = malloc(50*sizeof(char));
 			memset(fname2, '\0', 50*sizeof(char));
-			sprintf(fname2,"tmp/motifs_%dnt_distribution.dat", ms);
+			sprintf(fname2,"tmp/motifs_%dnt_Pdistribution.dat", ms);
 			char *fname3 = malloc(50*sizeof(char));
 			memset(fname3, '\0', 50*sizeof(char));
 			sprintf(fname3,"tmp/motifs_%dnt_Ndistribution.dat", ms);
@@ -735,7 +734,7 @@ int main(int argc, char* argv[]){
 			fclose(myTMP2);
 			FILE *myTMP3 = open_file(myTMP3, fname3, "w" );
 			for( i=0; i<new_mn; i++ ){
-				fprintf(myTMP3, "%s ", motifs[i]);
+				fprintf(myTMP3, "%s ", new_motifs[i]);
 				for( ii=0; ii<numNeg; ii++ ){
 					fprintf(myTMP3, " %d", nmotDist[i][ii]);
 				}
@@ -934,8 +933,8 @@ print_and_continue("6");
 	free(posPval);
 	free(negPval);
 print_and_continue("7");
-	free2Dint(pmotDist, new_mn);
-	free2Dint(nmotDist, new_mn);
+/* 	free2Dint(pmotDist, new_mn); */
+/* 	free2Dint(nmotDist, new_mn); */
 
 	printf("done\nThe script executed successfully!\n"); fflush(stdout);
 /* 	fprintf(log, "done\nThe script executed successfully!\n"); */
