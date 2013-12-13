@@ -1,0 +1,61 @@
+# DREME 4.9.0
+# command:   dreme -png -v 1 -oc . -t 18000 -p TIA1.posi.fa -n TIA1.nega.fa -norc -e 0.05
+# host:      C02G499EDHJP
+# when:      Tue Dec 10 19:09:13 CET 2013
+# positives: 1000
+#      from: TIA1.posi.fa (Tue Dec 10 16:29:35 CET 2013)
+# negatives: 968
+#      from: TIA1.nega.fa (Tue Dec 10 16:29:35 CET 2013)
+
+
+MEME version 4.9.0
+
+ALPHABET= ACGT
+
+strands: + -
+
+Background letter frequencies (from dataset):
+A 0.255 C 0.204 G 0.218 T 0.323
+
+MOTIF TTTHT
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST       TTTHT      ADAAA        867        365   4.0e-118   1.5e-113
+#            TTTTT      AAAAA        690        241   2.2e-088   8.3e-084
+#            TTTAT      ATAAA        428        138   4.7e-046   1.8e-041
+#            TTTCT      AGAAA        395        163   1.4e-029   5.3e-025
+
+letter-probability matrix: alength= 4 w= 5 nsites= 2148 E= 1.5e-113
+0.000000 0.000000 0.000000 0.998606
+0.000000 0.000000 0.000000 0.998606
+0.000000 0.000000 0.000000 0.998606
+0.243030 0.205390 0.000000 0.551115
+0.000000 0.000000 0.000000 0.998606
+
+
+MOTIF TTT
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST         TTT        AAA        790        535   1.1e-029   3.5e-025
+#              TTT        AAA        790        535   1.1e-029   3.5e-025
+
+letter-probability matrix: alength= 4 w= 3 nsites= 2231 E= 3.5e-025
+0.000000 0.000000 0.000000 0.998658
+0.000000 0.000000 0.000000 0.998658
+0.000000 0.000000 0.000000 0.998658
+
+
+MOTIF TTAW
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST        TTAW       WTAA        320        217   1.1e-006   2.7e-002
+#             TTAT       ATAA        195        126   6.1e-005   1.5e+000
+#             TTAA       TTAA        169        126   9.3e-003   2.2e+002
+
+letter-probability matrix: alength= 4 w= 4 nsites= 530 E= 2.7e-002
+0.000000 0.000000 0.000000 0.994382
+0.000000 0.000000 0.000000 0.994382
+0.994382 0.000000 0.000000 0.000000
+0.352060 0.000000 0.000000 0.644195
+
+

@@ -1,0 +1,90 @@
+# DREME 4.9.0
+# command:   dreme -png -v 1 -oc . -t 18000 -p PUM2.posi.fa -n PUM2.nega.fa -norc -e 0.05
+# host:      C02G499EDHJP
+# when:      Tue Dec 10 19:04:39 CET 2013
+# positives: 1000
+#      from: PUM2.posi.fa (Tue Dec 10 16:29:34 CET 2013)
+# negatives: 1000
+#      from: PUM2.nega.fa (Tue Dec 10 16:29:34 CET 2013)
+
+
+MEME version 4.9.0
+
+ALPHABET= ACGT
+
+strands: + -
+
+Background letter frequencies (from dataset):
+A 0.261 C 0.215 G 0.233 T 0.291
+
+MOTIF TRTAHA
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST      TRTAHA     TDTAYA        849         76   3.0e-300   7.4e-296
+#           TGTAAA     TTTACA        365         19   1.2e-100   3.0e-096
+#           TGTATA     TATACA        348         16   1.9e-097   4.7e-093
+#           TATATA     TATATA        283         16   1.1e-073   2.7e-069
+#           TGTACA     TGTACA        200          6   2.8e-056   7.1e-052
+#           TATAAA     TTTATA        161         22   6.7e-030   1.7e-025
+#           TATAAA     TTTATA        147         22   4.9e-026   1.2e-021
+#           TATACA     TGTATA         81         14   1.9e-013   4.8e-009
+#           TGTAAA     TTTACA         50         16   1.2e-005   3.1e-001
+
+letter-probability matrix: alength= 4 w= 6 nsites= 1424 E= 7.4e-296
+0.000000 0.000000 0.000000 0.997899
+0.276611 0.000000 0.721989 0.000000
+0.000000 0.000000 0.000000 0.997899
+0.997899 0.000000 0.000000 0.000000
+0.485294 0.176471 0.000000 0.337535
+0.997899 0.000000 0.000000 0.000000
+
+
+MOTIF TAWH
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST        TAWH       DWTA        888        512   2.4e-079   5.3e-075
+#             TAAA       TTTA        443        192   3.6e-034   7.9e-030
+#             TATT       AATA        471        215   4.2e-034   9.1e-030
+#             TATT       AATA        393        171   6.7e-029   1.5e-024
+#             TATA       TATA        263         83   1.7e-027   3.8e-023
+#             TAAT       ATTA        372        164   2.4e-026   5.3e-022
+#             TATC       GATA        203         68   2.3e-019   5.0e-015
+#             TAAA       TTTA        436        275   3.2e-014   7.1e-010
+#             TAAT       ATTA        285        150   1.3e-013   2.9e-009
+#             TAAC       GTTA        208         98   4.2e-012   9.1e-008
+
+letter-probability matrix: alength= 4 w= 4 nsites= 2643 E= 5.3e-075
+0.000000 0.000000 0.000000 0.998867
+0.998867 0.000000 0.000000 0.000000
+0.586702 0.000000 0.000000 0.412543
+0.410276 0.155648 0.000000 0.433699
+
+
+MOTIF TAY
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST         TAY        RTA        531        260   7.6e-036   9.5e-032
+#              TAC        GTA        433        205   2.4e-028   3.0e-024
+#              TAT        ATA        191         79   9.5e-014   1.2e-009
+#              TAT        ATA        167         75   1.4e-010   1.8e-006
+
+letter-probability matrix: alength= 4 w= 3 nsites= 926 E= 9.5e-032
+0.000000 0.000000 0.000000 0.996774
+0.996774 0.000000 0.000000 0.000000
+0.000000 0.634409 0.000000 0.363441
+
+
+MOTIF TTTTC
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST       TTTTC      GAAAA        166         90   2.2e-007   2.1e-003
+#            TTTTC      GAAAA        166         90   2.2e-007   2.1e-003
+
+letter-probability matrix: alength= 4 w= 5 nsites= 201 E= 2.1e-003
+0.000000 0.000000 0.000000 0.985366
+0.000000 0.000000 0.000000 0.985366
+0.000000 0.000000 0.000000 0.985366
+0.000000 0.000000 0.000000 0.985366
+0.000000 0.985366 0.000000 0.000000
+
+

@@ -1,0 +1,102 @@
+# DREME 4.9.0
+# command:   dreme -png -v 1 -oc . -t 18000 -p FUS.posi.fa -n FUS.nega.fa -norc -e 0.05
+# host:      C02G499EDHJP
+# when:      Tue Dec 10 18:50:08 CET 2013
+# positives: 1568
+#      from: FUS.posi.fa (Tue Dec 10 16:29:34 CET 2013)
+# negatives: 1568
+#      from: FUS.nega.fa (Tue Dec 10 16:29:34 CET 2013)
+
+
+MEME version 4.9.0
+
+ALPHABET= ACGT
+
+strands: + -
+
+Background letter frequencies (from dataset):
+A 0.280 C 0.187 G 0.206 T 0.327
+
+MOTIF WYAM
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST        WYAM       KTRW       1446        858   8.5e-135   1.4e-130
+#             TTAA       TTAA        584        256   8.8e-041   1.5e-036
+#             ACAA       TTGT        388        122   1.8e-039   3.0e-035
+#             TTAC       GTAA        400        131   5.4e-039   8.9e-035
+#             ATAA       TTAT        484        198   4.3e-036   7.1e-032
+#             TCAA       TTGA        397        139   1.2e-035   2.1e-031
+#             ATAA       TTAT        539        246   2.9e-034   4.8e-030
+#             ATAC       GTAT        334        116   1.1e-029   1.8e-025
+#             ACAC       GTGT        217         75   5.2e-019   8.7e-015
+#             TCAC       GTGA        227        129   2.0e-008   3.3e-004
+
+letter-probability matrix: alength= 4 w= 4 nsites= 3590 E= 1.4e-130
+0.507513 0.000000 0.000000 0.491931
+0.000000 0.300501 0.000000 0.698943
+0.999165 0.000000 0.000000 0.000000
+0.686422 0.313022 0.000000 0.000000
+
+
+MOTIF HWTC
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST        HWTC       GAWD        978        531   2.8e-058   2.4e-054
+#             TTTC       GAAA        468        228   2.0e-025   1.7e-021
+#             TATC       GATA        138         43   8.9e-014   7.6e-010
+#             ATTC       GAAT        232        108   4.8e-013   4.1e-009
+#             CTTC       GAAG        216        107   7.8e-011   6.7e-007
+#             CATC       GATG        173         78   2.0e-010   1.7e-006
+#             AATC       GATT        120         67   4.0e-005   3.4e-001
+
+letter-probability matrix: alength= 4 w= 4 nsites= 1459 E= 2.4e-054
+0.267943 0.250171 0.000000 0.481203
+0.302802 0.000000 0.000000 0.695830
+0.000000 0.000000 0.000000 0.997949
+0.000000 0.997949 0.000000 0.000000
+
+
+MOTIF WAA
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST         WAA        TTW        651        324   4.4e-037   2.0e-033
+#              TAA        TTA        370        147   1.2e-027   5.4e-024
+#              AAA        TTT        478        236   2.3e-025   9.9e-022
+
+letter-probability matrix: alength= 4 w= 3 nsites= 1194 E= 2.0e-033
+0.603506 0.000000 0.000000 0.394825
+0.997496 0.000000 0.000000 0.000000
+0.997496 0.000000 0.000000 0.000000
+
+
+MOTIF ATH
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST         ATH        DAT        487        320   5.3e-012   1.5e-008
+#              ATT        AAT        167         88   1.4e-007   4.1e-004
+#              ATA        TAT        248        161   2.4e-006   6.8e-003
+#              ATA        TAT        255        175   2.0e-005   5.6e-002
+#              ATT        AAT        132         86   7.6e-004   2.2e+000
+#              ATC        GAT        138         97   3.3e-003   9.4e+000
+
+letter-probability matrix: alength= 4 w= 3 nsites= 766 E= 1.5e-008
+0.996104 0.000000 0.000000 0.000000
+0.000000 0.000000 0.000000 0.996104
+0.500000 0.189610 0.000000 0.309091
+
+
+MOTIF TWCTA
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST       TWCTA      TAGWA         38          7   1.3e-006   3.1e-003
+#            TACTA      TAGTA         26          5   9.0e-005   2.1e-001
+#            TTCTA      TAGAA         14          2   2.0e-003   4.8e+000
+
+letter-probability matrix: alength= 4 w= 5 nsites= 41 E= 3.1e-003
+0.000000 0.000000 0.000000 0.933333
+0.600000 0.000000 0.000000 0.355556
+0.000000 0.933333 0.000000 0.000000
+0.000000 0.000000 0.000000 0.933333
+0.933333 0.000000 0.000000 0.000000
+
+

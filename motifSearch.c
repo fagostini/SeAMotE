@@ -677,7 +677,7 @@ int main(int argc, char* argv[]){
 	int new_mn = tmp_mn = mn;
 	do{
 		old_mn = new_mn;
-		if( new_mn != 0 && new_mn < 1000 ){
+		if( new_mn != 0 && new_mn < 2000 ){
 			ms++;
 			new_mn = filter_and_expand_nt(old_motifs, thread_data_array[0].cov, thread_data_array[1].cov, old_mn, ms, th, &new_motifs);
 		 	printf("   %d: Testing %d motifs (%d nt)", loop+1, new_mn, ms); fflush(stdout);

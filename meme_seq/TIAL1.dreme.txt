@@ -1,0 +1,102 @@
+# DREME 4.9.0
+# command:   dreme -png -v 1 -oc . -t 18000 -p TIAL1.posi.fa -n TIAL1.nega.fa -norc -e 0.05
+# host:      C02G499EDHJP
+# when:      Tue Dec 10 19:09:32 CET 2013
+# positives: 2117
+#      from: TIAL1.posi.fa (Tue Dec 10 16:29:35 CET 2013)
+# negatives: 2093
+#      from: TIAL1.nega.fa (Tue Dec 10 16:29:35 CET 2013)
+
+
+MEME version 4.9.0
+
+ALPHABET= ACGT
+
+strands: + -
+
+Background letter frequencies (from dataset):
+A 0.275 C 0.200 G 0.215 T 0.311
+
+MOTIF TTTNTW
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST      TTTNTW     WANAAA       1787        707   7.8e-259   4.8e-254
+#           TTTTTT     AAAAAA        989        242   3.7e-146   2.3e-141
+#           TTTTTA     TAAAAA        840        246   2.4e-099   1.5e-094
+#           TTTATT     AATAAA        556        157   3.9e-062   2.4e-057
+#           TTTCTT     AAGAAA        531        149   2.7e-059   1.6e-054
+#           TTTGTT     AACAAA        416        147   1.4e-034   8.6e-030
+#           TTTATA     TATAAA        303         92   1.2e-029   7.3e-025
+#           TTTGTA     TACAAA        269         98   4.9e-021   3.0e-016
+#           TTTCTA     TAGAAA        200         82   2.7e-013   1.6e-008
+#           TTTATA     TATAAA        135         80   1.0e-004   6.3e+000
+
+letter-probability matrix: alength= 4 w= 6 nsites= 4491 E= 4.8e-254
+0.000000 0.000000 0.000000 0.999333
+0.000000 0.000000 0.000000 0.999333
+0.000000 0.000000 0.000000 0.999333
+0.203337 0.183092 0.174861 0.438710
+0.000000 0.000000 0.000000 0.999333
+0.325250 0.000000 0.000000 0.674305
+
+
+MOTIF TTTW
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST        TTTW       WAAA       1454        879   7.8e-069   4.2e-064
+#             TTTT       AAAA       1170        620   2.1e-064   1.1e-059
+#             TTTA       TAAA       1023        589   7.8e-042   4.2e-037
+#             TTTA       TAAA        674        522   4.1e-007   2.2e-002
+
+letter-probability matrix: alength= 4 w= 4 nsites= 3730 E= 4.2e-064
+0.000000 0.000000 0.000000 0.999197
+0.000000 0.000000 0.000000 0.999197
+0.000000 0.000000 0.000000 0.999197
+0.422067 0.000000 0.000000 0.577397
+
+
+MOTIF TWT
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST         TWT        AWA       1643       1363   1.7e-019   7.9e-015
+#              TTT        AAA       1084        815   7.5e-016   3.5e-011
+#              TAT        ATA       1263       1017   3.4e-013   1.6e-008
+
+letter-probability matrix: alength= 4 w= 3 nsites= 5588 E= 7.9e-015
+0.000000 0.000000 0.000000 0.999464
+0.591917 0.000000 0.000000 0.407725
+0.000000 0.000000 0.000000 0.999464
+
+
+MOTIF YYCTT
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST       YYCTT      AAGRR        476        309   7.2e-011   2.3e-006
+#            CTCTT      AAGAG        165        101   4.6e-005   1.5e+000
+#            TTCTT      AAGAA        153         97   2.3e-004   7.3e+000
+#            CCCTT      AAGGG        115         70   5.9e-004   1.9e+001
+#            TCCTT      AAGGA        125         84   2.9e-003   9.3e+001
+
+letter-probability matrix: alength= 4 w= 5 nsites= 782 E= 2.3e-006
+0.000000 0.500000 0.000000 0.497455
+0.000000 0.449109 0.000000 0.548346
+0.000000 0.996183 0.000000 0.000000
+0.000000 0.000000 0.000000 0.996183
+0.000000 0.000000 0.000000 0.996183
+
+
+MOTIF TTAAY
+
+#             Word    RC Word        Pos        Neg    P-value    E-value
+# BEST       TTAAY      RTTAA        203        119   1.1e-006   3.4e-002
+#            TTAAT      ATTAA        111         60   5.8e-005   1.8e+000
+#            TTAAC      GTTAA        100         62   1.9e-003   5.6e+001
+
+letter-probability matrix: alength= 4 w= 5 nsites= 277 E= 3.4e-002
+0.000000 0.000000 0.000000 0.989324
+0.000000 0.000000 0.000000 0.989324
+0.989324 0.000000 0.000000 0.000000
+0.989324 0.000000 0.000000 0.000000
+0.000000 0.498221 0.000000 0.494662
+
+
