@@ -286,8 +286,8 @@ static int filter_and_expand_iupac(char **oldSet, int numMot, int newLen, char *
 	char pool2[] = "ACGTRYSWKMBDHV";
 	char **tmpSet = malloc(numMot*NOTATION*NOTATION*sizeof(char*));
 	for( i=0; i<=numMot*NOTATION*NOTATION; i++ ){
-		tmpSet[i] = malloc((newLen)*sizeof(char));
-		memset(tmpSet[i], '\0', (newLen)*sizeof(char));
+		tmpSet[i] = malloc((newLen+1)*sizeof(char));
+		memset(tmpSet[i], '\0', (newLen+1)*sizeof(char));
 	}
 	
 	FILE *temp;
@@ -296,12 +296,12 @@ static int filter_and_expand_iupac(char **oldSet, int numMot, int newLen, char *
 		exit(1);
 	}
 	
-	char *motA = malloc((newLen)*sizeof(char));
-	memset(motA, '\0', (newLen)*sizeof(char));
+	char *motA = malloc((newLen+1)*sizeof(char));
+	memset(motA, '\0', (newLen+1)*sizeof(char));
 	int c = 0;
 	for( i=0; i<numMot; i++ ){
-		memset(motA, '\0', (newLen)*sizeof(char));
-		memmove(motA, oldSet[i], newLen);
+		memset(motA, '\0', (newLen+1)*sizeof(char));
+		memmove(motA, oldSet[i], newLen+1);
 		if( motA[newLen-2] == 'N' ){
 			for( u=0; u<14; u++ ){
 				for( c=0; c<14; c++ ){
@@ -319,20 +319,20 @@ static int filter_and_expand_iupac(char **oldSet, int numMot, int newLen, char *
 	free(motA);
 
 	int numUniq = 0;
-	char *mot = malloc((newLen)*sizeof(char));
+	char *mot = malloc((newLen+1)*sizeof(char));
 	while(!feof(temp)){
-		memset(mot, '\0', (newLen)*sizeof(char));
+		memset(mot, '\0', (newLen+1)*sizeof(char));
 		fscanf(temp,"%[^\n]%*c", mot);
 		if( *mot != '\0' ){
 			int found = c = 0;
 			do{
-				if( strncmp(tmpSet[c++], mot, newLen) == 0 ){
+				if( strncmp(tmpSet[c++], mot, newLen+1) == 0 ){
 					found = 1;
 					break;
 				}
 			}while( c <= numUniq );
 			if( found == 0 ){
-				memmove(tmpSet[numUniq++], mot, newLen);
+				memmove(tmpSet[numUniq++], mot, newLen+1);
 			}
 		}
 	}
@@ -341,9 +341,9 @@ static int filter_and_expand_iupac(char **oldSet, int numMot, int newLen, char *
 	
 	(*newSet) = malloc(numUniq*sizeof(char *));
 	for( i=0; i<numUniq; i++ ){
-		(*newSet)[i] = malloc((newLen)*sizeof(char));
-		memset((*newSet)[i], '\0', (newLen)*sizeof(char));
-		memmove((*newSet)[i], tmpSet[i], newLen);
+		(*newSet)[i] = malloc((newLen+1)*sizeof(char));
+		memset((*newSet)[i], '\0', (newLen+1)*sizeof(char));
+		memmove((*newSet)[i], tmpSet[i], newLen+1);
 	}
 	
 	for( i=0; i<numMot*NOTATION*NOTATION; i++ ){
