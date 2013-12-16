@@ -136,7 +136,7 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
 /* 	int n = NOTATION*2; */
 	char pool2[] = "ACGTRYSWKMBDHV";
 	char **tmpSet = malloc(numMot*n*14*sizeof(char*));
-	for( i=0; i<=numMot*n*14; i++ ){
+	for( i=0; i<numMot*n*14; i++ ){
 		tmpSet[i] = malloc((newLen+1)*sizeof(char));
 		memset(tmpSet[i], '\0', (newLen+1)*sizeof(char));
 	}
@@ -277,19 +277,19 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
 }
 
 static int filter_and_expand_iupac(char **oldSet, int numMot, int newLen, char ***newSet){
-	
+
 /* 	printf("   Expanding %d motifs... ", numMot); fflush(stdout);  */
 	int i, ii, u;
 	int n = SEED_NOTA*2;
 	char pool[] = "ACGT";
 	int n2 = NOTATION;
 	char pool2[] = "ACGTRYSWKMBDHV";
-	char **tmpSet = malloc(numMot*NOTATION*NOTATION*sizeof(char*));
-	for( i=0; i<=numMot*NOTATION*NOTATION; i++ ){
+	char **tmpSet = malloc(numMot*NOTATION*NOTATION*sizeof(char *));
+	for( i=0; i<numMot*NOTATION*NOTATION; i++ ){
 		tmpSet[i] = malloc((newLen+1)*sizeof(char));
 		memset(tmpSet[i], '\0', (newLen+1)*sizeof(char));
 	}
-	
+
 	FILE *temp;
 	if( (temp = tmpfile()) == NULL ) {
 		printf("Fail\nCannot open the temporary file to store motifs.\n");
@@ -338,7 +338,7 @@ static int filter_and_expand_iupac(char **oldSet, int numMot, int newLen, char *
 	}
 	fclose(temp);
 	free(mot);
-	
+
 	(*newSet) = malloc(numUniq*sizeof(char *));
 	for( i=0; i<numUniq; i++ ){
 		(*newSet)[i] = malloc((newLen+1)*sizeof(char));
@@ -350,7 +350,7 @@ static int filter_and_expand_iupac(char **oldSet, int numMot, int newLen, char *
 		free(tmpSet[i]);
 	}
 	free(tmpSet);
-	
+
 /* 	printf("done\n"); fflush(stdout);  */
 	
 	return numUniq;
