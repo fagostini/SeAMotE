@@ -677,7 +677,7 @@ int main(int argc, char* argv[]){
 	int new_mn = tmp_mn = mn;
 	do{
 		old_mn = new_mn;
-		if( new_mn != 0 && loop+1 < 7 ){
+		if( new_mn != 0 && loop+4 < 7 ){
 			ms++;
 			new_mn = filter_and_expand_nt(old_motifs, thread_data_array[0].cov, thread_data_array[1].cov, old_mn, ms, th, &new_motifs);
 		 	printf("   %d: Testing %d motifs (%d nt)", loop+1, new_mn, ms); fflush(stdout);
@@ -698,7 +698,6 @@ int main(int argc, char* argv[]){
 				nmotDist[i] = calloc(numNeg, sizeof(int));
 			}
  */
-			printf("."); fflush(stdout);
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- BEGINS ----- */
 			pthread_attr_init(&attr);
 			pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -844,6 +843,9 @@ int main(int argc, char* argv[]){
 
 			char **tmp_motifs = NULL;
 			tmp_mn = filter_and_expand_iupac(new_motifs, new_mn, ms, &tmp_motifs);
+			
+			printf("done\n      - Testing %d expanded motifs.", tmp_mn); fflush(stdout);
+
 			
 			free(posCov);
 			free(negCov);
