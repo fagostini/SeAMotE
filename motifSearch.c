@@ -916,93 +916,6 @@ int main(int argc, char* argv[]){
 		}	
 		loop++;
 	}while( loop < MAX_MOT-MIN_MOT );
-
-	goto here;
-
-	printf("Calculating the motif distribution in the sets... "); fflush(stdout);
-/* 	fprintf(log, "Calculating the motif distribution in the sets.. "); */
-	tmp_mn = new_mn;
-
-	int *posCount, *negCount, *pshufCount, *nshufCount, ***pshuf_matches, ***nshuf_matches, **pmotDist, **nmotDist;
-	double *posPval, *negPval;
-	posCount = calloc(tmp_mn, sizeof(int));
-	negCount = calloc(tmp_mn, sizeof(int));
-	posPval = calloc(tmp_mn, sizeof(double));
-	negPval = calloc(tmp_mn, sizeof(double));
-	print_and_continue("0");
-	pmotDist = realloc(pmotDist, tmp_mn*numPos*sizeof(int *)*sizeof(int));
-	nmotDist = realloc(nmotDist, tmp_mn*numNeg*sizeof(int *)*sizeof(int));
-	memset(pmotDist, 0, tmp_mn*numPos*sizeof(int *)*sizeof(int));
-	memset(nmotDist, 0, tmp_mn*numNeg*sizeof(int *)*sizeof(int));
-	print_and_continue("1");
-/* ----- MULTI-THREADING COUNT ----- BEGINS ----- */
-	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-
-	thread_data_array[0].thread_id = 0;
-	thread_data_array[0].motNum = new_mn;
-	thread_data_array[0].arrMot = new_motifs;
-	thread_data_array[0].motLen = ms;
-	thread_data_array[0].count = posCount;
-	thread_data_array[0].motDistr = pmotDist;
-	
-	thread_data_array[1].thread_id = 1;
-	thread_data_array[1].motNum = new_mn;
-	thread_data_array[1].arrMot = new_motifs;
-	thread_data_array[1].motLen = ms;
-	thread_data_array[1].count = negCount;
-	thread_data_array[1].motDistr = nmotDist;
-	
-	for( i=0; i<NUM_THREADS; i++ ){
-		rc = pthread_create(&threads[i], &attr, set_count, (void *) &thread_data_array[i]);
-		if (rc) {
-			printf("ERROR; return code from pthread_create() is %d\n", rc);
-			exit(-1);
-		}
-	}
-	pthread_attr_destroy(&attr);
-	for( i=0; i<NUM_THREADS; i++ ){
-		rc = pthread_join(threads[i], &status);
-		if (rc) {
-			printf("ERROR; return code from pthread_join() is %d\n", rc);
-			exit(-1);
-		}
-	}
-	print_and_continue("2");
-	int p, cp, cn;
-	double ppval, npval;
-	for( i=0; i<tmp_mn; i++ ){
-		ppval = npval = 0;
-		for( b=0; b<NUM_BOOT; b++ ){
-			cp = cn = 0;
-			for( p=0; p<numPos; p++ ){
-				cp += newOrder[b][p]<numPos ? pmotDist[i][newOrder[b][p]] : nmotDist[i][newOrder[b][p]-numPos];
-			}
-			ppval += posCount[i] >= cp ? 1 : 0;
-			for( p=numPos; p<numTot; p++ ){
-				cn += newOrder[b][p]<numPos ? pmotDist[i][newOrder[b][p]] : nmotDist[i][newOrder[b][p]-numPos];
-			}
-			npval += negCount[i] >= cn ? 1 : 0;
-		}
-		posPval[i] = (1+ppval)/(NUM_BOOT+1); 
-		negPval[i] = (1+npval)/(NUM_BOOT+1);
-	}
-	
-/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
-	
-	printf("done\nCalculating the optimal distance between the sets... "); fflush(stdout);	  	
-/* 	fprintf(log, "done\nCalculating the optimal distance between the sets... "); */
-			  	
-	FILE *FoutAll = open_file(FoutAll, "motifs_last_loop.txt", "w" );
- 	for( i=0; i<new_mn; i++ ){
-		if( new_motifs[i][0] != '-' && new_motifs[i][ms-2] != '-' ){
-			fprintf(FoutAll, "%s %.3f %.3f %d %d %.4f %.4f\n", new_motifs[i], posCov[i], negCov[i], posCount[i], negCount[i], 1-posPval[i], 1-negPval[i]);
-		}
-	}
-
-	fclose(FoutAll);
-	
-	here:
 	
 	printf("done\nFreeing the memory... "); fflush(stdout);
 /*  	fprintf(log, "done\nFreeing the memory... "); */
@@ -1043,11 +956,11 @@ print_and_continue("4");
 		free2Dchar(new_motifs, new_mn);
 	}
 print_and_continue("6");
-	free(posCount);
-	free(negCount);
-	free(posPval);
-	free(negPval);
-print_and_continue("7");
+/* 	free(posCount); */
+/* 	free(negCount); */
+/* 	free(posPval); */
+/* 	free(negPval); */
+/* print_and_continue("7"); */
 /* 	free2Dint(pmotDist, new_mn); */
 /* 	free2Dint(nmotDist, new_mn); */
 
