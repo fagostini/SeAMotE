@@ -10,7 +10,7 @@ DF$V5 <- DF$V5-DF$V4;
 
 library(multicore)
 myFun <- function(x){ m <- matrix(c(DF[x,]$V2, DF[x,]$V3, DF[x,]$V4, DF[x,]$V5), 2, 2); return(fisher.test(m, alternative="greater")$p.value) }
-Pval <- mclapply(seq(1,dim(DF)[1],1), myFun, mc.cores=2)
+Pval <- mclapply(seq(1,dim(DF)[1],1), myFun, mc.cores=4)
 DF$Pval <- unlist(Pval)
 
 write.table(DF[order(unlist(Pval))[1:10],],"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)
