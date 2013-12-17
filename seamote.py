@@ -79,7 +79,7 @@ os.chdir(SCRIPT_PATH)
 
 args.FORMtitle = "".join([t.replace(' ', '_') for t in args.FORMtitle])
 
-command = """ bash runseamote.sh "{}" "{}" "{}" """.format(random_number, posiFile, negaFile)
+command = """ bash runseamote.sh "{}" """.format(random_number, posiFile, negaFile)
 
 p = subprocess.Popen(command, cwd=SCRIPT_PATH, shell=True)
 p.communicate()
