@@ -353,7 +353,7 @@ int main(int argc, char* argv[]){
 	double th = 0.9;
 	char **motifs, **posID, **posSeq, **negID, **negSeq, **shuSeq;
 	motifs = posID = posSeq = negID = negSeq = shuSeq = NULL;
-	FILE *log, *Fpositive, *Fnegative, *Fshuffle, *Fposshuf, *Fnegshuf;
+	FILE *log, *Fpositive, *Fnegative, *Fshuffle, *Fposshuf, *Fnegshuf, *Fmotifs;
 	char *fileM = malloc(100*sizeof(char));
 	memset(fileM, '\0', 100*sizeof(char));
 	char *fileP = malloc(100*sizeof(char));
@@ -382,6 +382,11 @@ int main(int argc, char* argv[]){
 	}
 	if( fileM[0] != '\0' ){
 		printf("Motifs file: %s\n", fileM); fflush(stdout);
+		Fmotifs = open_file(Fmotifs, fileM, "r");
+		mn = read_lines(Fmotifs);
+		motifs = malloc2Dchar(21, mn);
+		ms = read_motifs(Fmotifs, motifs);
+		fclose(Fmotifs);
 /* 		fprintf(log, "Motifs file: %s\n", fileM); */
 	}
 	else{
@@ -495,6 +500,7 @@ int main(int argc, char* argv[]){
  */
 
 /* 	GENERATION OF THE BOOTSTRAPPED REFERENCE DATASETS */	
+/* 
 	int b;
 	int numTot = numPos+numNeg;
 	int **newOrder = calloc(NUM_BOOT, sizeof(*newOrder));
@@ -505,6 +511,7 @@ int main(int argc, char* argv[]){
 		}
 	}
 	bootstrap_sampling(numTot, newOrder);
+ */
 
 	printf("Calculating the coverage for %d seeds... ", mn); fflush(stdout);
 /* 	fprintf(log, "Calculating the seed coverages... "); */
@@ -677,7 +684,7 @@ int main(int argc, char* argv[]){
 	int new_mn = tmp_mn = mn;
 	do{
 		old_mn = new_mn;
-		if( new_mn != 0 && loop+4 < 7 ){
+		if( new_mn != 0 && loop+3 < 7 ){
 			ms++;
 			new_mn = filter_and_expand_nt(old_motifs, thread_data_array[0].cov, thread_data_array[1].cov, old_mn, ms, th, &new_motifs);
 		 	printf("   %d: Testing %d motifs (%d nt)", loop+1, new_mn, ms); fflush(stdout);
@@ -939,7 +946,7 @@ print_and_continue("0");
 	}
 /* 	free3Dchar(PshuSeq, numPos, NUM_SHUFFLE); */
 /* 	free3Dchar(NshuSeq, numNeg, NUM_SHUFFLE); */
-	free2Dint(newOrder, NUM_BOOT);
+/* 	free2Dint(newOrder, NUM_BOOT); */
 print_and_continue("2");
 	free(posCov);
 	free(negCov);
@@ -955,14 +962,6 @@ print_and_continue("4");
 /* 		free2Dchar(backup_mot, tmp_mn); */
 		free2Dchar(new_motifs, new_mn);
 	}
-print_and_continue("6");
-/* 	free(posCount); */
-/* 	free(negCount); */
-/* 	free(posPval); */
-/* 	free(negPval); */
-/* print_and_continue("7"); */
-/* 	free2Dint(pmotDist, new_mn); */
-/* 	free2Dint(nmotDist, new_mn); */
 
 	printf("done\nThe script executed successfully!\n"); fflush(stdout);
 /* 	fprintf(log, "done\nThe script executed successfully!\n"); */

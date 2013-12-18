@@ -113,6 +113,33 @@ static void create_motifs_nt(char **array, char mlen){
  */
 }
 
+static int read_motifs(FILE *inFile, char **MOT){
+	char *mot = malloc((21+1)*sizeof(char));
+	memset(mot, '\0', (21+1)*sizeof(char));
+	fscanf(inFile, "%[^\n]%*c", mot);
+	rewind(inFile);
+	int l = strlen(mot);
+	int c = 0;
+	while(!feof(inFile)){
+    	memset(mot, '\0', (21+1)*sizeof(char));
+    	fscanf(inFile, "%[^\n]%*c", mot);
+    	if( *mot != '\0' ){
+    		if( strlen(mot) != l ){
+    			printf("Error! Motif at line %d has not size %d!\n", c+1, l); fflush(stdout);
+    			exit(1);
+    		}
+    		else{
+				memmove(MOT[c], mot, l);
+	    		c++;
+	    	}
+    	}
+    }
+	free(mot);
+    
+    return l;
+}
+
+
 static int check_motif(char *mstr, char mlen, double th){
 	int i, dash, no;
 	dash = no = 0;
