@@ -54,14 +54,16 @@ form_fields:
     -   name: threshold
         description: >
             Set Coverage<br/> 
-            <small>Basic run is recommended for majority of users and provides simplicity and robustness.
-            Switching to expert mode enables additional features aimed at advanced users but at potential
-            cost of increased computational time. 
+            <small>Default is recommended for majority of users and provides simplicity and robustness.
+            Switching to another threshold might yield to a different result but at potential
+            cost of increased computational time.</small>
+#            Switching to expert mode enables additional features aimed at advanced users but at potential
+#            cost of increased computational time. 
         type: radio
         required: yes
-        hidden: Yes
+        hidden: No
         entries:
-            -   title:  default (70%)
+            -   title:  Default (70%)
                 value:  0.7
             -   title:  60%
                 value:  0.6
