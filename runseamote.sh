@@ -3,25 +3,21 @@
 
 cd   tmp/$1
 
+       if [[ "$3" == "negative" && -s "negative.oneline" ]]; then
+                options="-n negative.oneline "
+        else
+                options="-r $3 "
+        fi
+
 	th_default=0.7
 
-	if [[ "$2" != "none" ]]; then
-		options="$3 "
-	fi
-
 	if [[ "$5" == "advanced" ]]; then
-		$options+="-t $4 "  
+		options+="-t $4 "  
 	else
-		$options+="-t 0.7 "
+		options+="-t 0.7 "
 	fi
 
-	if [[ "$3" == "negative" && -s "negative.oneline" ]]; then
-		$options+="-n negative.oneline "
-	else
-		$options+="-r $3 "
-	fi
-
-	./motifSearch -p positive.oneline "$options" -a rna
+	./motifSearch -p positive.oneline $options -a rna
 
 	if [[ -s "tmp/best_motifs.dat" ]]; then
 		sed 's/R/[AG]/g;s/Y/[CT]/g;s/M/[CA]/g;s/K/[TG]/g;s/W/[TA]/g;s/S/[CG]/g;s/B/[CTG]/g;s/D/[ATG]/g;s/H/[ATC]/g;s/V/[ACG]/g' tmp/best_motifs.dat | awk '{print $1, $2, $4, $2/($2+$3), $4/($4+$5), $NF}' > outputs/best_motifs.txt
