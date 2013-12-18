@@ -3,14 +3,16 @@
 
 cd   tmp/$1
 
+	th_default=0.7
+
 	if [[ "$2" != "none" ]]; then
 		options="$3 "
 	fi
 
 	if [[ "$5" == "advanced" ]]; then
-		$options+="$4 "  
+		$options+="-t $4 "  
 	else
-		$options+="0.7 "
+		$options+="-t 0.7 "
 	fi
 
 	if [[ "$3" == "negative" && -s "negative.oneline" ]]; then
