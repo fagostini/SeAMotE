@@ -119,7 +119,7 @@ examples:
 
 algorithm:
     command:              "seamote.py -fileA=<file0> -fileB=<file1> -output_dir=<output_dir>"
-    processing_timeout:   7200
+    processing_timeout:   86400
     
 # for the processing part
 output:
