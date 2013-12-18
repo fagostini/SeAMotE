@@ -1,14 +1,14 @@
 ---
-title:      Sequence Analysis of Motifs Enrichemnt
+title:      Sequence Analysis of Motifs Enrichment
 name:       seamote
 title_styled:   >
-    SeAMotE - Sequence Analysis of Motifs Enrichemnt
+    SeAMotE - Sequence Analysis of Motifs Enrichment
 version:    1.0
 description:    >
-    This module computes motif enrichment analysis
+    This module computes a discriminative motif enrichment analysis
 
 description_short:    >
-    This module computes motif enrichment analysis
+    This module computes a discriminative motif enrichment analysis
     
 nav_links:
     -   title:  >
@@ -16,13 +16,9 @@ nav_links:
         href:   >
             http://service.tartaglialab.com/new_submission/seamote   
     -   title:  >
-            Documentation
-        href:   >
-            http://service.tartaglialab.com/static_files/shared/documentation.html#4        
-    -   title:  >
             Tutorial
         href:   >
-            http://service.tartaglialab.com/static_files/shared/tutorial.html        
+            http://service.tartaglialab.com/static_files/shared/tutorial_seamote.html        
     -   title:  >
             Group page @ CRG
         href:   >
@@ -35,7 +31,7 @@ form_fields:
         type: text
     -   name: email
         description: Email address (optional)<br/> 
-            <small>However, we suggest to provide an email address for jobs with more than 500 sequences</small>
+            <small>We suggest to provide an email address for jobs that contain more than 500 sequences</small>
         type: email
         required: No
     -   name: use_as_reference
@@ -55,37 +51,28 @@ form_fields:
                 value: negative
                 shows:
                     - negative_set
-    -   name: mode
+    -   name: threshold
         description: >
-            Run mode <br/> 
+            Set Coverage<br/> 
             <small>Basic run is recommended for majority of users and provides simplicity and robustness.
             Switching to expert mode enables additional features aimed at advanced users but at potential
             cost of increased computational time. 
         type: radio
-        required: Yes
-        entries:
-            -   title: Basic
-                value: basic
-                hides:  
-                    - threshold
-#                    - motif_set
-            -   title: Advanced
-                value: advanced
-                shows:  
-                    - threshold
-#                    - motif_set
-    -   name: threshold
-        description: Set coverage
-        type: radio
-        required: No
+        required: yes
         hidden: Yes
         entries:
+            -   title:  default (70%)
+                value:  0.7
             -   title:  60%
                 value:  0.6
-            -   title:  70%
-                value:  0.7
+            -   title:  65%
+                value:  0.65
+            -   title:  75%
+                value:  0.75
             -   title:  80%
                 value:  0.8
+            -   title:  85%
+                value:  0.85
             -   title:  90%
                 value:  0.9
             -   title:  95%

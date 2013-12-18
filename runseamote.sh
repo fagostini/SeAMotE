@@ -3,19 +3,13 @@
 
 cd   tmp/$1
 
-       if [[ "$3" == "negative" && -s "negative.oneline" ]]; then
-                options="-n negative.oneline "
-        else
-                options="-r $3 "
-        fi
-
-	th_default=0.7
-
-	if [[ "$5" == "advanced" ]]; then
-		options+="-t $4 "  
+	if [[ "$3" == "negative" && -s "negative.oneline" ]]; then
+			options="-n negative.oneline "
 	else
-		options+="-t 0.7 "
+			options="-r $3 "
 	fi
+
+	options+="-t $4 "  
 
 	./motifSearch -p positive.oneline $options -a rna
 

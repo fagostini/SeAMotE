@@ -19,6 +19,7 @@
 int cmp( const void* a, const void* b){
 	double* p1 = *(double**) a; 
 	double* p2 = *(double**) b; 
+	/*printf("Compare %f %x <=> %f %x\n", p1[0], a, p2[0], b);*/
 	if( p1[1] > p2[1]){
 		return -1;
 	}
@@ -30,6 +31,8 @@ int cmp( const void* a, const void* b){
 	}
 }
 
+/* This functions need to be here because of the threading */
+/* Probably it is possible to move then to another file but I do not know how to properly do that */
 struct thread_data{
 	int  thread_id;
 	char **arrSeq;
@@ -63,6 +66,7 @@ void *set_coverage(void *threadarg){
    	coverage = my_data->cov;
    	seqSet = my_data->arrSeq;
    	motSet = my_data->arrMot;
+/*    	motDistr = my_data->motDistr; */
    	
 	int m, s, pos, i, br, count;
 	for( m=0; m<motNum; m++ ){
@@ -92,6 +96,7 @@ void *set_coverage(void *threadarg){
 					}
 				}while( i < motLen );
 				if( br == 1 ){
+/* 					motDistr[m][s] = 1; */
 					break;
 				}
 				pos++;
@@ -103,13 +108,164 @@ void *set_coverage(void *threadarg){
 	pthread_exit(NULL);
 }
 
+void *set_count(void *threadarg){
+
+	int taskid, seqNum, motNum, motLen, *count;
+	char **seqSet, **motSet;
+	int **mDist;
+	
+	sleep(1);
+	struct thread_data *my_data;
+	my_data = (struct thread_data *) threadarg;
+	taskid = my_data->thread_id;
+	seqNum = my_data->arrNum;
+	motNum = my_data->motNum;
+   	motLen = my_data->motLen;
+   	count = my_data->count;
+   	seqSet = my_data->arrSeq;
+   	motSet = my_data->arrMot;
+   	mDist = my_data->motDistr;
+  	
+	int m, s, pos, i, c, sc;
+	for( m=0; m<motNum; m++ ){
+		c = 0;
+		for( s=0; s<seqNum; s++ ){
+			pos = sc = 0;
+			do{
+				i = 0;
+				do{
+/* 
+					if( motSet[m][i] != '-' && motSet[m][i] != seqSet[s][pos+i]){
+						break;
+					}
+*/
+ 					if( seqSet[s][pos+i] == 'A' && ( motSet[m][i] != 'A' && motSet[m][i] != 'R' && motSet[m][i] != 'W' && motSet[m][i] != 'M' && motSet[m][i] != 'D' && motSet[m][i] != 'H' && motSet[m][i] != 'V') ){
+ 						break;
+ 					}
+ 					else if( seqSet[s][pos+i] == 'C' && ( motSet[m][i] != 'C' && motSet[m][i] != 'Y' && motSet[m][i] != 'S' && motSet[m][i] != 'M' && motSet[m][i] != 'B' && motSet[m][i] != 'H' && motSet[m][i] != 'V') ){
+ 						break;
+ 					}
+ 					else if( seqSet[s][pos+i] == 'G' && ( motSet[m][i] != 'G' && motSet[m][i] != 'R' && motSet[m][i] != 'S' && motSet[m][i] != 'K' && motSet[m][i] != 'B' && motSet[m][i] != 'D' && motSet[m][i] != 'V') ){
+ 						break;
+ 					}
+ 					else if( seqSet[s][pos+i] == 'T' && ( motSet[m][i] != 'T' && motSet[m][i] != 'Y' && motSet[m][i] != 'W' && motSet[m][i] != 'K' && motSet[m][i] != 'B' && motSet[m][i] != 'D' && motSet[m][i] != 'H') ){
+ 						break;
+ 					}
+					i++;
+					if( i == motLen-1 ){
+						c++;
+						sc++;	/* Put the condition sc += sc > 0 ? 0 : 1; if you want to consider only one motif per sequence   */
+						break;	/* Escape when the motif is completely covered */
+					}
+				}while( i < motLen );
+				pos++;
+			}while( pos < (strlen(seqSet[s])-motLen+1) );
+			mDist[m][s] = sc > 0 ? sc : 0; /* Multiple motifs in the same sequence are considered */
+		}
+		count[m] = c > 0 ? c : 0;
+	}
+	pthread_exit(NULL);
+}
+
+void select_motifs(int *numMot, int motLen, char ***motSet, double **posCov, double **negCov, double threshold){
+	int perc = (int)((*numMot)*threshold);
+	int m;
+	double **index = calloc((*numMot), sizeof(double *));
+	for( m=0; m<(*numMot); m++ ){
+		index[m] = calloc(4, sizeof(double));
+	}
+	/* The first selection is on the coverage over the positive dataset */
+	for( m=0; m<(*numMot); m++ ){
+		index[m][0] = (*posCov)[m];
+		index[m][1] = (*negCov)[m];
+		index[m][2] = m;
+	}
+	qsort(index, (*numMot), sizeof(double), cmp);
+	int *tmpIndex = calloc(perc*3,sizeof(int));
+	for( m=0; m<perc; m++ ){
+		tmpIndex[m] = (int)index[m][2];
+	}
+	/* The second selection is on the coverage over the negative dataset */
+	for( m=0; m<(*numMot); m++ ){
+		index[m][0] = (*negCov)[m];
+		index[m][1] = (*posCov)[m];
+		index[m][2] = m;
+	}
+	qsort(index, (*numMot), sizeof(double), cmp);
+	for( m=perc; m<perc*2; m++ ){
+		tmpIndex[m] = (int)index[m][2];
+/* 		printf("%s %.3lf\n", (*motSet)[tmpIndex[m]], (*posCov)[tmpIndex[m]]); */
+	}
+	/* The third selection is on the maximization of the coverage between dataset */
+	for( m=0; m<(*numMot); m++ ){
+		index[m][0] = (*posCov)[m]-(*negCov)[m];
+		index[m][1] = (*posCov)[m];
+		index[m][2] = (*negCov)[m];
+		index[m][3] = m;
+	}
+	qsort(index, (*numMot), sizeof(double), cmp);
+	for( m=perc*2; m<perc*3; m++ ){
+		tmpIndex[m] = (int)index[m][3];
+	}
+	
+/* 	printf("%p %p %p\n", (*motSet), (*posCov), (*negCov)); fflush(stdout); */
+	int realNum = 0;
+	int *selIndex = calloc(perc*3,sizeof(int));
+	for( m=0; m<perc*3; m++ ){
+		int i;
+		int exist = 0;
+		for( i=0; i<m; i++ ){
+			if( tmpIndex[m] == tmpIndex[i] ){
+				exist++;
+				break;
+			}
+		}
+		if( exist == 0 ){
+			selIndex[realNum] = tmpIndex[m];
+			realNum++;	
+		}
+	}
+	
+	double *PselCov = calloc(realNum, sizeof(double));
+	double *NselCov = calloc(realNum, sizeof(double));
+	char **selMot = malloc(realNum*sizeof(char *));
+	for( m=0; m<realNum; m++ ){
+		selMot[m] = malloc((motLen+1)*sizeof(char));
+		memset(selMot[m], '\0', (motLen+1)*sizeof(char));
+		memmove(selMot[m], (*motSet)[selIndex[m]], motLen+1 );
+		PselCov[m] = (*posCov)[selIndex[m]];
+		NselCov[m] = (*negCov)[selIndex[m]];
+/* 		printf("%s %.3lf %.3lf\n", selMot[m], PselCov[m], NselCov[m]); fflush(stdout); */
+	}
+		
+	for( m=0; m<(*numMot); m++ ){
+		free(index[m]);
+		free((*motSet)[m]);
+	}
+	free(index);
+	free((*motSet));
+	free((*posCov));
+	free((*negCov));
+	free(tmpIndex);
+	free(selIndex);
+
+	(*motSet) = selMot;
+	(*posCov) = PselCov;
+	(*negCov) = NselCov;
+	
+	(*numMot) = realNum;
+
+}
+
 void call_R(int n, double th, int o){
 	
 	FILE *fp;
 	int status;
+/* 	char path[1035]; */
 
 	/* Open the command for reading. */
 	char command[150];
+/* 	sprintf(command, "cat pvalues.R | R --slave --vanilla --args %s %.2f", filename, th); */
 	sprintf(command, "cat significant.R | R --slave --vanilla --args %d %.2f %d", n, th, o);
 	fp = popen(command, "r");
 	if (fp == NULL) {
@@ -117,6 +273,12 @@ void call_R(int n, double th, int o){
 		exit(1);
 	}
 
+	/* Read the output a line at a time - output it. */
+/* 
+	while( fgets(path, sizeof(path)-1, fp) != NULL) {
+		printf("%s", path);
+	}
+ */
  	int c = 0;
  	char *line = malloc(200*sizeof(char));
  	while( !feof(fp) ){
@@ -127,6 +289,7 @@ void call_R(int n, double th, int o){
  			int tp, fp, fn, tn;
  			double pval;
  			sscanf(line, "%s %d %d %d %d %lf", mot, &tp, &fp, &fn, &tn, &pval);
+/*  			printf("%s %lf\n", mot, pval); */
  		}
  		c++;
  	}
@@ -151,6 +314,12 @@ void call_R_out(int n, double th){
 		exit(1);
 	}
 
+	/* Read the output a line at a time - output it. */
+/* 
+	while( fgets(path, sizeof(path)-1, fp) != NULL) {
+		printf("%s", path);
+	}
+ */
  	int c = 0;
  	char *line = malloc(200*sizeof(char));
  	while( !feof(fp) ){
@@ -161,6 +330,7 @@ void call_R_out(int n, double th){
  			int tp, fp, fn, tn;
  			double pval;
  			sscanf(line, "%s %d %d %d %d %lf", mot, &tp, &fp, &fn, &tn, &pval);
+/*  			printf("%s %lf\n", mot, pval); */
  		}
  		c++;
  	}
@@ -173,6 +343,7 @@ void call_R_out(int n, double th){
 
 int main(int argc, char* argv[]){
 	
+/* 	srand(time(NULL)); */
 	srand(1);	
 	
 	int i, numPos, numNeg, dna, rna, prot, ref;
@@ -295,11 +466,67 @@ int main(int argc, char* argv[]){
 	}
 	printf("Coverage threshold: %.2f\n", th); fflush(stdout);
 /* 	fprintf(log, "Coverage threshold: %.2f\n", th); */
+/* 	GENERATION OF THE SHUFFLED REFERENCE DATASETS (NOT IN USE AT THE MOMENT) */	
+/* 
+	int s;
+	Fposshuf = open_file(Fposshuf, "Ref_PosShuf.txt", "w");
+	char ***PshuSeq = malloc(NUM_SHUFFLE*sizeof(**PshuSeq));
+	for( s=0; s<NUM_SHUFFLE; s++){
+		PshuSeq[s] = malloc(numPos*sizeof(*PshuSeq[s]));
+		for( i=0; i<numPos; i++){
+			int len = strlen(posSeq[i]);
+			PshuSeq[s][i] = malloc((len+1)*sizeof(char));
+			memset(PshuSeq[s][i], '\0', (len+1)*sizeof(char));
+			memmove(PshuSeq[s][i], posSeq[i], len);
+			str_shuffle_arr(len, &PshuSeq[s][i]);
+			fprintf(Fposshuf, "%s\n", PshuSeq[s][i]);
+		}
+	}
+	fclose(Fposshuf);
+	Fnegshuf = open_file(Fnegshuf, "Ref_NegShuf.txt", "w");
+	char ***NshuSeq = malloc(NUM_SHUFFLE*sizeof(**NshuSeq));
+	for( s=0; s<NUM_SHUFFLE; s++){
+		NshuSeq[s] = malloc(numNeg*sizeof(*NshuSeq[s]));
+		for( i=0; i<numNeg; i++){
+			int len = strlen(negSeq[i]);
+			NshuSeq[s][i] = malloc((len+1)*sizeof(char));
+			memset(NshuSeq[s][i], '\0', (len+1)*sizeof(char));
+			memmove(NshuSeq[s][i], negSeq[i], len);
+			str_shuffle_arr(len, &NshuSeq[s][i]);
+			fprintf(Fnegshuf, "%s\n", NshuSeq[s][i]);
+		}
+	}
+	fclose(Fnegshuf);
+ */
+
+/* 	GENERATION OF THE BOOTSTRAPPED REFERENCE DATASETS */	
+/* 
+	int b;
+	int numTot = numPos+numNeg;
+	int **newOrder = calloc(NUM_BOOT, sizeof(*newOrder));
+	for( b=0; b<NUM_BOOT; b++ ){
+		newOrder[b] = calloc(numTot, sizeof(int));
+		for( i=0; i<numTot; i++ ){
+			newOrder[b][i] = i;
+		}
+	}
+	bootstrap_sampling(numTot, newOrder);
+ */
 
 	printf("Calculating the coverage for %d seeds... ", mn); fflush(stdout);
 /* 	fprintf(log, "Calculating the seed coverages... "); */
 	double *posCov = calloc(mn, sizeof(posCov));
 	double *negCov = calloc(mn, sizeof(negCov));
+/* 
+	int **pmotDist = calloc(mn, sizeof(int *));
+	for( i=0; i<mn; i++ ){
+		pmotDist[i] = calloc(numPos,sizeof(int));
+	}
+	int **nmotDist = calloc(mn, sizeof(int *));
+	for( i=0; i<mn; i++ ){
+		nmotDist[i] = calloc(numNeg, sizeof(int));
+	}
+ */
 
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- BEGINS ----- */	
 	int rc;
@@ -317,6 +544,7 @@ int main(int argc, char* argv[]){
 	thread_data_array[0].motNum = mn;
 	thread_data_array[0].motLen = ms;
 	thread_data_array[0].cov = posCov;
+/* 	thread_data_array[0].motDistr = pmotDist; */
 	thread_data_array[1].thread_id = 1;
 	thread_data_array[1].depth = 1;
 	thread_data_array[1].arrSeq = negSeq;
@@ -325,6 +553,7 @@ int main(int argc, char* argv[]){
 	thread_data_array[1].motNum = mn;
 	thread_data_array[1].motLen = ms;
 	thread_data_array[1].cov = negCov;
+/* 	thread_data_array[1].motDistr = nmotDist; */
 
 	for( i=0; i<NUM_THREADS; i++ ){
 		rc = pthread_create(&threads[i], &attr, set_coverage, (void *) &thread_data_array[i]);
@@ -344,6 +573,15 @@ int main(int argc, char* argv[]){
 	}
 	
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- ENDS ----- */
+/* 
+	select_motifs(&mn, ms, &motifs, &posCov, &negCov, 0.1);
+	thread_data_array[0].arrMot = motifs;
+	thread_data_array[1].arrMot = motifs;
+	thread_data_array[0].cov = posCov;
+	thread_data_array[1].cov = negCov;
+	thread_data_array[0].motNum = mn;
+	thread_data_array[1].motNum = mn;
+ */
 
 	char *fname = malloc(50*sizeof(char));
 	memset(fname, '\0', 50*sizeof(char));
@@ -361,14 +599,45 @@ int main(int argc, char* argv[]){
 	}
 	fclose(myTMP);
 	
+/* 
+	FILE *myTMP2 = open_file(myTMP2, fname2, "w" );
+	int ii;
+	for( i=0; i<mn; i++ ){
+		fprintf(myTMP2, "%s ", motifs[i]);
+		for( ii=0; ii<numPos; ii++ ){
+			fprintf(myTMP2, " %d", pmotDist[i][ii]);
+		}
+		fprintf(myTMP2, " \n");
+	}
+	fclose(myTMP2);
+	
+	FILE *myTMP3 = open_file(myTMP3, fname3, "w" );
+	for( i=0; i<mn; i++ ){
+		fprintf(myTMP3, "%s ", motifs[i]);
+		for( ii=0; ii<numNeg; ii++ ){
+			fprintf(myTMP3, " %d", nmotDist[i][ii]);
+		}
+		fprintf(myTMP3, " \n");
+	}
+	fclose(myTMP3);
+ */
+	
 	call_R(ms, th, 0);
 
 	for( i=0; i<mn ; i++ ){
 		free(motifs[i]);
+/* 
+		free(pmotDist[i]);
+		free(nmotDist[i]);
+ */
 	}
 	free(motifs);
 	free(posCov);
 	free(negCov);
+/* 
+	free(pmotDist);
+	free(nmotDist);
+ */
 
 	myTMP = open_file(myTMP, fname, "r" );
 	mn = read_lines(myTMP);
@@ -424,8 +693,18 @@ int main(int argc, char* argv[]){
 			free(negCov);
 			posCov = calloc(new_mn, sizeof(double));
 			negCov = calloc(new_mn, sizeof(double));
+			
 			printf("."); fflush(stdout);
-
+/* 
+			pmotDist = calloc(new_mn, sizeof(int *));
+			for( i=0; i<new_mn; i++ ){
+				pmotDist[i] = calloc(numPos, sizeof(int));
+			}
+			nmotDist = calloc(new_mn, sizeof(int *));
+			for( i=0; i<new_mn; i++ ){
+				nmotDist[i] = calloc(numNeg, sizeof(int));
+			}
+ */
 	/* ----- MULTI-THREADING COVERAGE CALCULATION ----- BEGINS ----- */
 			pthread_attr_init(&attr);
 			pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -437,6 +716,7 @@ int main(int argc, char* argv[]){
 			thread_data_array[0].motNum = new_mn;
 			thread_data_array[0].motLen = ms;
 			thread_data_array[0].cov = posCov;
+/* 			thread_data_array[0].motDistr = pmotDist; */
 			thread_data_array[1].thread_id = 1;
 			thread_data_array[1].arrSeq = negSeq;
 			thread_data_array[1].arrMot = new_motifs;
@@ -444,6 +724,7 @@ int main(int argc, char* argv[]){
 			thread_data_array[1].motNum = new_mn;
 			thread_data_array[1].motLen = ms;
 			thread_data_array[1].cov = negCov;
+/* 			thread_data_array[1].motDistr = nmotDist; */
 			printf("."); fflush(stdout);
 			for( i=0; i<NUM_THREADS; i++ ){
 				rc = pthread_create(&threads[i], &attr, set_coverage, (void *) &thread_data_array[i]);
@@ -472,6 +753,7 @@ int main(int argc, char* argv[]){
 				out = 1;
 				if( th < 0.5 ){
 					printf("   Breaking the loop!\n");
+	/* 				free2Dchar(new_motifs, new_mn);	 */
 					break;
 				}
 			}
@@ -494,15 +776,44 @@ int main(int argc, char* argv[]){
 			}
 			fclose(myTMP);
 
+/* 
+			FILE *myTMP2 = open_file(myTMP2, fname2, "w" );
+			for( i=0; i<new_mn; i++ ){
+				fprintf(myTMP2, "%s ", new_motifs[i]);
+				for( ii=0; ii<numPos; ii++ ){
+					fprintf(myTMP2, " %d", pmotDist[i][ii]);
+				}
+				fprintf(myTMP2, " \n");
+			}
+			fclose(myTMP2);
+
+			FILE *myTMP3 = open_file(myTMP3, fname3, "w" );
+			for( i=0; i<new_mn; i++ ){
+				fprintf(myTMP3, "%s ", new_motifs[i]);
+				for( ii=0; ii<numNeg; ii++ ){
+					fprintf(myTMP3, " %d", nmotDist[i][ii]);
+				}
+				fprintf(myTMP3, " \n");
+			}
+			fclose(myTMP3);
+ */
+
 			call_R(ms, th, out);
 
 			for( i=0; i<new_mn ; i++ ){
 				free(new_motifs[i]);
+/* 
+				free(pmotDist[i]);
+				free(nmotDist[i]);
+ */
 			}
 			free(new_motifs);
 			free(posCov);
 			free(negCov);
-
+/* 
+			free(pmotDist);
+			free(nmotDist);
+ */
 			myTMP = open_file(myTMP, fname, "r" );
 			new_mn = read_lines(myTMP);
 			new_motifs = malloc(new_mn*sizeof(char *));
@@ -558,6 +869,7 @@ int main(int argc, char* argv[]){
 			thread_data_array[0].motNum = tmp_mn;
 			thread_data_array[0].motLen = ms;
 			thread_data_array[0].cov = posCov;
+/* 			thread_data_array[0].motDistr = pmotDist; */
 			thread_data_array[1].thread_id = 1;
 			thread_data_array[1].arrSeq = negSeq;
 			thread_data_array[1].arrMot = tmp_motifs;
@@ -565,6 +877,7 @@ int main(int argc, char* argv[]){
 			thread_data_array[1].motNum = tmp_mn;
 			thread_data_array[1].motLen = ms;
 			thread_data_array[1].cov = negCov;
+/* 			thread_data_array[1].motDistr = nmotDist; */
 			printf("."); fflush(stdout);
 			for( i=0; i<NUM_THREADS; i++ ){
 				rc = pthread_create(&threads[i], &attr, set_coverage, (void *) &thread_data_array[i]);
@@ -598,12 +911,14 @@ int main(int argc, char* argv[]){
 
 			call_R_out(ms, th);
 
+/* 			tmp_mn = old_mn; */
 	  		old_motifs = new_motifs;
 	  		printf("done\n"); fflush(stdout);
 
 		}
 		else{
 			printf("   Breaking the loop!\n");
+/* 			free2Dchar(new_motifs, new_mn);	 */
 			break;
 		}	
 		loop++;
@@ -616,21 +931,35 @@ int main(int argc, char* argv[]){
 	free(fileP);
 	free(fileN);
 	free(type);
-
+print_and_continue("0");
+/* 	free2Dchar(motifs, mn); */
 	free2Dchar(posID, numPos);
 	free2Dchar(posSeq, numPos);
 	if( negID ){
+		print_and_continue("1a");
 		free2Dchar(negID, numNeg);
 		free2Dchar(negSeq, numNeg);
 	}
 	else{
+		print_and_continue("1b");
 		free2Dchar(negSeq, numPos);
 	}
-
+/* 	free3Dchar(PshuSeq, numPos, NUM_SHUFFLE); */
+/* 	free3Dchar(NshuSeq, numNeg, NUM_SHUFFLE); */
+/* 	free2Dint(newOrder, NUM_BOOT); */
+print_and_continue("2");
 	free(posCov);
 	free(negCov);
-
+print_and_continue("3");
+/* 
+	free(backup_pcov);
+	free(backup_ncov);
+ */
+print_and_continue("4");
 	if( loop != 0 ){
+		printf("%d", loop);
+		print_and_continue("a");
+/* 		free2Dchar(backup_mot, tmp_mn); */
 		free2Dchar(new_motifs, new_mn);
 	}
 
