@@ -60,7 +60,6 @@ static void read_args(int argc, char **argv, char *fileM, char *fileP, char *fil
 						exit(1);
 					}
 					else{
-						
 						strcpy(fileM, argv[i+1]);
 						fclose(Ftest);
 					}

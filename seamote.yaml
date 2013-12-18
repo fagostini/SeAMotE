@@ -68,10 +68,12 @@ form_fields:
                 value: basic
                 hides:  
                     - threshold
+                    - motif_set
             -   title: Advanced
                 value: advanced
                 shows:  
                     - threshold
+                    - motif_set
     -   name: threshold
         description: Set coverage
         type: radio
@@ -90,6 +92,13 @@ form_fields:
                 value:  0.95
 
 file_uploads:    
+    -   filename: M.file
+        name: motif_set
+        description:  >
+            Upload a set of motifs<small>(one per line, 
+            all of the same size)</small>
+        required: No
+        hidden: yes
     -   filename: A.fasta
         name: positive_set
         description:     >
