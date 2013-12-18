@@ -71,7 +71,7 @@ pos = numPos = SeqIO.write(posiSeq, output_handle1, "tab")
 output_handle1.close()
 
 negaFile = TMP_PATH+"/negative.oneline"
-if args.fileB not "none":
+if args.fileB[0] != "none":
 	input_handle = open(args.fileB[0], "rU")
 	negaSeq = (record for record in SeqIO.parse(input_handle, "fasta")) 
 	output_handle2 = open(negaFile, "w")
