@@ -4,19 +4,19 @@
 cd   tmp/$1
 
 	if [[ "$2" != "none" ]]; then
-		options = "$3 "
+		options="$3 "
 	fi
 
 	if [[ "$5" == "advanced" ]]; then
-		options += "$4 "  
+		$options+="$4 "  
 	else
-		options += "0.7 "
+		$options+="0.7 "
 	fi
 
 	if [[ "$3" == "negative" && -s "negative.oneline" ]]; then
-		options += "-n negative.oneline "
+		$options+="-n negative.oneline "
 	else
-		options += "-r $3 "
+		$options+="-r $3 "
 	fi
 
 	./motifSearch -p positive.oneline "$options" -a rna
