@@ -59,27 +59,30 @@ copyfolder(SCRIPT_PATH+"/template", TMP_PATH)
 import StringIO
 from Bio import SeqIO
 
-alphabet = set("ACGT")
+alphabet = set("ACGTU")
 
+motiFile = "none"
+
+posiFile = TMP_PATH+"/positive.oneline"
 input_handle = open(args.fileA[0], "rU")
 posiSeq = (record for record in SeqIO.parse(input_handle, "fasta")) 
-posiFile = TMP_PATH+"/positive.oneline"
 output_handle1 = open(posiFile, "w")
 pos = numPos = SeqIO.write(posiSeq, output_handle1, "tab")
 output_handle1.close()
 
-input_handle = open(args.fileB[0], "rU")
-negaSeq = (record for record in SeqIO.parse(input_handle, "fasta")) 
 negaFile = TMP_PATH+"/negative.oneline"
-output_handle2 = open(negaFile, "w")
-neg = SeqIO.write(negaSeq, output_handle2, "tab")
-output_handle2.close()
+if args.fileB not "none":
+	input_handle = open(args.fileB[0], "rU")
+	negaSeq = (record for record in SeqIO.parse(input_handle, "fasta")) 
+	output_handle2 = open(negaFile, "w")
+	neg = SeqIO.write(negaSeq, output_handle2, "tab")
+	output_handle2.close()
 
 os.chdir(SCRIPT_PATH)
 
 args.FORMtitle = "".join([t.replace(' ', '_') for t in args.FORMtitle])
 
-command = """ bash runseamote.sh "{}" """.format(random_number, posiFile, negaFile)
+command = """ bash runseamote.sh "{}" "{}" "{}" "{}" "{}" """.format(random_number, motiFile, args.use_as_reference, args.threshold, args.mode )
 
 p = subprocess.Popen(command, cwd=SCRIPT_PATH, shell=True)
 p.communicate()
