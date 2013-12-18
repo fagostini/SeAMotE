@@ -95,8 +95,8 @@ file_uploads:
     -   filename: M.file
         name: motif_set
         description:  >
-            Upload a set of motifs<small>(one per line, 
-            all of the same size)</small>
+            Upload a set of motifs <small>(one letter code,
+            one per line, all of the same size)</small>
         required: No
         hidden: yes
     -   filename: A.fasta
