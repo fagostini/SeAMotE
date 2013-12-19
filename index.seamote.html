@@ -128,6 +128,20 @@
 						});
   					});
 				</script>
+				<script type="text/javascript">
+					// add parser through the tablesorter addParser method 
+					$.tablesorter.addParser({ 
+						// set a unique id
+						id: 'scinot', 
+						is: function(s) { 
+							return /[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?/.test(s); 
+						}, 
+						format: function(s) { 
+							return $.tablesorter.formatFloat(s);
+						}, 
+						type: 'numeric' 
+					});
+				</script>
 				
             </div>
             <div style="clear:both;">
