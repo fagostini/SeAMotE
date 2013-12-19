@@ -26,7 +26,7 @@ body {
 	width: 960px;
 	height: 140px;
 	margin: 0 auto;
-	background:url("images/gradient_red_slice.png");	
+	background:url(http://service.tartaglialab.com/static_files/images/gradient_green_slice.png);	
 }
 
 #home_panel
@@ -41,7 +41,7 @@ body {
 }
 
 p#task_description  {
-    font-size: 0.8em;
+    font-size: 0.85em;
 }
 
 #home_panel a 
@@ -220,13 +220,30 @@ p#task_description  {
 	float: left; 
 	margin: auto auto 10px;
 	padding-bottom: 5px;
+	clear: both;
 
 }
+#docs_image2 img
+{
 
+	margin: auto auto 8px;
+	padding-bottom: 2px;
+	clear: both;
+
+}
+}
+
+#centered_image img
+{
+	float: none
+	margin: 10px 10px 10px 10px;
+
+}
 
 #left_column
 { 
 /*	position: relative;*/
+    clear:both;
 	float: left;
 	top: 100px;  
 	width: 164px;
@@ -329,17 +346,21 @@ to be modified
 p 
 { 
 	color: #666; 
-	font-size: 16px; 
+	font-size: 14px; 
 	font-weight: normal; 
 	text-align: justify;
 	margin-top: 8px;
+    
+	line-height: 18px;
 }
 dt 
 { 
 	color: #666; 
 	font-size: 16px; 
 	font-weight: normal; 
-	text-align: center; 
+	text-align: center;
+	line-height: 20px;
+ 
 }
 dd 
 { 
@@ -347,7 +368,19 @@ dd
 	font-size: 14px; 
 	font-weight: normal; 
 	text-align: center;
-	font-style: italic; 
+	font-style: italic;
+	line-height: 20px;
+ 
+}
+li 
+{ 
+	color: #bf0000; 
+	font-size: 14px; 
+	font-weight: normal; 
+	text-align: left;
+	margin-left: 35px;
+	line-height: 20px;
+
 }
 /* Headers */
 h1 
@@ -381,7 +414,7 @@ h3
 h4 
 { 
 	color: #BF0000;
-	font-size: 14px;
+	font-size: 17px;
 	font-style: italic;
 	text-align: left;
 	font-weight: lighter;
@@ -389,7 +422,20 @@ h4
 	margin-top: 4px;
 
 }
+h5 
+{ 
+	color: orange;
+	font-size: 15px;
+	font-style: normal;
+	text-align: left;
+	font-weight: bold;
+	clear: both;
+	margin-top: 5px;
 
+}
+#table > thead a {
+    color: #FFFFFF;
+}
 a 
 { 
 	text-decoration: none; 
