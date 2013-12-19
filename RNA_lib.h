@@ -89,10 +89,10 @@ static void create_motifs_nt(char **array, char mlen){
 	c = 0;
 	for( i1=0; i1<SEED_NOTA; i1++ ){
 		for( i2=0; i2<NOTATION; i2++ ){
-			for( i3=0; i3<SEED_NOTA; i3++ ){
+			for( i3=0; i3<NOTATION; i3++ ){
 				array[c][0] = pool[i1];
 				array[c][1] = pool2[i2];
-				array[c][2] = pool[i3];
+				array[c][2] = pool2[i3];
 				array[c++][3] = '\0';
 			}
 		}
@@ -139,7 +139,6 @@ static int read_motifs(FILE *inFile, char **MOT){
     return l;
 }
 
-
 static int check_motif(char *mstr, char mlen, double th){
 	int i, dash, no;
 	dash = no = 0;
@@ -160,10 +159,10 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
 	int i, ii, u;
 	int n = SEED_NOTA*2;
 	char pool[] = "ACGT";
-/* 	int n = NOTATION*2; */
+	int n2 = NOTATION;
 	char pool2[] = "ACGTRYSWKMBDHV";
 	char **tmpSet = malloc(numMot*n*14*sizeof(char*));
-	for( i=0; i<numMot*n*14; i++ ){
+	for( i=0; i<numMot*n2; i++ ){
 		tmpSet[i] = malloc((newLen+1)*sizeof(char));
 		memset(tmpSet[i], '\0', (newLen+1)*sizeof(char));
 	}
@@ -190,11 +189,12 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
 	memset(motD, '\0', (newLen+1)*sizeof(char));
  */
 	for( i=0; i<numMot; i++ ){
-		for( ii=0; ii<n; ii++ ){
+		for( ii=0; ii<n2; ii++ ){
 			/* Add the nucleotide on the right side */
 			memset(motA, '\0', (newLen+1)*sizeof(char));
 			memmove(motA, oldSet[i], newLen-1);
-			strncat(motA, &pool[ii], 1);
+			strncat(motA, &pool2[ii], 1);
+/* 
 			if( motA[newLen-3] == 'N' ){
 				motA[newLen-2] = 'N';
 				for( u=0; u<14; u++ ){
@@ -203,10 +203,13 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
 				}
 			}
 			else{
+ */
 				fprintf(temp, "%s\n", motA);
+/* 
 				motA[newLen-2] = 'N';
 				fprintf(temp, "%s\n", motA);
-			}
+ */
+/* 			} */
 /* 
 			if( check_motif(motA, newLen, 0.35) == 0 ){
 				fprintf(tmp_out, "%s\n", motA);
@@ -293,7 +296,7 @@ static int filter_and_expand_nt(char **oldSet, double *pcov, double *ncov, int n
 		memmove((*newSet)[i], tmpSet[i], newLen);
 	}
 	
-	for( i=0; i<numMot*n*14; i++ ){
+	for( i=0; i<numMot*n2; i++ ){
 		free(tmpSet[i]);
 	}
 	free(tmpSet);
