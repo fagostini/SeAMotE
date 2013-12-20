@@ -63,13 +63,7 @@ form_fields:
         required: yes
         hidden: No
         entries:
-            -   title:  Default (70%)
-                value:  0.7
-            -   title:  60%
-                value:  0.6
-            -   title:  65%
-                value:  0.65
-            -   title:  75%
+            -   title:  Default (75%)
                 value:  0.75
             -   title:  80%
                 value:  0.8
@@ -113,9 +107,9 @@ file_uploads:
         hidden: yes
 
 examples:
-    -   reference_id:   8888
-        title:          Load Example
-        description:    A simple example of 10 vs 10 mRNAs
+    -   reference_id:   18324
+        title:          PAR-CLIP bound/unbound transcripts (FUS protein)
+        description:    <a href="http://www.ncbi.nlm.nih.gov/pubmed/22081015" target="_blank">RNA targets of wild-type and mutant FET family proteins. Hoell. <i>et al.</i>, 2011</a>
 
 algorithm:
     command:              "seamote.py -fileA=<file0> -fileB=<file1> -output_dir=<output_dir>"
