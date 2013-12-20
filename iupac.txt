@@ -1,0 +1,14 @@
+A A
+C C
+G G
+U U
+[AG] R
+[CU] Y
+[CA] M
+[GU] K
+[AU] W
+[CG] S
+[CUG] B
+[AUG] D
+[AUC] H
+[ACG] V
