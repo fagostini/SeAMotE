@@ -17,7 +17,7 @@ cd   tmp/$1
 		awk '{print $1}' tmp/best_motifs.dat > iupac.txt
 		sed 's/R/[AG]/g;s/Y/[CT]/g;s/M/[CA]/g;s/K/[TG]/g;s/W/[TA]/g;s/S/[CG]/g;s/B/[CTG]/g;s/D/[ATG]/g;s/H/[ATC]/g;s/V/[ACG]/g' tmp/best_motifs.dat | awk '{print $1, $2, $4, $2/($2+$3), $4/($4+$5), $6, $NF}' > best_motifs.txt
 		paste iupac.txt best_motifs.txt > outputs/best_motifs.txt
-		awk 'BEGIN{printf "<tbody>\n"}{printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td>%s</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%.3E</td>\n\t</tr>\n", NR, $1, $2 $2, $3, $4, $5*100, $6*100, $7*100, $8 }END{printf "</tbody>\n"}' ./outputs/best_motifs.txt > ./outputs/table.html
+		awk 'BEGIN{printf "<tbody>\n"}{printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td>%s</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%.3E</td>\n\t</tr>\n", NR, $1, $2, $3, $4, $5*100, $6*100, $7*100, $8 }END{printf "</tbody>\n"}' ./outputs/best_motifs.txt > ./outputs/table.html
 		mv tmp/*.dat outputs/
 	else
 		echo "The script has failed and no file has been created!"
