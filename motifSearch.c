@@ -423,10 +423,10 @@ int main(int argc, char* argv[]){
 	numPos = numNeg = ref = 0;
 	int ms = MIN_MOT;
 	int mn = SEED_NOTA*NOTATION*NOTATION;
-	double th = 0.7;
+	double th = 0.75;
 	char **motifs, **posID, **posSeq, **negID, **negSeq, **shuSeq;
 	motifs = posID = posSeq = negID = negSeq = shuSeq = NULL;
-	FILE *log, *Fpositive, *Fnegative, *Fshuffle, *Fposshuf, *Fnegshuf, *Fmotifs;
+	FILE *log, *Fpositive, *Fnegative, *Freference, *Fposshuf, *Fnegshuf, *Fmotifs;
 	char *fileM = malloc(100*sizeof(char));
 	memset(fileM, '\0', 100*sizeof(char));
 	char *fileP = malloc(100*sizeof(char));
@@ -512,7 +512,7 @@ int main(int argc, char* argv[]){
 			printf("Negative file: Not specified\nReference: Shuffle\nGenerating reference set from the Positive file... "); fflush(stdout);			
 		}
 /* 		fprintf(log, "Negative file: Not specified\nGenerating a shuffled set from the Positive file... "); */
-		Fshuffle = open_file(Fshuffle, "Ref_shuffle.txt", "w");
+		Freference = open_file(Freference, "reference.seq", "w");
 		shuSeq = malloc2Dchar(MAX_SEQ, numPos*NO_NEGA);
 		char *sequence = malloc(MAX_SEQ*sizeof(char));
 		for( i=0; i<numPos; i++ ){
@@ -527,10 +527,10 @@ int main(int argc, char* argv[]){
 					str_shuffle(sequence, strlen(sequence));
 				}
 				memmove(shuSeq[i*NO_NEGA+c], sequence, strlen(sequence));
-				fprintf(Fshuffle, "%s\n", sequence);
+				fprintf(Freference, "%s\n", sequence);
 			}
 		}
-		fclose(Fshuffle);
+		fclose(Freference);
 		free(sequence);
 		numNeg = numPos*NO_NEGA;
 		negSeq = shuSeq;

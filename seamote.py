@@ -119,8 +119,9 @@ if p.returncode == 0:
 	c = Context(
 	   {
 		   "title": args.FORMtitle,
-		   "DatasetA": (""" "{}" """.format(args.fileA[0])).split("/")[5].split("\"")[0],
-		   "DatasetB": (""" "{}" """.format(args.fileB[0])).split("/")[5].split("\"")[0],
+# 		   "DatasetA": (""" "{}" """.format(args.fileA[0])).split("/")[5].split("\"")[0],
+# 		   "DatasetB": (""" "{}" """.format(args.fileB[0])).split("/")[5].split("\"")[0],
+		   "myRef": args.FORMuse_as_reference,
 		   "randoms" : random_number,
 		   "generated" : str(datetime.datetime.now()),
 	   }

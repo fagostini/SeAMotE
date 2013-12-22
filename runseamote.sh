@@ -12,6 +12,13 @@ cd   tmp/$1
 	options+="-t $4 "  
 
 	./motifSearch -p positive.oneline $options -a rna
+	
+	mv positive.oneline outputs/positive.seq
+	if [[ -s "negative.oneline" ]]; then
+		mv negative.oneline outputs/reference.seq
+	else
+		mv reference.seq outputs/reference.seq
+	fi
 
 	if [[ -s "tmp/best_motifs.dat" ]]; then
 		awk '{print $1}' tmp/best_motifs.dat > iupac.txt
