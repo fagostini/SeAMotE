@@ -8,9 +8,9 @@
 #include <pthread.h>
 
 #include "main.h"
-#include "my_library.lib"
-#include "RNA_lib.lib"
-#include "DNA_lib.lib"
+#include "my_library.h"
+#include "RNA_lib.h"
+#include "DNA_lib.h"
 
 #define print_and_continue(a) {printf("%d ", a); fflush(stdout);}
 #define print_and_exit(a) {printf("%d\n", a); fflush(stdout); exit(1);}
