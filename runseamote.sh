@@ -1,5 +1,5 @@
 #!/bin/bash
-# bash runseamote.sh "random_number" "motiFile" "use_as_reference" "threshold"
+# bash runseamote.sh "random_number" "motiFile" "use_as_reference" "threshold" "reverse"
 
 cd   tmp/$1
 
@@ -11,7 +11,7 @@ cd   tmp/$1
 
 	options+="-t $4 "  
 
-	./motifSearch -p positive.oneline $options -a rna
+	./motifSearch -p positive.oneline $options -a $5
 	
 	mv positive.oneline outputs/positive.seq
 	if [[ -s "negative.oneline" ]]; then
