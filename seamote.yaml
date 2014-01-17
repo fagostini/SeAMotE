@@ -73,6 +73,15 @@ form_fields:
                 value:  0.9
             -   title:  95%
                 value:  0.95
+    -   name: revcompl
+        description: Use reverse complement
+        type: radio
+        required: yes
+        entries:
+            -   title:  No
+                value:  "rna"
+            -   title:  Yes
+                value:  "dna"
 
 file_uploads:    
 #    -   filename: M.file
