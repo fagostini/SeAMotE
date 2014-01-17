@@ -1,7 +1,14 @@
-#define pA 27
-#define pC 24
-#define pG 24
-#define pT 25
+/* Probability as estimated from the ensembl 68 cdna library */
+#define pA 258	/* 71001492 */
+#define pC 248	/* 68224368 */
+#define pG 253	/* 69548269 */
+#define pT 241	/* 66459718 */
+
+/* Probability as obtained from the hg18 genome assembly */
+/* #define pA 295 */	/* 827073261 */
+/* #define pC 204 */	/* 572580890 */
+/* #define pG 205 */	/* 572932977 */
+/* #define pT 296 */	/* 828265416 */
 
 int rand_int(int n) {
   int limit = RAND_MAX - RAND_MAX % n;
@@ -29,7 +36,7 @@ static int str_shuffle(char *array, int n) {
 static int str_random(char *array, int n) { 
 	int i, p;
 	for( i=0; i<n; i++){
-		p = rand() % 100;
+		p = rand() % 1000;
 		if( p < pA ){
 			array[i] = 'A';
 		}
@@ -62,7 +69,7 @@ static void random_sequence(int seqLen, char **sequence){
 	int i, p;
 	(*sequence) = malloc((seqLen+1)*sizeof(char));
 	for( i=0; i<seqLen; i++){
-		p = rand() % 100;
+		p = rand() % 1000;
 		if( p < pA ){
 			strncat((*sequence), "A", 1);
 		}

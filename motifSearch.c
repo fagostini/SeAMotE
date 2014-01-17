@@ -420,7 +420,7 @@ int main(int argc, char* argv[]){
 	srand(1);	
 	
 	int i, numPos, numNeg, dna, rna, prot, ref;
-	numPos = numNeg = ref = 0;
+	numPos = numNeg = ref = dna = rna = 0;
 	int ms = MIN_MOT;
 	int mn = SEED_NOTA*NOTATION*NOTATION;
 	double th = 0.75;
@@ -444,9 +444,11 @@ int main(int argc, char* argv[]){
 	if( type[0] != '\0' ){
 		if((strcmp(type, "rna") == 0) | (strcmp(type, "RNA") == 0)){
 			rna = 1;
+			printf("Use reverse complement: No\n"); fflush(stdout);
 		}	
 		else if((strcmp(type, "dna") == 0) | (strcmp(type, "DNA") == 0)){
 			dna = 1;
+			printf("Use reverse complement: Yes\n"); fflush(stdout);
 		}
 		else{
 			printf("The molecule type specified cannot be recognized!\n"); fflush(stdout);
@@ -475,14 +477,14 @@ int main(int argc, char* argv[]){
 /* 		fprintf(log, "Positive file: %s\nReading the Positive file... ", fileP); */
 		Fpositive = open_file(Fpositive, fileP, "r");
 		numPos = read_lines(Fpositive);
-		posID = dna == 0 ? malloc2Dchar(MAX_ID, numPos) : malloc2Dchar(MAX_ID, numPos*2);
-		posSeq = malloc2Dchar(MAX_SEQ, numPos);
+		posID = malloc2Dchar(MAX_ID, numPos);
+		posSeq = dna == 0 ? malloc2Dchar(MAX_SEQ, numPos) : malloc2Dchar(MAX_SEQ*2, numPos);
 		read_oneline(Fpositive, posID, posSeq, MAX_ID, MAX_SEQ, "%s %[^\n]%*c");
 		fclose(Fpositive);
 		if( dna == 1 ){
 			compl_inverse(numPos, &posSeq);
 		}
-		printf("done\n"); fflush(stdout);
+		printf("%d sequences\n", numPos); fflush(stdout);
 /* 		fprintf(log, "done\n"); */
 	}
 	else{
@@ -494,14 +496,14 @@ int main(int argc, char* argv[]){
 /* 		fprintf(log, "Negative file: %s\nReading the Negative file... ", fileN); */
 		Fnegative = open_file(Fnegative, fileN, "r");
 		numNeg = read_lines(Fnegative);
-		negID = dna == 0 ? malloc2Dchar(MAX_ID, numNeg) : malloc2Dchar(MAX_ID, numNeg*2);
-		negSeq = malloc2Dchar(MAX_SEQ, numNeg);
+		negID = malloc2Dchar(MAX_ID, numNeg);
+		negSeq = dna == 0 ? malloc2Dchar(MAX_SEQ, numNeg) : malloc2Dchar(MAX_SEQ*2, numNeg);
 		read_oneline(Fnegative, negID, negSeq, MAX_ID, MAX_SEQ, "%s %[^\n]%*c");
 		fclose(Fnegative);
 		if( dna == 1 ){
 			compl_inverse(numNeg, &negSeq);
 		}
-		printf("done\n"); fflush(stdout);
+		printf("%d sequences\n", numNeg); fflush(stdout);
 /* 		fprintf(log, "done\n"); */
 	}
 	else{
@@ -1119,7 +1121,7 @@ int main(int argc, char* argv[]){
 print_and_continue("0");
 /* 	free2Dchar(motifs, mn); */
 	free2Dchar(posID, numPos);
-	free2Dchar(posSeq, numPos);
+	free2Dchar(posSeq, numPos*2);
 	if( negID ){
 		print_and_continue("1a");
 		free2Dchar(negID, numNeg);

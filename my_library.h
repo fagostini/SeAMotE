@@ -112,7 +112,7 @@ static void read_args(int argc, char **argv, char *fileM, char *fileP, char *fil
 			}
 			else if(strcmp(argv[i], options[6].cmd) == 0){
 				if(argv[i+1] != NULL && argv[i+1][0] != '-' && ((strcmp(argv[i+1], "rna") == 0) || (strcmp(argv[i+1], "RNA") == 0) || (strcmp(argv[i+1], "dna") == 0) || (strcmp(argv[i+1], "DNA") == 0)) ){
-					*type = atof(argv[i+1]);
+					strcpy(type, argv[i+1]);
 				}
 				else{
 					printf("%s\n", options[6].err);
