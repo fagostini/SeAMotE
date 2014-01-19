@@ -122,6 +122,7 @@ if p.returncode == 0:
 # 		   "DatasetA": (""" "{}" """.format(args.fileA[0])).split("/")[5].split("\"")[0],
 # 		   "DatasetB": (""" "{}" """.format(args.fileB[0])).split("/")[5].split("\"")[0],
 		   "myRef": args.FORMuse_as_reference[0],
+		   "useRev": args.FORMrevcompl[0],
 		   "randoms" : random_number,
 		   "generated" : str(datetime.datetime.now()),
 	   }
