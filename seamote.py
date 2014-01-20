@@ -108,12 +108,12 @@ if p.returncode == 0:
 	
 	settings.configure(TEMPLATE_DIRS=(os.path.join(SCRIPT_PATH,'./')), DEBUG=True, TEMPLATE_DEBUG=True)
 	
+	import datetime
+
 	# read the template file into a variable
 	with open(os.path.join(SCRIPT_PATH, "index.seamote.html"), "r") as template_file:
 	   template_string = "".join(template_file.readlines())
-	
-	import datetime
-	
+		
 	# create template from the string
 	t = Template(template_string)
 	
@@ -132,6 +132,30 @@ if p.returncode == 0:
 	
 	# and this bit outputs it all into index.html
 	with open(os.path.join(OUTPUT_PATH, "index.html"), "w") as output: 
+	   output.write(t.render(c))
+
+	# read the template file into a variable
+	with open(os.path.join(SCRIPT_PATH, "download.seamote.html"), "r") as template_file:
+	   template_string = "".join(template_file.readlines())
+		
+	# create template from the string
+	t = Template(template_string)
+	
+	# context contains variables to be replaced
+	c = Context(
+	   {
+		   "title": args.FORMtitle,
+# 		   "DatasetA": (""" "{}" """.format(args.fileA[0])).split("/")[5].split("\"")[0],
+# 		   "DatasetB": (""" "{}" """.format(args.fileB[0])).split("/")[5].split("\"")[0],
+		   "myRef": args.FORMuse_as_reference[0],
+		   "useRev": args.FORMrevcompl[0],
+		   "randoms" : random_number,
+		   "generated" : str(datetime.datetime.now()),
+	   }
+	)
+	
+	# and this bit outputs it all into index.html
+	with open(os.path.join(OUTPUT_PATH, "download.html"), "w") as output: 
 	   output.write(t.render(c))
 	   
 else:

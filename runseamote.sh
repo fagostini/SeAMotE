@@ -31,9 +31,11 @@ cd   tmp/$1
 			grep -o -e "$REmot" outputs/positive.seq > matches.txt
 			python createLogo.py "$IUmot" 2&> python.log
 		done
+		zip -r outputs/results.zip logos/*
 		rm matches.txt
 	
 		awk 'BEGIN{printf "<tbody>\n"}{printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td>%s</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%.3E</td>\n\t</tr>\n", NR, $1, $2, $3, $4, $5*100, $6*100, $7*100, $8 }END{printf "</tbody>\n"}' ./outputs/best_motifs.txt > ./outputs/table.html
+		awk 'BEGIN{printf "<tbody>\n"}{printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td>%s</td>\n\t\t<td><a href=\"logos/%s_logo.png\">Download</a></td>\n\t\t<td><a href=\"logos/%s_pwm.txt\">Download</a></td>\n\t\t<td><a href=\"logos/%s_transfac.txt\">Download</a></td>\n\t\t<td>%d</td>\n\t\t<td>%.3E</td>\n\t</tr>\n", NR, $1, $2, $1, $1, $1, $7*100, $8 }END{printf "</tbody>\n"}' ./outputs/best_motifs.txt > ./outputs/logos.html
 		mv tmp/*.dat outputs/
 	else
 		echo "The script has failed and no file has been created!"
