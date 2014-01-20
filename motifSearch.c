@@ -1154,5 +1154,6 @@ print_and_continue("4");
 /* 	fprintf(log, "done\nThe script executed successfully!\n"); */
 	
 	pthread_exit(NULL);
+	return 0;
 		
 }

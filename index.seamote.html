@@ -24,8 +24,6 @@
         // get pathname
         var pathname = String(window.location.pathname.split("/").slice(0, -1).join("/"))
         var fullurl = String(window.location)
-        var downurl = String(window.location.replace("index","download"))
-        document.getElementById("downloadURL").setAttribute("href", downurl);
         try {
             if (parseUri(fullurl).queryKey["unlock"].slice(0, 10) == hex_md5(pathname).slice(0, 10)) {
                 $().ready(function() {
@@ -47,6 +45,10 @@
             })   
         }
     </script>
+    <script>
+    	var downurl = String(window.location.replace("index","download"))
+        document.getElementById("downloadURL").setAttribute("href", downurl);
+	</script>
     <!-- security end -->
     <script type="text/javascript" src="jquery.tablesorter.js"></script>
 	<script>
