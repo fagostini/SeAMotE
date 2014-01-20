@@ -24,6 +24,7 @@
         // get pathname
         var pathname = String(window.location.pathname.split("/").slice(0, -1).join("/"))
         var fullurl = String(window.location)
+        var passKey = String(parseUri(fullurl).queryKey["unlock"].slice(0, 10))
         try {
             if (parseUri(fullurl).queryKey["unlock"].slice(0, 10) == hex_md5(pathname).slice(0, 10)) {
                 $().ready(function() {
@@ -45,10 +46,6 @@
             })   
         }
     </script>
-    <script>
-    	var downurl = String(window.location.replace("index","download"))
-        document.getElementById("downloadURL").setAttribute("href", downurl);
-	</script>
     <!-- security end -->
     <script type="text/javascript" src="jquery.tablesorter.js"></script>
 	<script>
@@ -96,7 +93,7 @@
             <div style="float:left;width:940px;">          
  
                 <h3>
-                	<a href="#" id='downloadURL'>Go to the Download Page</a>
+                	<a href="download.html" onclick="location.href=this.href+'?unlock='+passKey;return false;" >Go to the Download Page</a>
                 	<br />or<br />
                     <a href="best_motifs.txt">Download the table content as a text file</a>
                 </h3>
