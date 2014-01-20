@@ -98,6 +98,8 @@ if p.returncode == 0:
 		shutil.copyfile(TMP_PATH+file, OUTPUT_PATH+file)
 	if os.path.exists(OUTPUT_PATH+"images") == False :
 		copyfolder(SCRIPT_PATH+"/images", OUTPUT_PATH+"images")
+	if os.path.exists(OUTPUT_PATH+"logos") == False :
+		copyfolder(SCRIPT_PATH+ "/tmp/"+ random_number+"/logos", OUTPUT_PATH+"logos")
 	
 	from django.template import Template
 	from django.template import Context

@@ -24,7 +24,7 @@ cd   tmp/$1
 		awk '{print $1}' tmp/best_motifs.dat > iupac.txt
 		sed 's/R/[AG]/g;s/Y/[CT]/g;s/M/[CA]/g;s/K/[TG]/g;s/W/[TA]/g;s/S/[CG]/g;s/B/[CTG]/g;s/D/[ATG]/g;s/H/[ATC]/g;s/V/[ACG]/g' tmp/best_motifs.dat | awk '{print $1, $2, $4, $2/($2+$3), $4/($4+$5), $6, $NF}' > best_motifs.txt
 		paste iupac.txt best_motifs.txt > outputs/best_motifs.txt
-	
+		
 		for((l=1;l<=`wc -l outputs/best_motifs.txt | awk '{print $1}'`;l++)); do
 			IUmot=`awk '(NR=='$l'){print $1}' outputs/best_motifs.txt`;
 			REmot=`awk '(NR=='$l'){print $2}' outputs/best_motifs.txt`;
