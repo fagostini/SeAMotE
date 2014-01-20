@@ -20,5 +20,5 @@ with open("logos/"+motif+"_pwm.txt", "w") as pwmFile:
 with open("logos/"+motif+"_transfac.txt", "w") as transFile:
 	print >> transFile, m.format("transfac")
 
-m.weblogo("logos/"+motif+"logo.png")
+m.weblogo("logos/"+motif+"_logo.png")
 
