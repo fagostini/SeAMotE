@@ -29,9 +29,11 @@ cd   tmp/$1
 		paste iupac.txt best_motifs.txt > outputs/best_motifs.txt
 		
 		# Generate the reverse complement for the DNA
+		mv outputs/positive.seq outputs/positive.tmp
 		if [[ "$5" == "dna" ]]; then
-			mv outputs/positive.seq outputs/positive.tmp
-			sed 's/U/T/g' outputs/positive.tmp | awk 'BEGIN{ j=n=split("A C G T", t); for(i=0;++i<=n;){ map[t[i]] = t[j--] }} { print $0; printf "%s_rc ", $1; for(i=length($2);i>0;i--){ printf "%s", map[substr($2, i, 1)]}; print x }' > outputs/positive.seq
+			awk '{gsub(/U/, "T", $2); print }' outputs/positive.tmp | awk 'BEGIN{ j=n=split("A C G T", t); for(i=0;++i<=n;){ map[t[i]] = t[j--] }} { printf "%s ", $0; for(i=length($2);i>0;i--){ printf "%s", map[substr($2, i, 1)]}; print x }' > outputs/positive.seq
+		else
+			awk '{gsub(/U/, "T", $2); print }' outputs/positive.tmp > outputs/positive.seq
 		fi
 		
 		# Generate the logo and other files for each motif and the collected zip file
@@ -42,7 +44,7 @@ cd   tmp/$1
 			python createLogo.py "$IUmot" 2&> python.log
 		done
 		zip -r outputs/results.zip logos/*
-		rm matches.txt
+		rm matches.txt outputs/positive.tmp
 		
 		# Write the html files
 		awk 'BEGIN{printf "<tbody>\n"}{printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td>%s</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%.3E</td>\n\t</tr>\n", NR, $1, $2, $3, $4, $5*100, $6*100, $7*100, $8 }END{printf "</tbody>\n"}' ./outputs/best_motifs.txt > ./outputs/table.html
