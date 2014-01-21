@@ -61,7 +61,6 @@ form_fields:
 #            cost of increased computational time. 
         type: radio
         required: yes
-        hidden: No
         entries:
             -   title:  Default (75%)
                 value:  0.75
