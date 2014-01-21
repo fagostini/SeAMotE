@@ -5,7 +5,7 @@
 		<title>{{title}}</title>
 		<link rel="stylesheet" href="http://service.tartaglialab.com/static_files/styles/gtt_lab_styles.css" type="text/css" media="all" charset="utf-8">
 		<link rel="stylesheet" href="style.css" type="text/css" media="all">
-		<link rel="stylesheet" href="http://service.tartaglialab.com/static_files/styles/jRating.jquery.css" type="text/css" media="all">
+<!-- 		<link rel="stylesheet" href="http://service.tartaglialab.com/static_files/styles/jRating.jquery.css" type="text/css" media="all"> -->
 		<link rel="stylesheet" href="http://service.tartaglialab.com/static_files/styles/tooltip.css" type="text/css">
 		<script src="http://service.tartaglialab.com/static_files/js/tooltip.js" type="text/javascript"></script> 
 </head>
@@ -16,7 +16,7 @@
     <!-- security start -->      
     <script language="javascript" type="text/javascript" src="http://service.tartaglialab.com/static_files/js/md5-min.js"></script>        
     <script language="javascript" type="text/javascript" src="http://service.tartaglialab.com/static_files/js/parseuri.js"></script>
-    <script language="javascript" type="text/javascript" src="http://service.tartaglialab.com/static_files/js/jRating.jquery.js"></script>        
+<!--     <script language="javascript" type="text/javascript" src="http://service.tartaglialab.com/static_files/js/jRating.jquery.js"></script>         -->
     <style type="text/css">
     body {
         /*hide main content */
@@ -96,19 +96,19 @@
             <div style="float:left;width:940px;">          
  
                 <h3>
-                    <a href="results.zip"><span class="tooltip" onmouseover="tooltip.pop(this, 'Logo, PWM and transfac files will be downloaded as a compressed zip file')">Download all files</span></a>
+                    <a href="results.zip"><span class="tooltip" onmouseover="tooltip.pop(this, 'Logo, PWM and transfac files will be downloaded as a compressed zip file', {position:0, overlay:false, offsetX:0, effect:'slide'})">Download all files</span></a>
                 </h3>
             	<br>
  				<table cellpadding="0" cellspacing="0" border="0" id="table" class="tablesorter"> 
  					<thead><tr>
 							<th  data-sort="int"><h3>#</h3></th>
-							<th data-sort="string"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'International Union of Pure and Applied Chemistry Notation')">Motif</br>(IUPAC)</span></h3></th>
-							<th data-sort="string"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'Regular Expression Notation')">Motif</br>(RegEx)</span></h3></th>
-							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'The logo of the motifs is generated using WebLogo and BioPython (package Motifs)')">Logo (png)</span></h3></th>
-							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'The positional weighted matrix is generated using BioPython (package Motifs)')">PWM (txt)</span></th>
-							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'The TRANSFAC format is generated using BioPython (package Motifs)')">Transfac (txt)</span></h3></th>
-							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, '---')">Discrimination (%)</span></h3></th>
-							<th data-sort="float"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'Fisher\'s Exact Test')">P-value</span></h3></th>
+							<th data-sort="string"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'International Union of Pure and Applied Chemistry Notation', {position:0, overlay:false, offsetX:0, effect:'slide'})">Motif</br>(IUPAC)</span></h3></th>
+							<th data-sort="string"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'Regular Expression Notation', {position:0, overlay:false, offsetX:0, effect:'slide'})">Motif</br>(RegEx)</span></h3></th>
+							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'The logo of the motifs is generated using WebLogo and BioPython (package Motifs)', {position:0, overlay:false, offsetX:0, effect:'slide'})">Logo (png)</span></h3></th>
+							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'The positional weighted matrix is generated using BioPython (package Motifs)', {position:0, overlay:false, offsetX:0, effect:'slide'})">PWM (txt)</span></th>
+							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'The TRANSFAC format is generated using BioPython (package Motifs)', {position:0, overlay:false, offsetX:0, effect:'slide'})">Transfac (txt)</span></h3></th>
+							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, '---', {position:0, overlay:false, offsetX:0, effect:'slide'})">Discrimination (%)</span></h3></th>
+							<th data-sort="float"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'Fisher\'s Exact Test', {position:0, overlay:false, offsetX:0, effect:'slide'})">P-value</span></h3></th>
 						</tr>
 					</thead>
 					<script type="text/javascript">
