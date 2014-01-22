@@ -51,7 +51,7 @@ form_fields:
                 value: negative
                 shows:
                     - negative_set
-    -   name: threshold
+    -   name: myThresh
         description: >
             Set Coverage<br/> 
             <small>Default is recommended for majority of users and provides simplicity and robustness.
@@ -73,13 +73,13 @@ form_fields:
             -   title:  95%
                 value:  0.95
     -   name: revcompl
-        description: Use reverse complement
+        description: Use only given strand
         type: radio
         required: yes
         entries:
-            -   title:  No
-                value:  "rna"
             -   title:  Yes
+                value:  "rna"
+            -   title:  No
                 value:  "dna"
 
 file_uploads:    
