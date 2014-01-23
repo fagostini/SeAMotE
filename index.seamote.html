@@ -81,13 +81,13 @@
     	<h2>Your submission results</h2><br />
         <span id="submission_info">
         <h4>Information about the JOB:</h4>
-        <p>ID: {{randoms}}<br />
-        User label: {{title}}<br />
-        DatasetA: <a href="positive.seq" >PositiveSet</a><br />
-        DatasetB: <a href="reference.seq" >ReferenceSet</a><br />
-        Reference: {{myRef}}<br />
-        Nucleic Acid: {{revcompl}}<br />
-        Generated: {{generated}}<br />
+        <p>ID: <span class="tooltip" onmouseover="tooltip.pop(this, 'The unique identifier of this job submission', {position:3, overlay:false, offsetX:0, effect:'slide'})">{{randoms}}</span><br />
+        User label: <span class="tooltip" onmouseover="tooltip.pop(this, 'The title assigned by the user', {position:3, overlay:false, offsetX:0, effect:'slide'})">{{title}}</span><br />
+        DatasetA: <a href="positive.seq" class="tooltip" onmouseover="tooltip.pop(this, 'The foreground dataset', {position:3, overlay:false, offsetX:0, effect:'slide'})">PositiveSet</a><br />
+        DatasetB: <a href="reference.seq" class="tooltip" onmouseover="tooltip.pop(this, 'The background dataset', {position:3, overlay:false, offsetX:0, effect:'slide'})">ReferenceSet</a><br />
+        Reference: <span class="tooltip" onmouseover="tooltip.pop(this, 'The type of the backgroud dataset selected for this submission', {position:3, overlay:false, offsetX:0, effect:'slide'})">{{myRef}}</span><br />
+        Nucleic Acid: <span class="tooltip" onmouseover="tooltip.pop(this, 'The type of nucleic acid selected for this submission', {position:3, overlay:false, offsetX:0, effect:'slide'})">{{useRev}}</span><br />
+        Generated: <span class="tooltip" onmouseover="tooltip.pop(this, 'The completion information for this job', {position:3, overlay:false, offsetX:0, effect:'slide'})">{{generated}}</span><br />
          </p>
        </span>
         <br />

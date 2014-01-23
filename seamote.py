@@ -101,6 +101,11 @@ if p.returncode == 0:
 	if os.path.exists(OUTPUT_PATH+"logos") == False :
 		copyfolder(SCRIPT_PATH+ "/tmp/"+ random_number+"/logos", OUTPUT_PATH+"logos")
 	
+	if args.FORMrevcompl[0] == 'rna':
+		nucleic = "RNA"
+	else:
+		nucleic = "DNA"
+	
 	from django.template import Template
 	from django.template import Context
 	from django.conf import settings
@@ -124,7 +129,7 @@ if p.returncode == 0:
 # 		   "DatasetA": (""" "{}" """.format(args.fileA[0])).split("/")[5].split("\"")[0],
 # 		   "DatasetB": (""" "{}" """.format(args.fileB[0])).split("/")[5].split("\"")[0],
 		   "myRef": args.FORMuse_as_reference[0],
-		   "useRev": args.FORMrevcompl[0],
+		   "useRev": nucleic,
 		   "randoms" : random_number,
 		   "generated" : str(datetime.datetime.now()),
 	   }
@@ -148,7 +153,7 @@ if p.returncode == 0:
 # 		   "DatasetA": (""" "{}" """.format(args.fileA[0])).split("/")[5].split("\"")[0],
 # 		   "DatasetB": (""" "{}" """.format(args.fileB[0])).split("/")[5].split("\"")[0],
 		   "myRef": args.FORMuse_as_reference[0],
-		   "useRev": args.FORMrevcompl[0],
+		   "useRev": nucleic,
 		   "randoms" : random_number,
 		   "generated" : str(datetime.datetime.now()),
 	   }
