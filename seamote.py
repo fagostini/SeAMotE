@@ -164,4 +164,4 @@ if p.returncode == 0:
 	   output.write(t.render(c))
 	   
 else:
-	sys.exit("The execution of the C code  failed.")
+	sys.exit("The execution of the C code failed.")
