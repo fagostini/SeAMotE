@@ -24,7 +24,7 @@ DFbest$Pval <- unlist(Pval)
 write.table(DFbest,"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)
 # write.table(DF[order(unlist(Pval))[1:10],],"tmp/best_motifs.dat", row.names=FALSE, col.names=FALSE, quote = FALSE, append=TRUE)
 DF <- DF[which( (DF$V2/(DF$V2+DF$V3) >= th) & (DF$V6 >= 0) ),]
-if( dim(DF)[1] > 1000 ){
-	DF <- DF[order(DF$V6, decreasing=T)[1:1000],]	
+if( dim(DF)[1] > 500 ){
+	DF <- DF[order(DF$V6, decreasing=T)[1:500],]	
 }
 write.table(DF, paste("tmp/motifs_",Args[5],"nt.dat", sep=""), row.names=FALSE, col.names=FALSE, quote = FALSE)
