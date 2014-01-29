@@ -95,7 +95,7 @@
             <div style="float:left;width:940px;">          
  
                 <h3 style="color:black" >
-                	<a href="download.html" onclick="location.href=this.href+'?unlock='+passKey;return false;"><span class="tooltip" onmouseover="tooltip.pop(this, 'Where is possible to download motif logos, PWMs and TRANSFACTOR notation files', {position:0, overlay:false, offsetX:0, effect:'slide'})">Download Page</span></a>
+                	<a href="download.html" onclick="location.href=this.href+'?unlock='+passKey;return false;"><span class="tooltip" onmouseover="tooltip.pop(this, 'Where it is possible to download motif logos, PWMs and TRANSFACTOR notation files', {position:0, overlay:false, offsetX:0, effect:'slide'})">Download Page</span></a>
                 	<br />or<br />
                     <a href="best_motifs.txt"> <span class="tooltip" onmouseover="tooltip.pop(this, 'Download the table content as a text file', {position:2, overlay:false, offsetX:0, effect:'slide'})">Table download</span></a>
                 </h3>
@@ -103,10 +103,12 @@
  				<table cellpadding="0" cellspacing="0" border="0" id="table" class="tablesorter"> 
  					<thead><tr>
 							<th data-sort="int"><h3>#</h3></th>
-							<th data-sort="string"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'International Union of Pure and Applied Chemistry Notation', {position:0, overlay:false, offsetX:0, effect:'slide'})">Motif</br>(IUPAC)</span></h3></th>
-							<th data-sort="string"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'Regular Expression Notation', {position:0, overlay:false, offsetX:0, effect:'slide'})">Motif</br>(RegEx)</span></h3></th>
-							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'Number of sequences with at least one motif', {position:0, overlay:false, offsetX:0, effect:'slide'})">Positive</br>Count</span></h3></th>
+							<th data-sort="string"><h3>Motif</br>(IUPAC)</h3></th>
+							<th data-sort="string"><h3>Motif</br>(RegEx)</h3></th>
+							<th class="nosort"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'The logo of the motifs is generated using WebLogo and BioPython (package Motifs)', {position:0, overlay:false, offsetX:0, effect:'slide'})">Logo</h3></th>
+<!-- 						<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'Number of sequences with at least one motif', {position:0, overlay:false, offsetX:0, effect:'slide'})">Positive</br>Count</span></h3></th>
 							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'Number of sequences with at least one motif', {position:0, overlay:false, offsetX:0, effect:'slide'})">Reference</br>Count</span></h3></th>
+ -->
 							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'Percentage of sequences with at least one motif', {position:0, overlay:false, offsetX:0, effect:'slide'})">Positive</br>Coverage (%)</span></h3></th>
 							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, 'Percentage of sequences with at least one motif', {position:0, overlay:false, offsetX:0, effect:'slide'})">Reference</br>Coverage (%)</span></h3></th>
 							<th data-sort="int"><h3><span class="tooltip" onmouseover="tooltip.pop(this, '---', {position:0, overlay:false, offsetX:0, effect:'slide'})">Discrimination (%)</span></h3></th>
