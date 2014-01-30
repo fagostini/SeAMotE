@@ -78,7 +78,7 @@ p#task_description  {
     position: relative; 
     visibility: visible;
 /*    border: solid 1px #999;*/
-    margin: 0 auto;
+    margin: auto;
 
 }*/
 #title_server 
@@ -181,11 +181,12 @@ p#task_description  {
 	margin: 0 auto;
 	padding:5px;  	
 }
-/*#welcome_main img
+
+#welcome_main img
 {
 	float: left; 
 	margin: 0px 8px 8px 0px; 	
-}*/
+}
 
 #welcome_server
 { 
@@ -209,11 +210,13 @@ p#task_description  {
 	padding:5px;  	
 }
 
+/* 
 #welcome_server img
 {
 	float: left; 
 	margin: 0px 8px 8px 0px; 	
 }
+ */
 
 #docs_image img
 {
