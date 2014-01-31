@@ -422,7 +422,8 @@ int main(int argc, char* argv[]){
 	int i, numPos, numNeg, dna, rna, prot, ref;
 	numPos = numNeg = ref = dna = rna = 0;
 	int ms = MIN_MOT;
-	int mn = SEED_NOTA*NOTATION*NOTATION;
+	int maxWidth = MAX_MOT;
+	int mn = NOTATION*NOTATION*NOTATION;
 	double th = 0.75;
 	char **motifs, **posID, **posSeq, **negID, **negSeq, **shuSeq;
 	motifs = posID = posSeq = negID = negSeq = shuSeq = NULL;
@@ -438,7 +439,7 @@ int main(int argc, char* argv[]){
 /* 	log = open_file(log, "log.txt", "w"); */
 /* 	printf("Reading args... ");  fflush(stdout); */
 /* 	fprintf(log, "Reading args... "); */
-	read_args(argc, argv, fileM, fileP, fileN, &th, type, &ref);
+	read_args(argc, argv, fileM, fileP, fileN, &th, type, &ref, &maxWidth);
 /* 	printf("done\n"); fflush(stdout); */
 /* 	fprintf(log, "done\n"); */
 	if( type[0] != '\0' ){
@@ -839,7 +840,7 @@ int main(int argc, char* argv[]){
 	free(fname2);
 	free(fname3);
 
-	printf("done\nBeginnig the motif coverage optimization:\n"); fflush(stdout);
+	printf("done\nBeginnig the motif coverage optimization until %dnt:\n", maxWidth); fflush(stdout);
 /* 	fprintf(log, "done\nBeginnig the motif coverage optimization:\n"); */
 
 /* NEW SECTION STARTS HERE... */
@@ -850,7 +851,7 @@ int main(int argc, char* argv[]){
 	int new_mn = tmp_mn = mn;
 	do{
 		old_mn = new_mn;
-		if( new_mn != 0 && loop+3 < 7 ){
+		if( new_mn != 0 && loop+3 < maxWidth ){
 			ms++;
 			new_mn = filter_and_expand_nt(old_motifs, posCov, negCov, old_mn, ms, th, &new_motifs);
 		 	printf("   %d: Testing %d motifs (%d nt)", loop+1, new_mn, ms); fflush(stdout);
@@ -1109,7 +1110,7 @@ int main(int argc, char* argv[]){
 			break;
 		}	
 		loop++;
-	}while( loop < MAX_MOT-MIN_MOT );
+	}while( loop < maxWidth-MIN_MOT );
 	
 	printf("done\nFreeing the memory... "); fflush(stdout);
 /*  	fprintf(log, "done\nFreeing the memory... "); */
@@ -1121,7 +1122,7 @@ int main(int argc, char* argv[]){
 print_and_continue("0");
 /* 	free2Dchar(motifs, mn); */
 	free2Dchar(posID, numPos);
-	free2Dchar(posSeq, numPos*2);
+	free2Dchar(posSeq, numPos);
 	if( negID ){
 		print_and_continue("1a");
 		free2Dchar(negID, numNeg);

@@ -18,9 +18,9 @@ static void call_help(int n, struct data *options){
 	exit(n);
 }
 
-static void read_args(int argc, char **argv, char *fileM, char *fileP, char *fileN, double *th, char *type, int *ref){
+static void read_args(int argc, char **argv, char *fileM, char *fileP, char *fileN, double *th, char *type, int *ref, int *maxW){
 	FILE *Ftest;
-	struct data options[8];
+	struct data options[9];
 	options[0].cmd = argv[0];
 	options[0].des = "Version 0.1 - Description of the application (under development)";
 	options[0].err = "";
@@ -45,6 +45,9 @@ static void read_args(int argc, char **argv, char *fileM, char *fileP, char *fil
 	options[7].cmd = "-r";
 	options[7].des = "the reference set can consist of a random of shuffle dataset (default: shuffle)";
 	options[7].err = "Error! The reference has not been specified correctly!";
+	options[8].cmd = "-w";
+	options[8].des = "the max width of the motifs";
+	options[8].err = "Error! The integer has not been specified correctly!";
 
 	int i = 1;
 	while( i < argc ){
@@ -128,6 +131,15 @@ static void read_args(int argc, char **argv, char *fileM, char *fileP, char *fil
 				}
 				else{
 					printf("%s\n", options[7].err);
+					exit(1);
+				}
+			}
+			else if(strcmp(argv[i], options[8].cmd) == 0){
+				if(argv[i+1] != NULL && argv[i+1][0] != '-'){
+					*maxW = atoi(argv[i+1]);
+				}
+				else{
+					printf("%s\n", options[8].err);
 					exit(1);
 				}
 			}

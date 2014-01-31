@@ -94,10 +94,10 @@ static void create_motifs_nt(char **array, char mlen){
 	char pool2[] = "ACGTRYSWKMBDHV";
 	int i1, i2, i3;
 	c = 0;
-	for( i1=0; i1<SEED_NOTA; i1++ ){
+	for( i1=0; i1<NOTATION; i1++ ){
 		for( i2=0; i2<NOTATION; i2++ ){
 			for( i3=0; i3<NOTATION; i3++ ){
-				array[c][0] = pool[i1];
+				array[c][0] = pool2[i1];
 				array[c][1] = pool2[i2];
 				array[c][2] = pool2[i3];
 				array[c++][3] = '\0';
