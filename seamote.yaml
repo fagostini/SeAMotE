@@ -116,8 +116,8 @@ file_uploads:
 
 examples:
     -   reference_id:   20542
-        title:          PAR-CLIP bound/unbound transcripts (FUS protein)
-        description:    <a href="http://www.ncbi.nlm.nih.gov/pubmed/22081015" target="_blank">Hoell. <i>et al.</i>, 2011</a>
+        title:          <small>PAR-CLIP bound/unbound transcripts (FUS protein)</small>
+        description:    <a href="http://www.ncbi.nlm.nih.gov/pubmed/22081015" target="_blank"><small>Hoell. <i>et al.</i>, 2011</small></a>
 
 algorithm:
     command:              "seamote.py -fileA=<file0> -fileB=<file1> -output_dir=<output_dir>"
