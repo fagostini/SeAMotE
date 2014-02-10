@@ -18,14 +18,13 @@
 		$(document).ready(function() {
 			$( document ).tooltip();
 		});
+		$(document).ready(function() {
+			$('#table').tablesorter({
+				widgets: ['zebra'],
+				widgetZebra: {css: ["NormRow","AltRow"]} // css classes to apply to rows
+			});
+		});
 	</script>
-
-	<style>
-		label {
-			display: inline-block;
-			width: 5em;
-		}
-	</style>
     <style type="text/css">
     body {
         /*hide main content */
@@ -139,19 +138,7 @@
 						}, 
 						type: 'numeric' 
 					});
-					
-					$(document).ready(function() {
-						$('#table').tablesorter({
-							widgets: ['zebra'],
-							widgetZebra: {css: ["NormRow","AltRow"]} // css classes to apply to rows
-						});
-					});
-					
-					$(document).ready(function() {
-						$( document ).tooltip();
-					});
-				</script>
-				
+				</script>				
             </div>
             <div style="clear:both;">
             <br>
