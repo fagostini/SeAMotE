@@ -5,10 +5,10 @@
 		<title>{{title}}</title>
 		<link rel="stylesheet" href="gtt_lab_styles.css" type="text/css" media="all" charset="utf-8">
 		<link rel="stylesheet" href="style.css" type="text/css" media="all">
-		<link rel="stylesheet" href="http://service.tartaglialab.com/static_files/styles/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" href="http://service.tartaglialab.com/static_files/styles/jquery-ui-1.9.2.custom.css" type="text/css" media="all">
 		<script src="http://service.tartaglialab.com/static_files/js/jquery-1.7.2.min.js" type="text/javascript"></script>
 		<script src="http://service.tartaglialab.com/static_files/js/jquery.tablesorter.js" type="text/javascript"></script>
-		<script src="http://service.tartaglialab.com/static_files/js/jquery-ui-1.9.2.custom.min.js"></script>		
+		<script src="http://service.tartaglialab.com/static_files/js/jquery-ui-1.9.2.custom.min.js" type="text/javascript"></script>		
 	</head>
 	<body>
     <!-- security start -->      
@@ -19,7 +19,7 @@
 			$( document ).tooltip();
 		});
 		$(document).ready(function() {
-			$('#table').tablesorter({
+			$('table').tablesorter({
 				widgets: ['zebra'],
 				widgetZebra: {css: ["NormRow","AltRow"]} // css classes to apply to rows
 			});
