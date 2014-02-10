@@ -14,21 +14,6 @@
     <!-- security start -->      
     <script language="javascript" type="text/javascript" src="http://service.tartaglialab.com/static_files/js/md5-min.js"></script>        
     <script language="javascript" type="text/javascript" src="http://service.tartaglialab.com/static_files/js/parseuri.js"></script>
-	<script>
-		$(document).ready(function() {
-			$('#table').tablesorter({
-				widgets: ['zebra'],
-				widgetZebra: {css: ["NormRow","AltRow"]} // css classes to apply to rows
-			});
-		});
-		$(document).ready(function() {
-			$('#infos').tooltip();
-		});
-
-		$(document).ready(function() {
-			$('#table').tooltip();
-		});
-	</script>
     <style type="text/css">
     body {
         /*hide main content */
@@ -62,7 +47,22 @@
         }
     </script>
     <!-- security end -->
-    
+    <script>
+		$(document).ready(function() {
+			$('#table').tablesorter({
+				widgets: ['zebra'],
+				widgetZebra: {css: ["NormRow","AltRow"]} // css classes to apply to rows
+			});
+		});
+		$(document).ready(function() {
+			$('#infos').tooltip();
+		});
+
+		$(document).ready(function() {
+			$('#table').tooltip();
+		});
+	</script>
+
 	<div id="topbar">
 		<div id="home_panel">
 		<p><a href="http://service.tartaglialab.com/">Portal Home</a></p>
