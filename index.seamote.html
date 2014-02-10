@@ -14,11 +14,6 @@
     <!-- security start -->      
     <script language="javascript" type="text/javascript" src="http://service.tartaglialab.com/static_files/js/md5-min.js"></script>        
     <script language="javascript" type="text/javascript" src="http://service.tartaglialab.com/static_files/js/parseuri.js"></script>
-	<script>
-		$(document).ready(function() {
-			$( document ).tooltip();
-		});
-	</script>
 	<style>
 		label {
 			display: inline-block;
@@ -139,9 +134,15 @@
 						type: 'numeric' 
 					});
 					
-					$('#table').tablesorter({
-						widgets: ['zebra'],
-						widgetZebra: {css: ["NormRow","AltRow"]} // css classes to apply to rows
+					$(document).ready(function() {
+						$('#table').tablesorter({
+							widgets: ['zebra'],
+							widgetZebra: {css: ["NormRow","AltRow"]} // css classes to apply to rows
+						});
+					});
+					
+					$(document).ready(function() {
+						$( document ).tooltip();
 					});
 				</script>
 				
