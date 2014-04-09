@@ -67,25 +67,25 @@ clean:
 tests: testRNA testDNA
 
 old:	$(OLD_BIN) $(QUICKFILE)
-	@./$(OLD_BIN) -p quick_posi.oneline -n quick_nega.oneline -t 0.8 -a rna > $(LOG)
+	@./$(OLD_BIN) -p quick_posi.oneline -n quick_nega.oneline -t 0.8 -w 7 -a rna > $(LOG)
 	@echo "Test Quick PASSED" || echo "Test Quick FAILED"
 
 quick:	$(BIN) $(QUICKFILE)
-	@./$(BIN) -p quick_posi.oneline -n quick_nega.oneline -t 0.8 -a rna > $(LOG)
+	@./$(BIN) -p quick_posi.oneline -n quick_nega.oneline -t 0.8 -w 7 -a rna > $(LOG)
 	@echo "Test Quick PASSED" || echo "Test Quick FAILED"
 	
 testRNA:	$(BIN) $(RNAFILE)
-	@./$(BIN) -p posi10_mRNA.oneline -n nega10_mRNA.oneline -t 0.8 -a rna > $(LOG)
+	@./$(BIN) -p posi10_mRNA.oneline -n nega10_mRNA.oneline -t 0.8 -w 7 -a rna > $(LOG)
 	@echo "Test RNA PASSED" || echo "Test RNA FAILED"
 
 testDNA:	$(BIN) $(DNAFILE)
-	@./$(BIN) -p posi10_DNA.oneline -n nega10_DNA.oneline -t 0.8 -a rna > $(LOG)
+	@./$(BIN) -p posi10_DNA.oneline -n nega10_DNA.oneline -t 0.8 -w 7 -a rna > $(LOG)
 	@echo "Test DNA PASSED" || echo "Test DNA FAILED"
 
 runRNA:	$(BIN) $(REALRNA)
-	@./$(BIN) -p positive_mRNA.oneline -n negative_mRNA.oneline -t 0.9 > $(LOG)
+	@./$(BIN) -p positive_mRNA.oneline -n negative_mRNA.oneline -t 0.9 -w 7 > $(LOG)
 	@echo "The algorithm RNA PASSED" || echo "The algorithm RNA FAILED"
 
 runDNA:	$(BIN) $(REALDNA)
-	@./$(BIN) -p positive_DNA.oneline -n negative_DNA.oneline -t 0.9 > $(LOG)
+	@./$(BIN) -p positive_DNA.oneline -n negative_DNA.oneline -t 0.9 -w 7 > $(LOG)
 	@echo "The algorithm DNA PASSED" || echo "The algorithm DNA FAILED"

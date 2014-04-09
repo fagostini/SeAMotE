@@ -14,6 +14,7 @@ static void call_help(int n, struct data *options){
 	printf("\t%s <double> : %s\n", options[5].cmd, options[5].des);
 	printf("\t%s <string> : %s\n", options[6].cmd, options[6].des);
 	printf("\t%s <string> : %s\n", options[7].cmd, options[7].des);
+	printf("\t%s <integer> : %s\n", options[8].cmd, options[8].des);
 	printf("\n");
 	exit(n);
 }
@@ -46,7 +47,7 @@ static void read_args(int argc, char **argv, char *fileM, char *fileP, char *fil
 	options[7].des = "the reference set can consist of a random of shuffle dataset (default: shuffle)";
 	options[7].err = "Error! The reference has not been specified correctly!";
 	options[8].cmd = "-w";
-	options[8].des = "the max width of the motifs";
+	options[8].des = "the max width of the motifs (default: 12)";
 	options[8].err = "Error! The integer has not been specified correctly!";
 
 	int i = 1;
