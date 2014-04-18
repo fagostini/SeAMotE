@@ -1,0 +1,286 @@
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/ELAVL1_Hafner.CV2.posi.seq
+Reading the Positive file... 333 sequences
+Negative file: meme_seq/ELAVL1_Hafner.CV2.nega.seq
+Reading the Negative file... 333 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 1000 motifs... done
+   1: Testing 14000 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/ELAVL1_Lebedeva.CV2.posi.seq
+Reading the Positive file... 482 sequences
+Negative file: meme_seq/ELAVL1_Lebedeva.CV2.nega.seq
+Reading the Negative file... 482 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 1000 motifs... done
+   1: Testing 14000 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/ELAVL1_MNASE.CV2.posi.seq
+Reading the Positive file... 333 sequences
+Negative file: meme_seq/ELAVL1_MNASE.CV2.nega.seq
+Reading the Negative file... 333 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 1000 motifs... done
+   1: Testing 14000 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/ELAVL1_Mukharjee.CV2.posi.seq
+Reading the Positive file... 1875 sequences
+Negative file: meme_seq/ELAVL1_Mukharjee.CV2.nega.seq
+Reading the Negative file... 1875 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 1000 motifs... done
+   1: Testing 14000 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/FUS.CV2.posi.seq
+Reading the Positive file... 523 sequences
+Negative file: meme_seq/FUS.CV2.nega.seq
+Reading the Negative file... 523 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 1000 motifs... done
+   1: Testing 14000 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/IGF2BP1-3.CV2.posi.seq
+Reading the Positive file... 1266 sequences
+Negative file: meme_seq/IGF2BP1-3.CV2.nega.seq
+Reading the Negative file... 1266 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 1000 motifs... done
+   1: Testing 14000 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/PUM2.CV2.posi.seq
+Reading the Positive file... 333 sequences
+Negative file: meme_seq/PUM2.CV2.nega.seq
+Reading the Negative file... 333 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 1000 motifs... done
+   1: Testing 14000 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/QKI.CV2.posi.seq
+Reading the Positive file... 333 sequences
+Negative file: meme_seq/QKI.CV2.nega.seq
+Reading the Negative file... 333 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 1000 motifs... done
+   1: Testing 14000 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/SFRS1.CV2.posi.seq
+Reading the Positive file... 103 sequences
+Negative file: meme_seq/SFRS1.CV2.nega.seq
+Reading the Negative file... 105 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 1000 motifs... done
+   1: Testing 14000 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/TAF15.CV2.posi.seq
+Reading the Positive file... 333 sequences
+Negative file: meme_seq/TAF15.CV2.nega.seq
+Reading the Negative file... 333 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 1000 motifs... done
+   1: Testing 14000 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/TARDBP_iCLIP.CV2.posi.seq
+Reading the Positive file... 1585 sequences
+Negative file: meme_seq/TARDBP_iCLIP.CV2.nega.seq
+Reading the Negative file... 1582 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 718 motifs... done
+   1: Testing 10052 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/TIA1.CV2.posi.seq
+Reading the Positive file... 333 sequences
+Negative file: meme_seq/TIA1.CV2.nega.seq
+Reading the Negative file... 323 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 955 motifs... done
+   1: Testing 13370 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
+Use reverse complement: No
+Motifs file: Not specified
+Generating the seed (3 nt) motifs... done
+Positive file: meme_seq/TIAL1.CV2.posi.seq
+Reading the Positive file... 706 sequences
+Negative file: meme_seq/TIAL1.CV2.nega.seq
+Reading the Negative file... 698 sequences
+Coverage threshold: 0.75
+Calculating the coverage for 2744 seeds (positive set)... done
+Calculating the coverage for 2744 seeds (negative set)... done
+Beginnig the motif coverage optimization until 7nt:
+   Expanding 778 motifs... done
+   1: Testing 10892 motifs (4 nt)... ... done
+   Expanding 1000 motifs... done
+   2: Testing 14000 motifs (5 nt)... ... done
+   Expanding 1000 motifs... done
+   3: Testing 14000 motifs (6 nt)... ... done
+   Expanding 1000 motifs... done
+   4: Testing 14000 motifs (7 nt)... ... done
+done
+Freeing the memory... 0 1a 2 3 4 4a done
+The script executed successfully!
