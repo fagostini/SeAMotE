@@ -1023,13 +1023,15 @@ int main(int argc, char* argv[]){
 			sprintf(fname3,"tmp/motifs_%dnt_Ndistribution.dat", ms);
 			FILE *myTMP = open_file(myTMP, fname, "w" );
 			for( i=0; i<new_mn; i++ ){
+				int lNP, lNN;
 				if( dna == 1 ){
-					int lNP, lNN;
 					lNP = (int)(numPos/2);
 					lNN = (int)(numNeg/2);
 					fprintf(myTMP, "%s %d %d %d %d\n", new_motifs[i], (int)(lNP*posCov[i]), lNP, (int)(lNN*negCov[i]), lNN);
 				}
 				else{
+					lNP = numPos;
+					lNN = numNeg;
 					fprintf(myTMP, "%s %d %d %d %d\n", new_motifs[i], (int)(lNP*posCov[i]), lNP, (int)(lNN*negCov[i]), lNN);
 				}
 			}
