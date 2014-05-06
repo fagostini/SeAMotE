@@ -37,12 +37,13 @@ cd   tmp/$1
 		fi
 
 		# Generate the logo and other files for each motif and the collected zip file
-		for((l=1;l<=`wc -l outputs/best_motifs.txt | awk '{print $1}'`;l++)); do
-			IUmot=`awk '(NR=='$l'){print $1}' outputs/best_motifs.txt`;
-			REmot=`awk '(NR=='$l'){print $2}' outputs/best_motifs.txt`;
-			grep -o -e "$REmot" outputs/positive.seq > matches.txt
-			python createLogo.py "$IUmot" 2&> python.log
-		done
+		Rscript createLogos.R --vanilla --slave 2&>R_log
+# 		for((l=1;l<=`wc -l outputs/best_motifs.txt | awk '{print $1}'`;l++)); do
+# 			IUmot=`awk '(NR=='$l'){print $1}' outputs/best_motifs.txt`;
+# 			REmot=`awk '(NR=='$l'){print $2}' outputs/best_motifs.txt`;
+# 			grep -o -e "$REmot" outputs/positive.seq > matches.txt
+# 			python createLogo.py "$IUmot" 2&> python.log
+# 		done
 		zip -r outputs/results.zip logos/*
 		rm matches.txt outputs/positive.tmp
 
