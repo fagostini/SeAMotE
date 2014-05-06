@@ -18,12 +18,10 @@ with open("matches.txt", "r") as inFile:
 
 p = m.pwm()
 with open("logos/"+motif+"_pwm.txt", "w") as pwmFile:
-	print >> pwmFile, "  G     A     T     C"
+	print >> pwmFile, "  A     C     G     T"
 	for pos in range(len(m)):
-		print >> pwmFile, "%.3f %.3f %.3f %.3f" % (p[pos]["G"], p[pos]["A"], p[pos]["T"], p[pos]["C"])
+		print >> pwmFile, "%.6f %.6f %.6f %.6f" % (p[pos]["A"], p[pos]["C"], p[pos]["G"], p[pos]["T"])
 
-# with open("logos/"+motif+"_transfac.txt", "w") as transFile:
-# 	print >> transFile, m.format("transfac")
 pl = ml.pwm()
 ml.weblogo("logos/"+motif+"_logo.png")
 
