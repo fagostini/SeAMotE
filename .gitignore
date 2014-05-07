@@ -5,6 +5,7 @@ test.log
 /motifs_last_loop.txt
 /*.DS_Store
 /*.o
+/*.pdf
 /tmp/1*
 /tmp/2*
 /tmp/3*
@@ -14,6 +15,12 @@ test.log
 /tmp/7*
 /tmp/8*
 /tmp/9*
+/tmp/old_tests
+/tmp/motifs_*
+/results/*
+/DNAsets
+/DNAsets_results
+/meme_seq
 /Ref_NegRand.txt
 /Ref_PosRand.txt
 /Ref_shuffle.txt

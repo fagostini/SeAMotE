@@ -1,0 +1,26 @@
+t <- read.table("time.txt")
+
+pdf("compare.pdf")
+plot( log2(t$V2), log2(t$V4), main="DREME vs SeAMotE", ylim=c(0,12), xlim=c(14, 23), xlab= "Number of nucleotides", ylab="time (s)", pch=19)
+points( log2(t$V2), log2(t$V3), main="DREME vs SeAMotE", ylim=c(0,12), xlim=c(14, 23), xlab= "Number of nucleotides", pch=19, col=2)
+mod1 <- lm((log2(t$V3))~log2(t$V2))
+mod2 <- lm((log2(t$V4))~log2(t$V2))
+abline(mod1)
+abline(mod2)
+# abline(0,1,col=2)
+dev.off()
+
+pdf("time_vs_size.pdf")
+plot(t$V3, t$V2, ylim=c(0, 2300000), main="Computational time vs Dataset size", ylab= "Number of nucleotides", xlab="Time (s)", col=c(t$V1), pch=19, yaxt='n')
+legend("bottomright", legend=t$V1, col=t$V1, pch=19, cex=0.7)
+dev.off()
+
+pdf("time_vs_size_log2.pdf")
+plot(t$V3, log2(t$V2), ylim=c(14, 22), main="Computational time vs Dataset size", ylab= "Number of nucleotides (log2)", xlab="Time (s)", col=c(t$V1), pch=19)
+legend("bottomright", legend=t$V1, col=t$V1, pch=19, cex=0.7)
+dev.off()
+
+pdf("time_vs_size_log10.pdf")
+plot(t$V3, log10(t$V2), ylim=c(4.5, 6.5), main="Computational time vs Dataset size", ylab= "Number of nucleotides (log10)", xlab="Time (s)", col=c(t$V1), pch=19)
+legend("bottomright", legend=t$V1, col=t$V1, pch=19, cex=0.7)
+dev.off()
