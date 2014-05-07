@@ -55,14 +55,19 @@ form_fields:
         description: >
             Set Coverage<br/> 
             <small>Default is recommended for majority of users and provides simplicity and robustness.
-            Switching to another threshold might yield to a different result but at potential
-            cost of increased computational time.</small>
+            Switching to a lower threshold might yield to a different result but at potential cost of increased computational time.
+            A higher threshold can speed up calculation but is only recommended using high quality data (e.g. iCLIP).</small>
 #            Switching to expert mode enables additional features aimed at advanced users but at potential
 #            cost of increased computational time. 
         type: radio
         required: yes
+        default: 0.75
         entries:
-            -   title:  Default (75%)
+            -   title:  60%
+                value:  0.6
+            -   title:  65%
+                value:  0.65
+            -   title:  75% (default)
                 value:  0.75
             -   title:  80%
                 value:  0.8
