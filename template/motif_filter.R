@@ -1,9 +1,9 @@
-# cat motif_filter.R | R --slave --vanilla --args <seamote output>
+# Rscript motif_filter.R --vanilla --slave --args <seamote output>
 library(stringdist)
 
 Args <- commandArgs()
 
-myTab <- data.frame(read.table(Args[5]), row.names=1)
+myTab <- data.frame(read.table(Args[9]), row.names=1)
 
 for( l in seq(3,7)){ 
 	myVec <- myTab[which(nchar(rownames(myTab))==l),]

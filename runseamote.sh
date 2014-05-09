@@ -36,6 +36,8 @@ cd   tmp/$1
 			awk '{gsub(/U/, "T", $2); print }' outputs/positive.tmp > outputs/positive.seq
 		fi
 
+		Rscript motif_filter_disc.R --vanilla --slave --args outputs/best_motifs.txt
+
 		# Generate the logo and other files for each motif and the collected zip file
 		Rscript createLogos.R --vanilla --slave 2&>R_log
 # 		for((l=1;l<=`wc -l outputs/best_motifs.txt | awk '{print $1}'`;l++)); do
