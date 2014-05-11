@@ -826,7 +826,7 @@ int main(int argc, char* argv[]){
  			memset(mot, '\0', 50*sizeof(char));
  			int tp, fp, fn, tn;
  			double pval, nval;
- 			sscanf(mline, "%s %d %d %d %d %lf", mot, &tp, &fp, &fn, &tn, &pval, &nval);
+ 			sscanf(mline, "%s %d %d %d %d %lf", mot, &tp, &fp, &fn, &tn, &pval);
  			memmove(motifs[i], mot, ms+1);
  			posCov[i] = (double)tp/numPos;
  			negCov[i] = (double)fn/numNeg;
@@ -1095,7 +1095,7 @@ int main(int argc, char* argv[]){
 					memset(mot, '\0', 50*sizeof(char));
 					int tp, fp, fn, tn;
 					double pval, nval;
-					sscanf(mline, "%s %d %d %d %d %lf", mot, &tp, &fp, &fn, &tn, &pval, &nval);
+					sscanf(mline, "%s %d %d %d %d %lf", mot, &tp, &fp, &fn, &tn, &pval);
 					memmove(new_motifs[i], mot, ms+1);
 					posCov[i] = (double)tp/numPos;
 					negCov[i] = (double)fn/numNeg;

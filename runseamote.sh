@@ -36,25 +36,25 @@ cd   tmp/$1
 			awk '{gsub(/U/, "T", $2); print }' outputs/positive.tmp > outputs/positive.seq
 		fi
 
-		Rscript motif_filter_disc.R --vanilla --slave --args outputs/best_motifs.txt
+		Rscript motif_filter_disc.R --vanilla --slave --args outputs/best_motifs.txt 2> R1.log
 
 		# Generate the logo and other files for each motif and the collected zip file
-		Rscript createLogos.R --vanilla --slave 2&>R_log
+		Rscript createLogos.R --vanilla --slave 2> R2.log
 # 		for((l=1;l<=`wc -l outputs/best_motifs.txt | awk '{print $1}'`;l++)); do
 # 			IUmot=`awk '(NR=='$l'){print $1}' outputs/best_motifs.txt`;
 # 			REmot=`awk '(NR=='$l'){print $2}' outputs/best_motifs.txt`;
 # 			grep -o -e "$REmot" outputs/positive.seq > matches.txt
 # 			python createLogo.py "$IUmot" 2&> python.log
 # 		done
-		zip -r outputs/results.zip logos/*
+		zip -r outputs/results.zip logos/
 		rm matches.txt outputs/positive.tmp
 
 		# Write the html files
 # 		awk 'BEGIN{printf "<tbody>\n"}{printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td>%s</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%.3E</td>\n\t</tr>\n", NR, $1, $2, $3, $4, $5*100, $6*100, $7*100, $8 }END{printf "</tbody>\n"}' ./outputs/best_motifs.txt > ./outputs/table.html
 # 		awk 'BEGIN{printf "<tbody>\n"}{printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td>%s</td>\n\t\t<td><img src=\"logos/%s_logo.png\" width=\"%d\" height=\"50\" style=\"solid white; display:block; margin-top:-1px; margin-left:1px; margin-right:-6px; margin-bottom:-1px;\"/></td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%.3E</td>\n\t</tr>\n", NR, $1, $2, $1, length($1)*30, $5*100, $6*100, $7*100, $8 }END{printf "</tbody>\n"}' ./outputs/best_motifs.txt > ./outputs/table.html
- 		awk 'BEGIN{printf "<tbody>\n"}{if($8>0){printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td class=\"regex\">%s</td>\n\t\t<td class=\"logo\"><a href=\"logos/%s_logo.png\"><img src=\"logos/%s_logo.png\" width=\"%d\" /></a></td>\n\t\t<td class=\"pwm\"><a href=\"logos/%s_pwm.txt\"><img src=\"download.gif\" /></a></td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%.3E</td>\n\t</tr>\n", NR, $1, $2, $1, $1, length($1)*25, $1, $5*100, $6*100, $7*100, $8} else{printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td class=\"regex\">%s</td>\n\t\t<td class=\"logo\"><a href=\"logos/%s_logo.png\"><img src=\"logos/%s_logo.png\" width=\"%d\" /></a></td>\n\t\t<td class=\"pwm\"><a href=\"logos/%s_pwm.txt\"><img src=\"download.gif\" /></a></td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td> \< 5.0E-324</td>\n\t</tr>\n", NR, $1, $2, $1, $1, length($1)*25, $1, $5*100, $6*100, $7*100} }END{printf "</tbody>\n"}' ./outputs/best_motifs.txt > ./outputs/table.html
- 		awk 'BEGIN{printf "<tbody>\n"}{printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td class=\"regex\">%s</td>\n\t\t<td class=\"logo\"><a href=\"logos/%s_logo.png\"><img src=\"logos/%s_logo.png\" width=\"%d\" /></a></td>\n\t\t<td class=\"pwm\"><a href=\"logos/%s_pwm.txt\">Download</a></td>\n\t\t<td><a href=\"logos/%s_transfac.txt\">Download</a></td>\n\t\t<td>%d</td>\n\t\t<td>%.3E</td>\n\t</tr>\n", NR, $1, $2, $1, $1, length($1)*25, $1, $1, $7*100, $8 }END{printf "</tbody>\n"}' ./outputs/best_motifs.txt > ./outputs/logos.html
-		awk 'BEGIN{printf "#  IUPAC\t\t\t\t\tRegEX\tPos Count\tRef Count\tPos Coverage\tRef Coverage\tDiscrimination\tP-value\n"} {printf "%8s\t%37s\t%d\t\t%d\t\t%.5f\t\t%.5f\t\t%.5f\t\t%e\n", $1, $2, $3, $4, $5, $6, $7, $8}' ./outputs/best_motifs.txt > ./outputs/motifs.txt
+ 		awk 'BEGIN{printf "<tbody>\n"}{if($8>0){printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td class=\"regex\">%s</td>\n\t\t<td class=\"logo\"><a href=\"logos/%s_logo.png\"><img src=\"logos/%s_logo.png\" width=\"%d\" /></a></td>\n\t\t<td class=\"pwm\"><a href=\"logos/%s_pwm.txt\"><img src=\"download.gif\" /></a></td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%.3E</td>\n\t</tr>\n", NR, $1, $2, $1, $1, length($1)*25, $1, $5*100, $6*100, $7*100, $8} else{printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td class=\"regex\">%s</td>\n\t\t<td class=\"logo\"><a href=\"logos/%s_logo.png\"><img src=\"logos/%s_logo.png\" width=\"%d\" /></a></td>\n\t\t<td class=\"pwm\"><a href=\"logos/%s_pwm.txt\"><img src=\"download.gif\" /></a></td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td> \< 5.0E-324</td>\n\t</tr>\n", NR, $1, $2, $1, $1, length($1)*25, $1, $5*100, $6*100, $7*100} }END{printf "</tbody>\n"}' ./outputs/best_motifs.txt > ./outputs/table.html 2> html1.log
+ 		awk 'BEGIN{printf "<tbody>\n"}{printf "\t<tr>\n\t\t<td>%d</td>\n\t\t<td>%s</td>\n\t\t<td class=\"regex\">%s</td>\n\t\t<td class=\"logo\"><a href=\"logos/%s_logo.png\"><img src=\"logos/%s_logo.png\" width=\"%d\" /></a></td>\n\t\t<td class=\"pwm\"><a href=\"logos/%s_pwm.txt\">Download</a></td>\n\t\t<td><a href=\"logos/%s_transfac.txt\">Download</a></td>\n\t\t<td>%d</td>\n\t\t<td>%.3E</td>\n\t</tr>\n", NR, $1, $2, $1, $1, length($1)*25, $1, $1, $7*100, $8 }END{printf "</tbody>\n"}' ./outputs/best_motifs.txt > ./outputs/logos.html 2> html2.log
+		awk 'BEGIN{printf "#  IUPAC\t\t\t\t\tRegEX\tPos Count\tRef Count\tPos Coverage\tRef Coverage\tDiscrimination\tP-value\n"} {printf "%8s\t%37s\t%d\t\t%d\t\t%.5f\t\t%.5f\t\t%.5f\t\t%e\n", $1, $2, $3, $4, $5, $6, $7, $8}' ./outputs/best_motifs.txt > ./outputs/motifs.txt 2> html3.log
 		sed 's/0.000000e+00/< 5.0000e-324/g' ./outputs/motifs.txt > ./outputs/best_motifs.txt
 		mv tmp/*.dat outputs/
 	else
