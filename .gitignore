@@ -15,6 +15,7 @@ test.log
 /tmp/7*
 /tmp/8*
 /tmp/9*
+/tmp/*
 /tmp/old_tests
 /tmp/motifs_*
 /results/*

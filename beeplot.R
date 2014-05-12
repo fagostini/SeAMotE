@@ -1,0 +1,33 @@
+# Rscript beeplot.R --vanilla --slave
+library(beeswarm)
+
+d <- read.table("dreme_res")
+s <- read.table("seamote_res")
+
+da <- cbind("DREME", d)
+sa <- cbind("SeAMotE", s)
+
+colnames(da) <- c("ID", "V1", "V2")
+colnames(sa) <- c("ID", "V1", "V2")
+
+ds <- rbind(da,sa)
+
+# da$col <- "red"
+# sa$col <- "darkcyan"
+# ds1 <- rbind(da,sa)
+# ds2 <- rbind(da,sa)
+# ds1$ID <- "disc"
+# ds1$V1 <- ds1$V1*100
+# ds1$V2 <- 0
+# ds2$ID <- "pval"
+# ds2$V1 <- -log10(ds2$V2)
+# ds2$V2 <- 0
+
+pdf("plot_DiscSign.pdf", width=12, height=6, pointsize=12)
+par(mfrow=c(1,2), bg="white")
+beeswarm(    V1*100 ~ ID, data=ds, method="center", pch = 16, xlab="", ylab="Discrimination (%)", ylim=c(0,100), col=c(2,"darkcyan"), main="Motif discrimination ability", cex=0.75);
+beeswarm(-log10(V2) ~ ID, data=ds, method="center", pch=16, xlab="", ylab="-log10(p-value) (Fisher's exact test)", ylim=c(0,325), col=c(2,"darkcyan"), main="Motif significance", cex=0.75)
+dev.off()
+
+
+# "swarm", "center", "hex", "square"
