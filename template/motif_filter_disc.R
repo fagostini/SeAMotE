@@ -7,21 +7,21 @@ myTab <- data.frame(read.table(Args[9]), row.names=1)
 
 for( l in seq(3,7)){ 
 	myVec <- myTab[which(nchar(rownames(myTab))==l),]
-	myOrd <- myVec[order(myVec$V6, decreasing=TRUE),]
+	myOrd <- myVec[order(myVec$V7, decreasing=TRUE),]
 	
 	myFirst <- rownames(myOrd)[1]
 	mat <- stringdistmatrix(rownames(myOrd)[1], rownames(myOrd), method="hamming")
 	m <- max(mat)
 	sel <- unique(which(mat / m == 1 , arr.ind = TRUE)[,1])
 	myVec <- myOrd[sel,]
-	myOrd <- myVec[order(myVec$V6, decreasing=TRUE),]
+	myOrd <- myVec[order(myVec$V7, decreasing=TRUE),]
 	
 	mySecond <- rownames(myOrd)[1]
 	mat <- stringdistmatrix(rownames(myOrd)[1], rownames(myOrd), method="hamming")
 	m <- max(mat)
 	sel <- unique(which(mat / m == 1 , arr.ind = TRUE)[,1])
 	myVec <- myOrd[sel,]
-	myOrd <- myVec[order(myVec$V6, decreasing=TRUE),]
+	myOrd <- myVec[order(myVec$V7, decreasing=TRUE),]
 
 	myThird <- rownames(myOrd)[1]	
 	
@@ -34,6 +34,6 @@ for( l in seq(3,7)){
 	}
 }
 	
-motSelection <- final[order(final$V6, decreasing=TRUE),]
+motSelection <- final[order(final$V7, decreasing=TRUE),]
 	
 write.table(motSelection, "selected_motifs.dat", col.names=FALSE, quote = FALSE)

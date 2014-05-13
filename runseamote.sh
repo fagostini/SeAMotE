@@ -1,6 +1,6 @@
 #!/bin/bash
-# bash runseamote.sh "random_number" "motiFile" "use_as_reference" "threshold" "reverse"
-echo "bash runseamote.sh" "$1" "$2" "$3" "$4" "$5"
+# bash runseamote.sh "random_number" "motiFile" "use_as_reference" "threshold" "reverse" "filter"
+echo "bash runseamote.sh" "$1" "$2" "$3" "$4" "$5" "$6"
 
 cd   tmp/$1
 	# Set the type of reference to be used
@@ -36,7 +36,11 @@ cd   tmp/$1
 			awk '{gsub(/U/, "T", $2); print }' outputs/positive.tmp > outputs/positive.seq
 		fi
 
-		Rscript motif_filter_disc.R --vanilla --slave --args outputs/best_motifs.txt 2> R1.log
+		cp outputs/best_motifs.txt outputs/original_motifs.txt
+		if [[ "$6" == "yes" ]]; then
+			Rscript motif_filter_disc.R --vanilla --slave --args outputs/best_motifs.txt 2> R1.log
+			cp selected_motifs.dat outputs/best_motifs.txt
+		fi
 
 		# Generate the logo and other files for each motif and the collected zip file
 		Rscript createLogos.R --vanilla --slave 2> R2.log
