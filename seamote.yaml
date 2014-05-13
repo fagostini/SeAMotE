@@ -100,7 +100,7 @@ file_uploads:
         description:     >
             Upload a Positive dataset <small>(FASTA format, 
             at least 10 and at most 10<sup>4</sup> sequences)</small>
-        format: fasta
+        format: fasta-nucleic
         required: Yes        
         min_sequences:  10
         max_sequences:  10000
@@ -111,7 +111,7 @@ file_uploads:
         description:  >
             Upload a Reference dataset <small>(FASTA format, 
             at least 10 and at most 10<sup>4</sup> sequences)</small>
-        format: fasta
+        format: fasta-nucleic
         required: No
         min_sequences:  10
         max_sequences:  10000
